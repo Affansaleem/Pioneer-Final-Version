@@ -91,6 +91,8 @@ class _MainPageState extends State<AdminMainPage> {
       setState(() {
         GlobalObjects.adminName = data!.userName;
         GlobalObjects.adminMail = data.email;
+        print(GlobalObjects.adminName);
+        print(GlobalObjects.adminMail);
       });
     } catch (e) {
       print('Error fetching admin profile: $e');
@@ -121,17 +123,14 @@ class _MainPageState extends State<AdminMainPage> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        GestureDetector(
-
-                          child: UserAccountsDrawerHeader(
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                             ),
-                            accountName: Text( GlobalObjects.adminName ?? ""),
-                            accountEmail: Text(GlobalObjects.adminMail ?? ""),
-                            currentAccountPicture: const CircleAvatar(
-                              backgroundImage: AssetImage("assets/icons/userr.png"),
-                            ),
+                        UserAccountsDrawerHeader(
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                           ),
+                          accountName: Text( GlobalObjects.adminName ?? ""),
+                          accountEmail: Text(GlobalObjects.adminMail ?? ""),
+                          currentAccountPicture: const CircleAvatar(
+                            backgroundImage: AssetImage("assets/icons/userrr.png"),
                           ),
                         ),
 
@@ -252,17 +251,17 @@ class _MainPageState extends State<AdminMainPage> {
   String _getPageInfo(AdminDrawerItem item) {
     switch (item) {
       case AdminDrawerItems.home:
-        return "HOME";
+        return "Home";
       case AdminDrawerItems.geofence:
-        return "GEOFENCE";
+        return "Geofence";
       case AdminDrawerItems.profile:
-        return "PROFILE";
+        return "Profile";
       case AdminDrawerItems.reports:
-        return "REPORTS";
+        return "Reports";
       case AdminDrawerItems.logout:
         return "";
       default:
-        return "HOME";
+        return "Home";
     }
   }
 }

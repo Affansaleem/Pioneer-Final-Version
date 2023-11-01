@@ -9,11 +9,15 @@ class GlobalObjects{
    static  DateTime? empJoinDate;
    static String? empProfilePic;
    static String? empName;
-
+   // admin objects
    static String? adminCorpId;
    int? adminId;
    static String? adminName;
    static String? adminMail;
+   static String? adminusername;
+   static String? adminpassword;
+   static String? adminemail;
+   static String? adminphonenumber;
 
 
 

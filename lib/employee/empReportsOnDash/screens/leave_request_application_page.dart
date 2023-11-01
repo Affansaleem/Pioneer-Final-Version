@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:project/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +20,10 @@ class LeaveRequestForm extends StatefulWidget {
   _LeaveRequestFormState createState() => _LeaveRequestFormState();
 }
 
-class _LeaveRequestFormState extends State<LeaveRequestForm> {
+class _LeaveRequestFormState extends State<LeaveRequestForm>
+    with TickerProviderStateMixin {
+  late AnimationController addToCartPopUpAnimationController;
+
   final _reasonController = TextEditingController();
   final _reasonTextController = TextEditingController();
   final _leaveDurationController = TextEditingController();
@@ -40,6 +43,10 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
 
   @override
   void initState() {
+    addToCartPopUpAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
     super.initState();
     // Initialize controllers with default values
     getSharedData();
@@ -51,6 +58,12 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
         _currentTime = DateFormat.yMd().add_jm().format(DateTime.now());
       });
     });
+  }
+
+  @override
+  void dispose() {
+    addToCartPopUpAnimationController.dispose();
+    super.dispose();
   }
 
   late final empId;
@@ -66,6 +79,16 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
         _fromDate = picked;
       });
     }
+  }
+
+  void showPopupWithMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpMessage(
+            addToCartPopUpAnimationController, message);
+      },
+    );
   }
 
   Future<void> _selectToDate(BuildContext context) async {
@@ -163,7 +186,9 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                                   SizedBox(height: 10),
                                   const Text(
                                     'From Date',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   Row(
                                     children: [
@@ -187,7 +212,9 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                                   const SizedBox(height: 16),
                                   const Text(
                                     'To Date',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   Row(
                                     children: [
@@ -211,7 +238,9 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                                   const SizedBox(height: 16),
                                   const Text(
                                     'Leave Type',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   DropdownButtonFormField<String>(
                                     value: _selectedReason,
@@ -238,7 +267,9 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                                   const SizedBox(height: 16),
                                   const Text(
                                     'Reason for Leave',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   TextField(
                                     controller: _reasonTextController,
@@ -248,14 +279,16 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                                   ),
 
                                   const SizedBox(height: 16),
-                                  const Text(
-                                    'Leave Duration',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                                  // const Text(
+                                  //   'Leave Duration',
+                                  //   style: TextStyle(fontSize: 16),
+                                  // ),
                                   const SizedBox(height: 16),
                                   const Text(
                                     'Leave Duration',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   DropdownButtonFormField<String>(
                                     value: _selectedLeaveDuration,
@@ -291,9 +324,13 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                                     onPressed: () async {
                                       final selectedLeaveDuration =
                                           _leaveDurationController.text;
-                                      final selectedTextReason = _reasonTextController.text; // Get the reason from the text field
-                                      final selectedReason = _reasonController.text; // Get the reason from the text field
-                                      print("Selected Reason: $selectedReason ");
+                                      final selectedTextReason =
+                                          _reasonTextController
+                                              .text; // Get the reason from the text field
+                                      final selectedReason = _reasonController
+                                          .text; // Get the reason from the text field
+                                      print(
+                                          "Selected Reason: $selectedReason ");
                                       final selectedTypeId =
                                           _reasonToLTypeId[selectedReason] ?? 0;
 
@@ -330,16 +367,29 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                                       if (_postRequestBloc.state
                                           is SubmissionSuccess) {
                                         print("Successful");
-                                        Fluttertoast.showToast(
-                                          msg: "Request submitted successfully",
-                                        );
+                                        addToCartPopUpAnimationController
+                                            .forward();
+
+                                        // Delay for a few seconds and then reverse the animation
+                                        Timer(const Duration(seconds: 3), () {
+                                          addToCartPopUpAnimationController
+                                              .reverse();
+                                        });
+                                        showPopupWithMessage(
+                                            "Request Submitted Successfully");
                                       } else if (_postRequestBloc.state
                                           is SubmissionError) {
                                         print("Not Successful");
+                                        addToCartPopUpAnimationController
+                                            .forward();
 
-                                        Fluttertoast.showToast(
-                                          msg:
-                                              "Error: ${(_postRequestBloc.state as SubmissionError).error}",
+                                        // Delay for a few seconds and then reverse the animation
+                                        Timer(const Duration(seconds: 3), () {
+                                          addToCartPopUpAnimationController
+                                              .reverse();
+                                        });
+                                        showPopupWithMessage(
+                                          "Error: ${(_postRequestBloc.state as SubmissionError).error}",
                                         );
                                       }
                                     },

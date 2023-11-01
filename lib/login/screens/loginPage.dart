@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:project/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +25,22 @@ class LoginPage extends StatefulWidget {
 
 enum UserType { employee, admin }
 
-class LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
+  late AnimationController addToCartPopUpAnimationController;
+  @override
+  void initState() {
+    addToCartPopUpAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    super.initState();
+  }
+  @override
+  void dispose() {
+    addToCartPopUpAnimationController.dispose();
+    super.dispose();
+  }
 
 
   UserType? _selectedUserType = UserType.employee;
@@ -57,10 +74,12 @@ class LoginPageState extends State<LoginPage> {
 
         _loginAsAdmin();
       } else {
-        _showErrorSnackbar(context, "User not found!");
+        showPopupWithMessageFailed("User not found!"); // Show "User not found" message
+
       }
     } catch (e) {
-      _showErrorSnackbar(context, "User not found!");
+      showPopupWithMessageFailed("User not found!"); // Show "User not found" message
+
     }
   }
   void _saveAdminUsernameToSharedPreferences(String username) async {
@@ -89,35 +108,20 @@ class LoginPageState extends State<LoginPage> {
         _saveCardNoToSharedPreferences(cardNo, empCode,employeeId);
         _loginAsEmployee();
       } else {
-        _showErrorSnackbar(context, "User not found!");
+        showPopupWithMessageFailed("User not found!"); // Show "User not found" message
+
       }
     } catch (e) {
-      _showErrorSnackbar(context, "User not found!");
+      showPopupWithMessageFailed("User not found!"); // Show "User not found" message
     }
   }
 
-  void _showErrorSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Center(child: Text(message)),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
 
-  Future<void> _successScaffoldMessage(
-      BuildContext context, String message) async {
-    await ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Center(child: Text(message)),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
 
   void _loginAsEmployee() async {
-    await _successScaffoldMessage(context, "Login Successful");
-    await Future.delayed(Duration(seconds: 2));
+    // await _successScaffoldMessage(context, "Login Successful");
+    showPopupWithMessageSuccess("Login Successful");
+    await Future.delayed(Duration(seconds: 3));
 
     Navigator.pushReplacement(
         context,
@@ -133,19 +137,44 @@ class LoginPageState extends State<LoginPage> {
     sharedPrefEmp.setInt('employee_id', employeeId);
    GlobalObjects.empCode = empCode;
    GlobalObjects.empId = employeeId;
-   print("${GlobalObjects.empCode} ${GlobalObjects.empId}");
-    print(sharedPrefEmp.getInt('employee_id'));
+
   }
 
   void _loginAsAdmin() async {
-    await _successScaffoldMessage(context, "Login Successful");
-    await Future.delayed(Duration(seconds: 2));
+    showPopupWithMessageSuccess("Login Successful");
+    await Future.delayed(Duration(seconds: 3));
     Navigator.pushReplacement(
         context,
         PageTransition(
             child: const AdminMainPage(),
             type: PageTransitionType.rightToLeft));
   }
+
+  void showPopupWithMessageFailed(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpFailed(addToCartPopUpAnimationController, message);
+      },
+    );
+  }
+  void showPopupWithMessageSuccess(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpSuccess(addToCartPopUpAnimationController, message);
+      },
+    );
+  }
+  void showPopupWithMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpMessage(addToCartPopUpAnimationController, message);
+      },
+    );
+  }
+
 
 
   void _onLoginButtonPressed() async {
@@ -168,8 +197,21 @@ class LoginPageState extends State<LoginPage> {
       // Set the role based on the selected user type
       if (_selectedUserType == UserType.employee) {
         enteredRole = 'employee';
-      } else if (_selectedUserType == UserType.admin) {
+        addToCartPopUpAnimationController.forward();
+
+        // Delay for a few seconds and then reverse the animation
+        Timer(const Duration(seconds: 3), () {
+          addToCartPopUpAnimationController.reverse();
+        });
+      }
+      else if (_selectedUserType == UserType.admin) {
         enteredRole = 'admin';
+        addToCartPopUpAnimationController.forward();
+
+        // Delay for a few seconds and then reverse the animation
+        Timer(const Duration(seconds: 3), () {
+          addToCartPopUpAnimationController.reverse();
+        });
       }
       sharedPref.setString('role', enteredRole);
       // saving corporateId
@@ -194,7 +236,6 @@ class LoginPageState extends State<LoginPage> {
         corporateId = _CoorporateIdController.text;
 
         GlobalObjects.adminCorpId = corporateId;
-        print(GlobalObjects.adminCorpId);
         handleAdminLogin(
           corporateId!,
           enteredUsername,
@@ -216,12 +257,13 @@ class LoginPageState extends State<LoginPage> {
         _isButtonPressed = false;
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill out all required fields.'),
-          duration: Duration(seconds: 3),
-        ),
-      );
+      addToCartPopUpAnimationController.forward();
+
+      // Delay for a few seconds and then reverse the animation
+      Timer(const Duration(seconds: 3), () {
+        addToCartPopUpAnimationController.reverse();
+      });
+     showPopupWithMessage("Please filled out all fields");
     }
   }
   bool isInternetLost = false;
@@ -265,54 +307,26 @@ class LoginPageState extends State<LoginPage> {
                       height: MediaQuery.of(context).size.height * 0.5,
                       width: MediaQuery.of(context).size.width,
                       color: AppColors.primaryColor,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
+                      child:  Expanded(
+                        child: Column(
+                          children: [
 
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          // Align(
-                          //   alignment: Alignment.topLeft,
-                          //   child: Card(
-                          //     elevation: 4,
-                          //     shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(12),
-                          //     ),
-                          //     child: ClipRRect(
-                          //       borderRadius: BorderRadius.circular(12),
-                          //       child: Container(
-                          //         decoration: const BoxDecoration(
-                          //           boxShadow: [
-                          //             BoxShadow(
-                          //               color: Colors.white,
-                          //               blurRadius: 4,
-                          //               offset: Offset(0, 8),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //         child: Image.asset(
-                          //           'assets/images/pioneer_logo_app.png',
-                          //           fit: BoxFit.contain,
-                          //           height: 50,
-                          //           width: 50,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          Text(
-                            "PIONEER TIME ATTENDANCE",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 25, // Adjust the size as needed
-                              color: Colors.white, // Adjust the color as needed
+                            SizedBox(
+                              height: 100,
                             ),
-                          )
-                          
-                        ],
+                            Text(
+                              "PIONEER TIME ATTENDANCE",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 25, // Adjust the size as needed
+                                color: Colors.white, // Adjust the color as needed
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -511,7 +525,7 @@ class LoginPageState extends State<LoginPage> {
                                           ),
                                   );
                                 },
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -533,4 +547,6 @@ class LoginPageState extends State<LoginPage> {
       },
     );
   }
+
+
 }

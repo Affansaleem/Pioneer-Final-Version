@@ -82,7 +82,7 @@ class EmpProfilePageState extends State<EmpProfilePage> {
       if (profileData.isNotEmpty) {
         EmpProfileModel? empProfile = profileData.first;
         final profileImage = empProfile.profilePic;
-
+        GlobalObjects.empId = empProfile.empId;
         if (profileImage != null && profileImage.isNotEmpty) {
           setState(() {
             EmpProfileModel? empProfile = profileData.first;
@@ -90,6 +90,8 @@ class EmpProfilePageState extends State<EmpProfilePage> {
             GlobalObjects.empProfilePic = empProfile.profilePic;
             GlobalObjects.empName = empProfile.empName;
             GlobalObjects.empMail = empProfile.emailAddress;
+            GlobalObjects.empId = empProfile.empId;
+            print(GlobalObjects.empId);
           });
         }
         if (profileImage == null && profileImage.isEmpty) {

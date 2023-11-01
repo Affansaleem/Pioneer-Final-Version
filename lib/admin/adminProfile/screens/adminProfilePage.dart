@@ -193,11 +193,14 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is AdminProfileLoaded) {
+
                   final adminProfile = state.adminProfile;
                   final joinedDate = formatDate(adminProfile.onDate);
                   userProfile = UserProfile(adminProfile.userName ?? '---',
                       adminProfile.email ?? '---');
 
+                  GlobalObjects.adminphonenumber=adminProfile.mobile;
+                  GlobalObjects.adminpassword=adminProfile.userPassword;
                   GlobalObjects.adminName = adminProfile.userName;
                   GlobalObjects.adminMail = adminProfile.email;
 
@@ -229,7 +232,7 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                                   const Center(
                                     child: CircleAvatar(
                                       backgroundImage:
-                                          AssetImage('assets/icons/userr.png'),
+                                          AssetImage('assets/icons/userrr.png'),
                                       radius: 70,
                                     ),
                                   ),
