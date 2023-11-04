@@ -15,15 +15,18 @@ import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
 import '../../../login/screens/loginPage.dart';
-import '../../adminDashboard/screen/adminMain.dart';
 import '../bloc/admin_profile_bloc.dart';
 import '../bloc/admin_profile_event.dart';
 import '../bloc/admin_profile_state.dart';
 import 'AdminEditProfilePage.dart';
 import 'adminProfile.dart';
 
+typedef void RefreshDataCallbackAdmin();
+
 class AdminProfilePage extends StatefulWidget {
-  AdminProfilePage({Key? key}) : super(key: key);
+  final RefreshDataCallbackAdmin? onRefreshData;
+
+  AdminProfilePage({Key? key, this.onRefreshData}) : super(key: key);
 
   @override
   AdminProfilePageState createState() => AdminProfilePageState();
@@ -31,8 +34,6 @@ class AdminProfilePage extends StatefulWidget {
 
 class AdminProfilePageState extends State<AdminProfilePage> {
   late AdminProfileBloc adminProfileBloc;
-  UserProfile userProfile = UserProfile('Loading...', 'Loading...');
-
   Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', false);
@@ -147,26 +148,33 @@ class AdminProfilePageState extends State<AdminProfilePage> {
   bool isInternetLost = false;
 
   Future<void> fetchProfileData() async {
+    if (widget.onRefreshData != null) {
+      widget.onRefreshData!();
+    }
+    SharedPreferences prefAdmin = await SharedPreferences.getInstance();
+    GlobalObjects.adminusername = prefAdmin.getString('admin_username');
+    GlobalObjects.adminCorpId = prefAdmin.getString('admin_corporateId');
     adminProfileBloc.add(FetchAdminProfile(
       corporateId: GlobalObjects.adminCorpId ?? 'ptsoffice',
-      employeeId: 'ptsadmin',
+      employeeId: GlobalObjects.adminusername ?? 'ptsadmin',
     ));
+    print(GlobalObjects.adminMail);
+    print(GlobalObjects.adminusername);
   }
 
   @override
   Widget build(BuildContext context) {
-    adminProfileBloc =
-        AdminProfileBloc(AdminProfileRepository());
+    adminProfileBloc = AdminProfileBloc(AdminProfileRepository());
     adminProfileBloc.add(FetchAdminProfile(
       corporateId: GlobalObjects.adminCorpId ?? 'ptsoffice',
-      employeeId: 'ptsadmin',
+      employeeId: GlobalObjects.adminusername ?? "ptsadmin",
     ));
 
     return BlocConsumer<InternetBloc, InternetStates>(
       listener: (context, state) {
         if (state is InternetLostState) {
           isInternetLost = true;
-          Future.delayed(Duration(seconds: 2), () {
+          Future.delayed(const Duration(seconds: 2), () {
             Navigator.push(
               context,
               PageTransition(
@@ -193,15 +201,12 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is AdminProfileLoaded) {
-
                   final adminProfile = state.adminProfile;
                   final joinedDate = formatDate(adminProfile.onDate);
-                  userProfile = UserProfile(adminProfile.userName ?? '---',
-                      adminProfile.email ?? '---');
 
-                  GlobalObjects.adminphonenumber=adminProfile.mobile;
-                  GlobalObjects.adminpassword=adminProfile.userPassword;
-                  GlobalObjects.adminName = adminProfile.userName;
+                  GlobalObjects.adminphonenumber = adminProfile.mobile;
+                  GlobalObjects.adminpassword = adminProfile.userPassword;
+                  GlobalObjects.adminusername = adminProfile.userName;
                   GlobalObjects.adminMail = adminProfile.email;
 
                   return SingleChildScrollView(
@@ -282,7 +287,8 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                                                     MainAxisAlignment.center,
                                                 children: [
                                                   Card(
-                                                    shape: RoundedRectangleBorder(
+                                                    shape:
+                                                        RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50),
@@ -291,15 +297,17 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                                                       decoration: BoxDecoration(
                                                         color: Colors.red,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                50),
+                                                            BorderRadius
+                                                                .circular(50),
                                                       ),
                                                       padding:
-                                                          const EdgeInsets.all(5),
+                                                          const EdgeInsets.all(
+                                                              5),
                                                       child: IconButton(
                                                         icon: const Icon(
                                                             Icons.call,
-                                                            color: Colors.white),
+                                                            color:
+                                                                Colors.white),
                                                         onPressed: () {
                                                           _launchDialer(
                                                               adminProfile
@@ -309,7 +317,8 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                                                     ),
                                                   ),
                                                   Card(
-                                                    shape: RoundedRectangleBorder(
+                                                    shape:
+                                                        RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50),
@@ -318,24 +327,28 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                                                       decoration: BoxDecoration(
                                                         color: Colors.blue,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                50),
+                                                            BorderRadius
+                                                                .circular(50),
                                                       ),
                                                       padding:
-                                                          const EdgeInsets.all(5),
+                                                          const EdgeInsets.all(
+                                                              5),
                                                       child: IconButton(
                                                         icon: const Icon(
                                                             Icons.message,
-                                                            color: Colors.white),
+                                                            color:
+                                                                Colors.white),
                                                         onPressed: () {
-                                                          _launchSms(adminProfile
-                                                              .mobile);
+                                                          _launchSms(
+                                                              adminProfile
+                                                                  .mobile);
                                                         },
                                                       ),
                                                     ),
                                                   ),
                                                   Card(
-                                                    shape: RoundedRectangleBorder(
+                                                    shape:
+                                                        RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               50),
@@ -344,18 +357,21 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                                                       decoration: BoxDecoration(
                                                         color: Colors.green,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                50),
+                                                            BorderRadius
+                                                                .circular(50),
                                                       ),
                                                       padding:
-                                                          const EdgeInsets.all(5),
+                                                          const EdgeInsets.all(
+                                                              5),
                                                       child: IconButton(
                                                         icon: const Icon(
                                                             Icons.mail,
-                                                            color: Colors.white),
+                                                            color:
+                                                                Colors.white),
                                                         onPressed: () {
                                                           _launchEmail(
-                                                              adminProfile.email);
+                                                              adminProfile
+                                                                  .email);
                                                         },
                                                       ),
                                                     ),
@@ -469,7 +485,8 @@ class AdminProfilePageState extends State<AdminProfilePage> {
               },
             ),
           );
-        } else {
+        }
+        else {
           return Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );

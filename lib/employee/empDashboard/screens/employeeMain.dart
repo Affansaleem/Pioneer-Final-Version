@@ -81,8 +81,6 @@ class EmpMainPageState extends State<EmpMainPage> {
           GlobalObjects.empMail = empProfile.emailAddress;
         });
 
-        print(GlobalObjects.empName);
-        print(GlobalObjects.empMail);
 
         // Update your UI with other profile data here
       }

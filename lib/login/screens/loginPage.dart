@@ -27,6 +27,7 @@ enum UserType { employee, admin }
 
 class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
   late AnimationController addToCartPopUpAnimationController;
+
   @override
   void initState() {
     addToCartPopUpAnimationController = AnimationController(
@@ -36,6 +37,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
 
     super.initState();
   }
+
   @override
   void dispose() {
     addToCartPopUpAnimationController.dispose();
@@ -70,7 +72,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
       );
 
       if (employeeData.isNotEmpty) {
-         _saveAdminUsernameToSharedPreferences(enteredUsername);
+         _saveAdminDataToSharedPreferences(enteredUsername,enteredCorporateID);
 
         _loginAsAdmin();
       } else {
@@ -82,9 +84,12 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
 
     }
   }
-  void _saveAdminUsernameToSharedPreferences(String username) async {
+  void _saveAdminDataToSharedPreferences(String username,String corporateId) async {
     final sharedPref = await SharedPreferences.getInstance();
+    GlobalObjects.adminusername=username;
+    GlobalObjects.adminCorpId=corporateId;
     sharedPref.setString('admin_username', username);
+    sharedPref.setString('admin_corporateId', corporateId);
   }
 
   void _handleEmployeeLogin(

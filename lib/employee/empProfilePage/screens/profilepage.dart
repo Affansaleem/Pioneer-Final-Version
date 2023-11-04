@@ -168,12 +168,7 @@ class EmpProfilePageState extends State<EmpProfilePage> {
           if (state is EmpProfileLoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is EmpProfileLoadedState) {
-            Widget _buildRefreshButton() {
-              return IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: refreshUserData,
-              );
-            }
+
 
             List<EmpProfileModel> userList = state.users;
             final employeeProfile = userList[0];

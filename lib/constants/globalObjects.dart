@@ -12,7 +12,6 @@ class GlobalObjects{
    // admin objects
    static String? adminCorpId;
    int? adminId;
-   static String? adminName;
    static String? adminMail;
    static String? adminusername;
    static String? adminpassword;

@@ -26,7 +26,7 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _usernameController =
-      TextEditingController(text: GlobalObjects.adminName);
+      TextEditingController(text: GlobalObjects.adminusername);
   final TextEditingController _passwordController =
       TextEditingController(text: GlobalObjects.adminpassword);
   final TextEditingController _emailController =
@@ -67,15 +67,6 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
       if (success) {
         GlobalObjects.adminMail = adminEditProfile.email;
         GlobalObjects.empName = adminEditProfile.userName;
-        // addToCartPopUpAnimationController.forward();
-        //
-        // // Delay for a few seconds and then reverse the animation
-        // Timer(const Duration(seconds: 3), () {
-        //   addToCartPopUpAnimationController.reverse();
-        //   Navigator.pop(context,true);
-        // });
-        //
-        // showPopupWithMessage("Changes has been applied");
         Fluttertoast.showToast(msg: "Changes applied!");
         Navigator.pop(context,true);
 
