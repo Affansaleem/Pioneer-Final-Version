@@ -364,290 +364,294 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                 BorderRadius.all(Radius.circular(10)),
                               ),
                               content: SingleChildScrollView(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Card(
-                                    color: AppColors.primaryColor,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                          Text(
-                                            "FILTERS",
-                                            style: GoogleFonts.openSans(
-                                              textStyle: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                child: Container(
+                                  width: 900,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Card(
+                                      color: AppColors.primaryColor,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                          children: <Widget>[
+                                            Text(
+                                              "FILTERS",
+                                              style: GoogleFonts.openSans(
+                                                textStyle: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
+                                              textAlign: TextAlign.center,
                                             ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(height: 10),
-                                          // Department Dropdown
-                                          // Department Dropdown
-                                          Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Department:',
-                                                style: GoogleFonts.openSans(
-                                                  textStyle: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                    color: Colors.white,
-                                                    width: 2.0,
-                                                  ),
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      4.0),
-                                                ),
-                                                child: DropdownButtonFormField<
-                                                    String>(
-                                                  isExpanded: true,
-                                                  value:
-                                                  departmentDropdownValue,
-                                                  onChanged: (newValue) {
-
-                                                    departmentDropdownValue =
-                                                        newValue;
-
-                                                  },
-                                                  items: [
-                                                    DropdownMenuItem<String>(
-                                                      value: '',
-                                                      child: Text(
-                                                        'All',
-                                                        style: GoogleFonts
-                                                            .openSans(
-                                                          textStyle:
-                                                          const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
+                                            const SizedBox(height: 10),
+                                            // Department Dropdown
+                                            // Department Dropdown
+                                            Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Department:',
+                                                  style: GoogleFonts.openSans(
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
-                                                    ...departmentNames
-                                                        .map((String value) {
-                                                      return DropdownMenuItem<
-                                                          String>(
-                                                        value: value,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                      color: Colors.white,
+                                                      width: 2.0,
+                                                    ),
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        4.0),
+                                                  ),
+                                                  child: DropdownButtonFormField<
+                                                      String>(
+                                                    isExpanded: true,
+                                                    value:
+                                                    departmentDropdownValue,
+                                                    onChanged: (newValue) {
+
+                                                      departmentDropdownValue =
+                                                          newValue;
+
+                                                    },
+                                                    items: [
+                                                      DropdownMenuItem<String>(
+                                                        value: '',
                                                         child: Text(
-                                                          value,
+                                                          'All',
                                                           style: GoogleFonts
                                                               .openSans(
                                                             textStyle:
                                                             const TextStyle(
                                                               fontSize: 14,
-                                                              color:
-                                                              Colors.black,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold,
+                                                              FontWeight.bold,
                                                             ),
                                                           ),
                                                         ),
-                                                      );
-                                                    }).toList(),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          const SizedBox(height: 10),
-                                          // Branch Dropdown
-                                          Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Branch:',
-                                                style: GoogleFonts.openSans(
-                                                  textStyle: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                    color: Colors.white,
-                                                    width: 2.0,
-                                                  ),
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      4.0),
-                                                ),
-                                                child: DropdownButtonFormField<
-                                                    String>(
-                                                  isExpanded: true,
-                                                  value: branchDropdownValue,
-                                                  onChanged: (newValue) {
-
-                                                    branchDropdownValue =
-                                                    newValue!;
-                                                  },
-                                                  items: [
-                                                    DropdownMenuItem<String>(
-                                                      value: '',
-                                                      child: Text(
-                                                        'All',
-                                                        style: GoogleFonts
-                                                            .openSans(
-                                                          textStyle:
-                                                          const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                          ),
-                                                        ),
                                                       ),
+                                                      ...departmentNames
+                                                          .map((String value) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: value,
+                                                          child: Text(
+                                                            value,
+                                                            style: GoogleFonts
+                                                                .openSans(
+                                                              textStyle:
+                                                              const TextStyle(
+                                                                fontSize: 14,
+                                                                color:
+                                                                Colors.black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            const SizedBox(height: 10),
+                                            // Branch Dropdown
+                                            Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Branch:',
+                                                  style: GoogleFonts.openSans(
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
-                                                    ...branchNames
-                                                        .map((String value) {
-                                                      return DropdownMenuItem<
-                                                          String>(
-                                                        value: value,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                      color: Colors.white,
+                                                      width: 2.0,
+                                                    ),
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        4.0),
+                                                  ),
+                                                  child: DropdownButtonFormField<
+                                                      String>(
+                                                    isExpanded: true,
+                                                    value: branchDropdownValue,
+                                                    onChanged: (newValue) {
+
+                                                      branchDropdownValue =
+                                                      newValue!;
+                                                    },
+                                                    items: [
+                                                      DropdownMenuItem<String>(
+                                                        value: '',
                                                         child: Text(
-                                                          value,
+                                                          'All',
                                                           style: GoogleFonts
                                                               .openSans(
                                                             textStyle:
                                                             const TextStyle(
                                                               fontSize: 14,
-                                                              color:
-                                                              Colors.black,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold,
+                                                              FontWeight.bold,
                                                             ),
                                                           ),
                                                         ),
-                                                      );
-                                                    }).toList(),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-                                          // Company Dropdown
-                                          Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Company:',
-                                                style: GoogleFonts.openSans(
-                                                  textStyle: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                    color: Colors.white,
-                                                    width: 2.0,
-                                                  ),
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      4.0),
-                                                ),
-                                                child: DropdownButtonFormField<
-                                                    String>(
-                                                  isExpanded: true,
-                                                  value: companyDropdownValue,
-                                                  onChanged: (newValue) {
-                                                    companyDropdownValue =
-                                                    newValue!;
-                                                  },
-                                                  items: [
-                                                    DropdownMenuItem<String>(
-                                                      value: '',
-                                                      child: Text(
-                                                        'All',
-                                                        style: GoogleFonts
-                                                            .openSans(
-                                                          textStyle:
-                                                          const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                          ),
-                                                        ),
                                                       ),
+                                                      ...branchNames
+                                                          .map((String value) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: value,
+                                                          child: Text(
+                                                            value,
+                                                            style: GoogleFonts
+                                                                .openSans(
+                                                              textStyle:
+                                                              const TextStyle(
+                                                                fontSize: 14,
+                                                                color:
+                                                                Colors.black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            // Company Dropdown
+                                            Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Company:',
+                                                  style: GoogleFonts.openSans(
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
-                                                    ...companyNames
-                                                        .map((String value) {
-                                                      return DropdownMenuItem<
-                                                          String>(
-                                                        value: value,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                      color: Colors.white,
+                                                      width: 2.0,
+                                                    ),
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        4.0),
+                                                  ),
+                                                  child: DropdownButtonFormField<
+                                                      String>(
+                                                    isExpanded: true,
+                                                    value: companyDropdownValue,
+                                                    onChanged: (newValue) {
+                                                      companyDropdownValue =
+                                                      newValue!;
+                                                    },
+                                                    items: [
+                                                      DropdownMenuItem<String>(
+                                                        value: '',
                                                         child: Text(
-                                                          value,
+                                                          'All',
                                                           style: GoogleFonts
                                                               .openSans(
                                                             textStyle:
                                                             const TextStyle(
                                                               fontSize: 14,
-                                                              color:
-                                                              Colors.black,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold,
+                                                              FontWeight.bold,
                                                             ),
                                                           ),
                                                         ),
-                                                      );
-                                                    }).toList(),
-                                                  ],
+                                                      ),
+                                                      ...companyNames
+                                                          .map((String value) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: value,
+                                                          child: Text(
+                                                            value,
+                                                            style: GoogleFonts
+                                                                .openSans(
+                                                              textStyle:
+                                                              const TextStyle(
+                                                                fontSize: 14,
+                                                                color:
+                                                                Colors.black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-                                          // Search Bar
-                                          Row(
-                                            children: [
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text("close"),
-                                              ),
-                                              SizedBox(width: 40,),
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                  });
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text("apply"),
-                                              ),
-                                            ],
-                                          ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            // Search Bar
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                    });
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text("Apply"),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text("close"),
+                                                ),
 
-                                        ],
+                                              ],
+                                            ),
+
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),

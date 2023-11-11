@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:project/AnimatedTextPopUp.dart';
+import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
+import 'package:project/constants/globalObjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bloc/empLeaveRequestApiFiles/emp_leave_request_bloc.dart';
 import '../bloc/empPostRequestApiFiles/emp_post_request_bloc.dart';
@@ -81,12 +82,18 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
     }
   }
 
-  void showPopupWithMessage(String message) {
+  void showPopupWithMessage(String message, BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return addToCartPopUpMessage(
-            addToCartPopUpAnimationController, message);
+          addToCartPopUpAnimationController,
+          message,
+              () {
+            // Add the logic you want to execute when the pop-up is pressed
+            Navigator.pop(context); // Close the pop-up
+          },
+        );
       },
     );
   }
@@ -105,13 +112,23 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
     }
   }
 
+  void _popPage() {
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pop(context);
+    });
+
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pop(context);
+    });
+  }
+
   final Map<String, int> _reasonToLTypeId = {
     "Annual": 1,
     "Outstation Duty": 2,
     "SL": 3,
   };
-  String _selectedLeaveDuration = "Full Day";
-  String _selectedReason = "Annual";
+  String _selectedLeaveDuration = "";
+  String _selectedReason = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,6 +181,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                       scrollDirection: Axis.vertical,
                       child: Center(
                         child: Container(
+                          margin: EdgeInsets.only(top: 50),
                           color: AppColors.brightWhite,
                           width: MediaQuery.of(context).size.width /
                               1.2, // Adjust the width as needed
@@ -245,6 +263,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   DropdownButtonFormField<String>(
                                     value: _selectedReason,
                                     items: [
+                                      "",
                                       employeeLeave1.ltypeName,
                                       employeeLeave2.ltypeName,
                                       employeeLeave3.ltypeName,
@@ -293,6 +312,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   DropdownButtonFormField<String>(
                                     value: _selectedLeaveDuration,
                                     items: [
+                                      "",
                                       "Full Day",
                                       "Half Day",
                                     ].map((String duration) {
@@ -311,86 +331,112 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   ),
                                   const SizedBox(height: 32),
                                   ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
+                                    style: (_reasonTextController.text == null ||
+                                        _reasonTextController.text.isEmpty ||
+                                        _reasonController.text == null ||
+                                        _reasonController.text.isEmpty ||
+                                        _leaveDurationController.text == null ||
+                                        _leaveDurationController.text.isEmpty)
+                                        ? ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            30.0), // Adjust the value as needed
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                      backgroundColor: Colors.grey,
+                                      padding: EdgeInsets.all(16.0),
+                                      minimumSize: Size(200, 40),
+                                    )
+                                        : ElevatedButton.styleFrom(
+
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
                                       ),
                                       backgroundColor: Colors.blue,
                                       padding: EdgeInsets.all(16.0),
-                                      minimumSize: Size(200,
-                                          40), // Change the button color as needed
+                                      minimumSize: Size(200, 40),
                                     ),
                                     onPressed: () async {
-                                      final selectedLeaveDuration =
-                                          _leaveDurationController.text;
-                                      final selectedTextReason =
-                                          _reasonTextController
-                                              .text; // Get the reason from the text field
-                                      final selectedReason = _reasonController
-                                          .text; // Get the reason from the text field
-                                      print(
-                                          "Selected Reason: $selectedReason ");
-                                      final selectedTypeId =
-                                          _reasonToLTypeId[selectedReason] ?? 0;
+                                      if (_reasonTextController.text == null ||
+                                          _reasonTextController.text.isEmpty ||
+                                          _reasonController.text == null ||
+                                          _reasonController.text.isEmpty ||
+                                          _leaveDurationController.text == null ||
+                                          _leaveDurationController.text.isEmpty) {
+                                        GlobalObjects.checkForLeaveForm(
+                                            context);
+                                      } else {
+                                        final selectedLeaveDuration =
+                                            _leaveDurationController.text;
+                                        final selectedTextReason =
+                                            _reasonTextController
+                                                .text; // Get the reason from the text field
+                                        final selectedReason = _reasonController
+                                            .text; // Get the reason from the text field
+                                        print(
+                                            "Selected Reason: $selectedReason ");
+                                        final selectedTypeId =
+                                            _reasonToLTypeId[selectedReason] ??
+                                                0;
 
-                                      final submissionModel = SubmissionModel(
-                                        employeeId: empId.toString(),
-                                        fromDate:
-                                            "${_fromDate.toLocal().toIso8601String().split('T')[0]}T00:00:00Z",
-                                        toDate:
-                                            "${_toDate.toLocal().toIso8601String().split('T')[0]}T00:00:00Z",
-                                        reason: selectedTextReason,
-                                        leaveId: selectedTypeId,
-                                        leaveDuration: selectedLeaveDuration,
-                                        status: 'UnApproved',
-                                        applicationDate:
-                                            "${DateTime.now().toIso8601String().split('T')[0]}T00:00:00Z",
-                                        remark: '',
-                                      );
-
-                                      _postRequestBloc.add(Create(
-                                        submissionModel.employeeId,
-                                        submissionModel.fromDate,
-                                        submissionModel.toDate,
-                                        submissionModel.reason,
-                                        submissionModel.leaveId,
-                                        submissionModel.leaveDuration,
-                                        submissionModel.status,
-                                        submissionModel.applicationDate,
-                                        submissionModel.remark,
-                                      ));
-
-                                      await Future.delayed(
-                                          const Duration(seconds: 2));
-
-                                      if (_postRequestBloc.state
-                                          is SubmissionSuccess) {
-                                        print("Successful");
-                                        addToCartPopUpAnimationController
-                                            .forward();
-
-                                        // Delay for a few seconds and then reverse the animation
-                                        Timer(const Duration(seconds: 3), () {
-                                          addToCartPopUpAnimationController
-                                              .reverse();
-                                        });
-                                        showPopupWithMessage(
-                                            "Request Submitted Successfully");
-                                      } else if (_postRequestBloc.state
-                                          is SubmissionError) {
-                                        print("Not Successful");
-                                        addToCartPopUpAnimationController
-                                            .forward();
-
-                                        // Delay for a few seconds and then reverse the animation
-                                        Timer(const Duration(seconds: 3), () {
-                                          addToCartPopUpAnimationController
-                                              .reverse();
-                                        });
-                                        showPopupWithMessage(
-                                          "Error: ${(_postRequestBloc.state as SubmissionError).error}",
+                                        final submissionModel = SubmissionModel(
+                                          employeeId: empId.toString(),
+                                          fromDate:
+                                              "${_fromDate.toLocal().toIso8601String().split('T')[0]}T00:00:00Z",
+                                          toDate:
+                                              "${_toDate.toLocal().toIso8601String().split('T')[0]}T00:00:00Z",
+                                          reason: selectedTextReason,
+                                          leaveId: selectedTypeId,
+                                          leaveDuration: selectedLeaveDuration,
+                                          status: 'UnApproved',
+                                          applicationDate:
+                                              "${DateTime.now().toIso8601String().split('T')[0]}T00:00:00Z",
+                                          remark: '',
                                         );
+
+                                        _postRequestBloc.add(Create(
+                                          submissionModel.employeeId,
+                                          submissionModel.fromDate,
+                                          submissionModel.toDate,
+                                          submissionModel.reason,
+                                          submissionModel.leaveId,
+                                          submissionModel.leaveDuration,
+                                          submissionModel.status,
+                                          submissionModel.applicationDate,
+                                          submissionModel.remark,
+                                        ));
+
+                                        await Future.delayed(
+                                            const Duration(seconds: 2));
+
+                                        if (_postRequestBloc.state
+                                            is SubmissionSuccess) {
+                                          print("Successful");
+                                          addToCartPopUpAnimationController
+                                              .forward();
+
+                                          // Delay for a few seconds and then reverse the animation
+                                          Timer(const Duration(seconds: 3), () {
+                                            addToCartPopUpAnimationController
+                                                .reverse();
+                                          });
+                                          showPopupWithMessage(
+                                              "Request Submitted Successfully",context);
+
+                                          _popPage();
+                                        } else if (_postRequestBloc.state
+                                            is SubmissionError) {
+                                          print("Not Successful");
+                                          addToCartPopUpAnimationController
+                                              .forward();
+
+                                          // Delay for a few seconds and then reverse the animation
+                                          Timer(const Duration(seconds: 3), () {
+                                            addToCartPopUpAnimationController
+                                                .reverse();
+                                          });
+                                          showPopupWithMessage(
+                                            "Error: ${(_postRequestBloc.state as SubmissionError).error}",context
+                                          );
+                                        }
                                       }
                                     },
                                     child: Text(

@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +11,7 @@ import 'package:project/constants/AppColor_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:convert';
-
+import '../../../constants/AnimatedTextPopUp.dart';
 import '../models/attendanceGeoFencingModel.dart';
 import '../models/attendanceGeoFencingRepository.dart';
 import '../models/geofenceGetLatLongRepository.dart';
@@ -24,29 +24,60 @@ class EmployeeMap extends StatefulWidget {
   _EmployeeMapState createState() => _EmployeeMapState();
 }
 
-class _EmployeeMapState extends State<EmployeeMap> {
+class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin{
   double? getLat;
   double? getLong;
   double? geofenceRadius = 100;
-
+  late AnimationController addToCartPopUpAnimationController;
   double? currentLat;
   double? currentLong;
   bool locationError = false;
   String Street = "";
   String fullAddress = "";
   String countryName = "";
-
   File? selectedImage;
   String base64Image = "";
   late String sublocaity;
 
+  void showPopupWithSuccessMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpSuccess(
+            addToCartPopUpAnimationController,
+            message
+        );
+      },
+    );
+  }
+  void showPopupWithFailedMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpFailed(
+            addToCartPopUpAnimationController,
+            message
+        );
+      },
+    );
+  }
   @override
   void initState() {
+    addToCartPopUpAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
     super.initState();
     checkLocationPermission();
     _initializelatLong();
     display();
     checkLocationPermissionAndFetchLocation();
+  }
+
+  @override
+  void dispose() {
+    addToCartPopUpAnimationController.dispose();
+    super.dispose();
   }
 
   Future<void> _initializelatLong() async {
@@ -129,57 +160,53 @@ class _EmployeeMapState extends State<EmployeeMap> {
 
           try {
             await geoFenceRepository.postData(geoFenceModel);
-            Fluttertoast.showToast(
-              msg: 'Attendance marked successfully!',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-            );
+            addToCartPopUpAnimationController.forward();
+            // Delay for a few seconds and then reverse the animation
+            Timer(const Duration(seconds: 3), () {
+              addToCartPopUpAnimationController.reverse();
+              Navigator.pop(context);
+            });
+            showPopupWithSuccessMessage("Attendance marked successfully!");
+
           } catch (e) {
-            print('Error making API request: $e');
-            Fluttertoast.showToast(
-              msg:
-                  'Failed to mark attendance. Please check your internet connection.',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-            );
+            addToCartPopUpAnimationController.forward();
+            // Delay for a few seconds and then reverse the animation
+            Timer(const Duration(seconds: 3), () {
+              addToCartPopUpAnimationController.reverse();
+              Navigator.pop(context);
+
+            });
+            showPopupWithFailedMessage("Failed to mark.Check your internet!");
+
           }
         }
       } else if (distance >= geofenceRadius!) {
-        Fluttertoast.showToast(
-          msg: 'Failed to mark attendance. Please check your Location.',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        addToCartPopUpAnimationController.forward();
+        // Delay for a few seconds and then reverse the animation
+        Timer(const Duration(seconds: 3), () {
+          addToCartPopUpAnimationController.reverse();
+          Navigator.pop(context);
+
+        });
+        showPopupWithFailedMessage("Failed to mark.Check your internet!");
       }
     } else if (geofenceLatitude == null || geofenceLongitude == null) {
-      Fluttertoast.showToast(
-        msg:
-        'Oops...Geofence Not Started by office.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      addToCartPopUpAnimationController.forward();
+      // Delay for a few seconds and then reverse the animation
+      Timer(const Duration(seconds: 3), () {
+        addToCartPopUpAnimationController.reverse();
+        Navigator.pop(context);
+      });
+      showPopupWithFailedMessage("Geofence not started by office!");
     } else {
-      Fluttertoast.showToast(
-        msg:
-            'Failed to mark attendance. Please check your internet connection.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
+      addToCartPopUpAnimationController.forward();
+      // Delay for a few seconds and then reverse the animation
+      Timer(const Duration(seconds: 3), () {
+        addToCartPopUpAnimationController.reverse();
+        Navigator.pop(context);
+
+      });
+      showPopupWithFailedMessage("Failed to mark.Check your internet!");
     }
   }
 
@@ -235,25 +262,23 @@ class _EmployeeMapState extends State<EmployeeMap> {
 
       try {
         await geoFenceRepository.postData(geoFenceModel);
-        Fluttertoast.showToast(
-          msg: 'Attendance marked successfully!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-        );
+        addToCartPopUpAnimationController.forward();
+        // Delay for a few seconds and then reverse the animation
+        Timer(const Duration(seconds: 3), () {
+          addToCartPopUpAnimationController.reverse();
+          Navigator.pop(context);
+
+        });
+        showPopupWithSuccessMessage("Attendance successfully marked!");
       } catch (e) {
-        print('Error making API request: $e');
-        Fluttertoast.showToast(
-          msg:
-              'Failed to mark attendance. Please check your internet connection.',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        addToCartPopUpAnimationController.forward();
+        // Delay for a few seconds and then reverse the animation
+        Timer(const Duration(seconds: 3), () {
+          addToCartPopUpAnimationController.reverse();
+          Navigator.pop(context);
+
+        });
+        showPopupWithFailedMessage("Failed to mark.Check your internet!");
       }
     }
   }
@@ -287,48 +312,7 @@ class _EmployeeMapState extends State<EmployeeMap> {
     }
   }
 
-  /*
-  void _geoFenceNotStart() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Oops..'),
-          content: const Text('Geofence Not Started by office'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
-
-  void outRadius() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Oh No'),
-          content: const Text('Your Attendance did not get MARKED'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-*/
 
   void CheckOfficeOrLocation() {
     showDialog(
@@ -399,10 +383,6 @@ class _EmployeeMapState extends State<EmployeeMap> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   String remarks = "";
 

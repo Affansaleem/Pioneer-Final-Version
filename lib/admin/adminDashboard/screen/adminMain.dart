@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/admin/adminOptionsReport/screens/AdminMonthlyAndDailyReportsMainPage.dart';
+import 'package:project/admin/adminReportsFiles/screens/AdminReportsMainPage.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
@@ -14,7 +15,6 @@ import '../../adminGeofence/screens/GeoFenceMainPage.dart';
 import '../../adminProfile/models/AdminProfileModel.dart';
 import '../../adminProfile/models/AdminProfileRepository.dart';
 import '../../adminProfile/screens/adminProfilePage.dart';
-import '../../adminReports/screens/adminReports_page.dart';
 import '../bloc/admin_dash_bloc.dart';
 import 'adminAppbar.dart';
 import 'adminDraweritems.dart';
@@ -71,11 +71,10 @@ class AdminMainPageState extends State<AdminMainPage> {
       String corporateId, String username) async {
     try {
       final data =
-      await profileRepository.fetchAdminProfile(corporateId, username);
+          await profileRepository.fetchAdminProfile(corporateId, username);
       setState(() {
         GlobalObjects.adminusername = data!.userName;
         GlobalObjects.adminMail = data.email;
-
       });
     } catch (e) {
       print('Error fetching admin profile: $e');
@@ -139,6 +138,9 @@ class AdminMainPageState extends State<AdminMainPage> {
                             case AdminDrawerItems.profile:
                               dashBloc.add(NavigateToProfileEvent());
                               break;
+                            case AdminDrawerItems.leaves:
+                              dashBloc.add(NavigateToLeavesEvent());
+                              break;
 
                             case AdminDrawerItems.logout:
                               dashBloc.add(NavigateToLogoutEvent());
@@ -193,11 +195,10 @@ class AdminMainPageState extends State<AdminMainPage> {
         builder: (context, state) {
           if (state is NavigateToProfileState) {
             return AdminProfilePage(onRefreshData: () {
-              // Handle the refresh signal here in the drawer.
-              // Update the drawer's UI or reload the data as needed.
-              fetchAdminProfileData(corporateId,
-                  username); // You can call the function to refresh the profile data here.
+              fetchAdminProfileData(corporateId, username);
             });
+          } else if (state is NavigateToLeavesState) {
+            return AdminReportsMainPage(viaDrawer: true,);
           } else if (state is NavigateToGeofenceState) {
             return const GeoFenceMainPage();
           } else if (state is NavigateToHomeState) {
@@ -244,6 +245,8 @@ class AdminMainPageState extends State<AdminMainPage> {
         return "Geofence";
       case AdminDrawerItems.profile:
         return "Profile";
+      case AdminDrawerItems.leaves:
+        return "Leaves";
       case AdminDrawerItems.reports:
         return "Reports";
       case AdminDrawerItems.logout:

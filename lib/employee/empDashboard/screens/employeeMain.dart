@@ -8,6 +8,7 @@ import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:project/employee/empDashboard/screens/empAppbar.dart';
 import 'package:project/employee/empDashboard/screens/empHomePage.dart';
+import 'package:project/employee/empReportsOnDash/screens/leaveReportMainPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
@@ -81,7 +82,6 @@ class EmpMainPageState extends State<EmpMainPage> {
           GlobalObjects.empMail = empProfile.emailAddress;
         });
 
-
         // Update your UI with other profile data here
       }
     } catch (e) {
@@ -90,102 +90,106 @@ class EmpMainPageState extends State<EmpMainPage> {
   }
 
   @override
-  Widget build(BuildContext context) => BlocConsumer<InternetBloc, InternetStates>(
-    listener: (context, state) {},
-    builder: (context, state) {
-      if (state is InternetGainedState) {
-        return Scaffold(
-          appBar: PreferredSize(
-            preferredSize: AppBar().preferredSize,
-            child: GenAppBar(
-              pageHeading: _getStyledTitle(item), // Use _getStyledTitle here
-            ),
-          ),
-          drawer: Drawer(
-            child: Column(
-              children: [
-                UserAccountsDrawerHeader(
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryColor,
-                  ),
-                  accountName: Text(GlobalObjects.empName ?? ""),
-                  accountEmail: Text(GlobalObjects.empMail ?? ""),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundImage: GlobalObjects.empProfilePic != null && GlobalObjects.empProfilePic!.isNotEmpty
-                        ? Image.memory(
-                      Uint8List.fromList(base64Decode(GlobalObjects.empProfilePic!)),
-                    ).image
-                        : AssetImage('assets/icons/userrr.png'),
-                  ),
+  Widget build(BuildContext context) =>
+      BlocConsumer<InternetBloc, InternetStates>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is InternetGainedState) {
+            return Scaffold(
+              appBar: PreferredSize(
+                preferredSize: AppBar().preferredSize,
+                child: GenAppBar(
+                  pageHeading:
+                      _getStyledTitle(item), // Use _getStyledTitle here
                 ),
-                Container(
-                  child: EmpDrawer(
-                    onSelectedItems: (selectedItem) {
-                      setState(() {
-                        Navigator.of(context).pop();
-                        item = selectedItem;
-                      });
-                      switch (item) {
-                        case EmpDrawerItems.home:
-                          dashBloc.add(NavigateToHomeEvent());
-                          break;
-
-                        case EmpDrawerItems.reports:
-                          dashBloc.add(NavigateToReportsEvent());
-                          break;
-
-                        case EmpDrawerItems.profile:
-                          dashBloc.add(NavigateToProfileEvent());
-                          break;
-
-                        case EmpDrawerItems.logout:
-                          dashBloc.add(NavigateToLogoutEvent());
-                          break;
-
-                        default:
-                          dashBloc.add(NavigateToHomeEvent());
-                          break;
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          backgroundColor: Colors.white,
-          body: getDrawerPage(),
-        );
-      } else if (state is InternetLostState) {
-        return Scaffold(
-          body: Container(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "No Internet Connection!",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Lottie.asset('assets/no_wifi.json'),
-                ],
               ),
-            ),
-          ),
-        );
-      } else {
-        return Scaffold(
-          body: Container(),
-        );
-      }
-    },
-  );
+              drawer: Drawer(
+                child: Column(
+                  children: [
+                    UserAccountsDrawerHeader(
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryColor,
+                      ),
+                      accountName: Text(GlobalObjects.empName ?? ""),
+                      accountEmail: Text(GlobalObjects.empMail ?? ""),
+                      currentAccountPicture: CircleAvatar(
+                        backgroundImage: GlobalObjects.empProfilePic != null &&
+                                GlobalObjects.empProfilePic!.isNotEmpty
+                            ? Image.memory(
+                                Uint8List.fromList(
+                                    base64Decode(GlobalObjects.empProfilePic!)),
+                              ).image
+                            : AssetImage('assets/icons/userrr.png'),
+                      ),
+                    ),
+                    Container(
+                      child: EmpDrawer(
+                        onSelectedItems: (selectedItem) {
+                          setState(() {
+                            Navigator.of(context).pop();
+                            item = selectedItem;
+                          });
+                          switch (item) {
+                            case EmpDrawerItems.home:
+                              dashBloc.add(NavigateToHomeEvent());
+                              break;
+                            case EmpDrawerItems.reports:
+                              dashBloc.add(NavigateToReportsEvent());
+                              break;
+                            case EmpDrawerItems.profile:
+                              dashBloc.add(NavigateToProfileEvent());
+                              break;
+                            case EmpDrawerItems.leaves:
+                              dashBloc.add(NavigateToLeaveEvent());
+                              break;
+                            case EmpDrawerItems.logout:
+                              dashBloc.add(NavigateToLogoutEvent());
+                              break;
+
+                            default:
+                              dashBloc.add(NavigateToHomeEvent());
+                              break;
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              backgroundColor: Colors.white,
+              body: getDrawerPage(),
+            );
+          } else if (state is InternetLostState) {
+            return Scaffold(
+              body: Container(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "No Internet Connection!",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Lottie.asset('assets/no_wifi.json'),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return Scaffold(
+              body: Container(),
+            );
+          }
+        },
+      );
 
   Widget getDrawerPage() {
     return BlocBuilder<EmpDashboardkBloc, EmpDashboardkState>(
@@ -193,10 +197,12 @@ class EmpMainPageState extends State<EmpMainPage> {
       builder: (context, state) {
         if (state is NavigateToProfileState) {
           return EmpProfilePage(onRefreshData: () {
-            // Handle the refresh signal here in the drawer.
-            // Update the drawer's UI or reload the data as needed.
-            fetchProfileData(); // You can call the function to refresh the profile data here.
+            fetchProfileData();
           });
+        }
+        else if (state is NavigateToLeaveState) {
+          print("This is leave state");
+          return LeaveRequestPage(viaDrawer: true,);
         } else if (state is NavigateToHomeState) {
           return EmpDashboard();
         } else if (state is NavigateToReportsState) {
@@ -234,6 +240,8 @@ class EmpMainPageState extends State<EmpMainPage> {
 
   String _getStyledTitle(EmpDrawerItem item) {
     switch (item) {
+      case EmpDrawerItems.leaves:
+        return "Leaves";
       case EmpDrawerItems.home:
         return "Home";
       case EmpDrawerItems.reports:
@@ -246,6 +254,4 @@ class EmpMainPageState extends State<EmpMainPage> {
         return "Home"; // Set the default title
     }
   }
-
-
 }

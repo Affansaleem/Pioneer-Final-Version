@@ -56,7 +56,7 @@ class AdminStorageDetails extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AdminReportsMainPage(),
+                    builder: (context) => AdminReportsMainPage(viaDrawer: false),
                   ));
             },
             child: const AdminStorageInfoCard(

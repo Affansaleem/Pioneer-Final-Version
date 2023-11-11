@@ -451,7 +451,7 @@ class HomePageState extends State<EmpDashHome> {
                                                   CupertinoPageRoute(
                                                 builder: (context) {
                                                   // return LeaveRequestForm();
-                                                  return LeaveRequestPage();
+                                                  return LeaveRequestPage(viaDrawer: false,);
                                                 },
                                               ));
                                             },
@@ -465,7 +465,8 @@ class HomePageState extends State<EmpDashHome> {
                                                         viaDrawer: false,
                                                       ),
                                                       type: PageTransitionType
-                                                          .rightToLeft));
+                                                          .rightToLeft)
+                                              );
                                             },
                                             child: ItemDashboard(
                                               showShadow: false,

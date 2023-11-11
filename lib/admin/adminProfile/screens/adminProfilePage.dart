@@ -10,16 +10,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../No_internet/no_internet.dart';
-import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
-import '../../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
 import '../../../login/screens/loginPage.dart';
 import '../bloc/admin_profile_bloc.dart';
 import '../bloc/admin_profile_event.dart';
 import '../bloc/admin_profile_state.dart';
 import 'AdminEditProfilePage.dart';
-import 'adminProfile.dart';
 
 typedef void RefreshDataCallbackAdmin();
 
@@ -34,26 +30,48 @@ class AdminProfilePage extends StatefulWidget {
 
 class AdminProfilePageState extends State<AdminProfilePage> {
   late AdminProfileBloc adminProfileBloc;
+
   Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', false);
     prefs.setBool('isEmployee', false);
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return Builder(
-            builder: (context) => BlocProvider(
-              create: (context) => SignInBloc(),
-              child: LoginPage(),
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirm Logout"),
+          content: const Text("Are you sure?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
             ),
-          );
-        },
-      ),
+            TextButton(
+              child: const Text('Logout'),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return Builder(
+                        builder: (context) => BlocProvider(
+                          create: (context) => SignInBloc(),
+                          child: LoginPage(),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
-
   @override
   void initState() {
     super.initState();
@@ -106,44 +124,9 @@ class AdminProfilePageState extends State<AdminProfilePage> {
     return joinedDate != null ? DateFormat.yMMMd().format(joinedDate) : '---';
   }
 
-  void _launchDialer(String phoneNumber) async {
-    final url = Uri(scheme: 'tel:$phoneNumber');
-    try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url);
-      } else {
-        throw 'Could not launch $url';
-      }
-    } catch (e) {
-      print('Error launching dialer: $e');
-    }
-  }
-
-  void _launchSms(String phoneNumber) async {
-    final url = 'sms:$phoneNumber';
-    try {
-      if (await canLaunch(url)) {
-        await launch(url);
-      } else {
-        throw 'Could not launch $url';
-      }
-    } catch (e) {
-      print('Error launching SMS: $e');
-    }
-  }
-
-  void _launchEmail(String email) async {
-    final url = 'mailto:$email';
-    try {
-      if (await canLaunch(url)) {
-        await launch(url);
-      } else {
-        throw 'Could not launch $url';
-      }
-    } catch (e) {
-      print('Error launching email: $e');
-    }
-  }
+  void call(String number) => launch("tel:$number");
+  void sendSms(String number) => launch("sms:$number");
+  void sendEmail(String email) => launch("mailto:$email");
 
   bool isInternetLost = false;
 
@@ -170,328 +153,245 @@ class AdminProfilePageState extends State<AdminProfilePage> {
       employeeId: GlobalObjects.adminusername ?? "ptsadmin",
     ));
 
-    return BlocConsumer<InternetBloc, InternetStates>(
-      listener: (context, state) {
-        if (state is InternetLostState) {
-          isInternetLost = true;
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.push(
-              context,
-              PageTransition(
-                child: NoInternet(),
-                type: PageTransitionType.rightToLeft,
-              ),
+    return Scaffold(
+      body: BlocBuilder<AdminProfileBloc, AdminProfileState>(
+        bloc: adminProfileBloc,
+        builder: (context, state) {
+          if (state is AdminProfileLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          });
-        } else if (state is InternetGainedState) {
-          if (isInternetLost) {
-            Navigator.pop(context);
-          }
-          isInternetLost = false;
-        }
-      },
-      builder: (context, state) {
-        if (state is InternetGainedState) {
-          return Scaffold(
-            body: BlocBuilder<AdminProfileBloc, AdminProfileState>(
-              bloc: adminProfileBloc,
-              builder: (context, state) {
-                if (state is AdminProfileLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is AdminProfileLoaded) {
-                  final adminProfile = state.adminProfile;
-                  final joinedDate = formatDate(adminProfile.onDate);
+          } else if (state is AdminProfileLoaded) {
+            final adminProfile = state.adminProfile;
+            final joinedDate = formatDate(adminProfile.onDate);
 
-                  GlobalObjects.adminphonenumber = adminProfile.mobile;
-                  GlobalObjects.adminpassword = adminProfile.userPassword;
-                  GlobalObjects.adminusername = adminProfile.userName;
-                  GlobalObjects.adminMail = adminProfile.email;
+            GlobalObjects.adminphonenumber = adminProfile.mobile;
+            GlobalObjects.adminpassword = adminProfile.userPassword;
+            GlobalObjects.adminusername = adminProfile.userName;
+            GlobalObjects.adminMail = adminProfile.email;
 
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          0, MediaQuery.of(context).size.height / 15, 0, 0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          WillPopScope(
-                            onWillPop: () async {
-                              return _onBackPressed(context)
-                                  .then((value) => value ?? false);
-                            },
-                            child: const SizedBox(),
-                          ),
-                          Card(
-                            elevation: 4.0,
-                            margin: const EdgeInsets.all(32.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+            return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                    0, MediaQuery.of(context).size.height / 15, 0, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    WillPopScope(
+                      onWillPop: () async {
+                        return _onBackPressed(context)
+                            .then((value) => value ?? false);
+                      },
+                      child: const SizedBox(),
+                    ),
+                    Card(
+                      elevation: 4.0,
+                      margin: const EdgeInsets.all(32.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Center(
+                              child: CircleAvatar(
+                                backgroundImage:
+                                    AssetImage('assets/icons/userrr.png'),
+                                radius: 70,
+                              ),
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
+                            const SizedBox(height: 16),
+                            Center(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Center(
-                                    child: CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage('assets/icons/userrr.png'),
-                                      radius: 70,
+                                  Text(
+                                    adminProfile.userName ?? '---',
+                                    style: GoogleFonts.roboto(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: AppColors.primaryColor,
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
-                                  Center(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          adminProfile.userName ?? '---',
-                                          style: GoogleFonts.roboto(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            color: AppColors.primaryColor,
-                                          ),
-                                        ),
-                                        Text(
-                                          adminProfile.email ?? '---',
-                                          style: GoogleFonts.roboto(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Joined $joinedDate',
-                                          style: GoogleFonts.roboto(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
+                                  Text(
+                                    adminProfile.email ?? '---',
+                                    style: GoogleFonts.roboto(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 16,
+                                      color: Colors.black,
                                     ),
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.all(16),
-                                    child: Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.all(16),
-                                            child: Center(
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                    ),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.red,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      child: IconButton(
-                                                        icon: const Icon(
-                                                            Icons.call,
-                                                            color:
-                                                                Colors.white),
-                                                        onPressed: () {
-                                                          _launchDialer(
-                                                              adminProfile
-                                                                  .mobile);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                    ),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.blue,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      child: IconButton(
-                                                        icon: const Icon(
-                                                            Icons.message,
-                                                            color:
-                                                                Colors.white),
-                                                        onPressed: () {
-                                                          _launchSms(
-                                                              adminProfile
-                                                                  .mobile);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                    ),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.green,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      child: IconButton(
-                                                        icon: const Icon(
-                                                            Icons.mail,
-                                                            color:
-                                                                Colors.white),
-                                                        onPressed: () {
-                                                          _launchEmail(
-                                                              adminProfile
-                                                                  .email);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                  Text(
+                                    'Joined $joinedDate',
+                                    style: GoogleFonts.roboto(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.all(16),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.all(16),
+                                      child: Center(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Card(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red,
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: IconButton(
+                                                  icon: const Icon(Icons.call,
+                                                      color: Colors.white),
+                                                  onPressed: () {
+                                                    call(
+                                                        adminProfile.mobile);
+                                                  },
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                            Card(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                      Icons.message,
+                                                      color: Colors.white),
+                                                  onPressed: () {
+                                                    sendSms(
+                                                        adminProfile.mobile);
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            Card(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.green,
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: IconButton(
+                                                  icon: const Icon(Icons.mail,
+                                                      color: Colors.white),
+                                                  onPressed: () {
+                                                    sendEmail(
+                                                        adminProfile.email);
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Container(
-                              color: Colors.white,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const SizedBox(height: 10),
-                                  _buildTileWidget(
-                                    title: 'Edit Profile',
-                                    icon: Icons.edit,
-                                    onTap: () async {
-                                      final result = await Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          child: const AdminEditProfilePage(),
-                                          type: PageTransitionType.rightToLeft,
-                                        ),
-                                      );
-                                      if (result == true) {
-                                        // Refresh the admin profile data when the user returns from EditProfile
-                                        fetchProfileData();
-                                      }
-                                    },
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const SizedBox(height: 10),
+                            _buildTileWidget(
+                              title: 'Edit Profile',
+                              icon: Icons.edit,
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    child: const AdminEditProfilePage(),
+                                    type: PageTransitionType.rightToLeft,
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  _buildTileWidget(
-                                    title: 'Logout',
-                                    icon: Icons.logout,
-                                    onTap: () => _logout(context),
-                                  ),
-                                ],
-                              ),
+                                );
+                                if (result == true) {
+                                  // Refresh the admin profile data when the user returns from EditProfile
+                                  fetchProfileData();
+                                }
+                              },
                             ),
-                          )
-                        ],
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _buildTileWidget(
+                              title: 'Logout',
+                              icon: Icons.logout,
+                              onTap: () => _logout(context),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                } else if (state is AdminProfileError) {
-                  return Center(
-                    child: Text(
-                      "Error: ${state.error}",
-                      style: GoogleFonts.roboto(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.red,
-                      ),
-                    ),
-                  );
-                } else if (state is InternetLostState) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "No Internet Connection!",
-                          style: GoogleFonts.roboto(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Lottie.asset('assets/no_wifi.json'),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "No Internet Connection!",
-                          style: GoogleFonts.roboto(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Lottie.asset('assets/no_wifi.json'),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
-          );
-        }
-        else {
-          return Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-      },
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else if (state is AdminProfileError) {
+            return Center(
+              child: Text(
+                "Error: ${state.error}",
+                style: GoogleFonts.roboto(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.red,
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.grey,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                strokeWidth: 5.0,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -527,7 +427,7 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                       const Text(""),
                       Text(
                         "${title}",
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.w600,
                             color: Colors.white),
