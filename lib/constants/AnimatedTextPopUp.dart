@@ -44,7 +44,7 @@ class CustomDialog extends StatelessWidget {
                     onTap: () {
                       animationController.reverse();
                     },
-                    child: const Icon(Icons.cancel),
+                    child: const Icon(Icons.cancel,color: Colors.red,),
                   ),
                 ],
               ),
@@ -111,7 +111,7 @@ addToCartPopUpSuccess(AnimationController animationController, String message) {
                     onTap: () {
                       animationController.reverse();
                     },
-                    child: const Icon(Icons.cancel),
+                    child: const Icon(Icons.cancel,color: Colors.red,),
                   ),
                 ],
               ),
@@ -152,13 +152,6 @@ addToCartPopUpFailed(AnimationController animationController, String message) {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: FaIcon(
-                      FontAwesomeIcons.times,
-                      color: Colors.red,
-                    ),
-                  ),
                   const SizedBox(width: 15),
                   Expanded(
                     child: Column(
@@ -180,7 +173,7 @@ addToCartPopUpFailed(AnimationController animationController, String message) {
                     onTap: () {
                       animationController.reverse();
                     },
-                    child: const Icon(Icons.cancel),
+                    child: const Icon(Icons.cancel,color: Colors.red,),
                   ),
                 ],
               ),
@@ -311,7 +304,7 @@ addToCartPopUpMessage(AnimationController animationController,String message,Voi
 
                   InkWell(
                     onTap: onPressed,
-                    child: const Icon(Icons.cancel), // Use any icon you want
+                    child: const Icon(Icons.cancel,color: Colors.red,), // Use any icon you want
                   ),
                 ],
               ),

@@ -390,7 +390,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               TextFormField(
                                 controller: _CoorporateIdController,
                                 decoration: InputDecoration(
-                                  labelText: 'Coorporate ID',
+                                  labelText: 'Corporate Id',
                                   suffixIcon: Image.asset(
                                     'assets/icons/username.png',
                                   ),
@@ -405,7 +405,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               TextFormField(
                                 controller: _UserController,
                                 decoration: InputDecoration(
-                                  labelText: 'User Name',
+                                  labelText: 'Username',
                                   suffixIcon:
                                       Image.asset('assets/icons/profile.png'),
                                 ),
@@ -459,30 +459,62 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                 ],
                               ),
-                              ListTile(
-                                title: const Text('Employee'),
-                                leading: Radio<UserType>(
-                                  value: UserType.employee,
-                                  groupValue: _selectedUserType,
-                                  onChanged: (UserType? value) {
-                                    setState(() {
-                                      _selectedUserType = value!;
-                                    });
-                                  },
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedUserType = UserType.employee;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8),
+                                      child: Row(
+                                        children: [
+                                          Radio<UserType>(
+                                            value: UserType.employee,
+                                            groupValue: _selectedUserType,
+                                            onChanged: (UserType? value) {
+                                              setState(() {
+                                                _selectedUserType = value!;
+                                              });
+                                            },
+                                          ),
+                                          const Text('Employee'),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 16), // Adjust the spacing between Employee and Admin
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedUserType = UserType.admin;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8),
+
+                                      child: Row(
+                                        children: [
+                                          Radio<UserType>(
+                                            value: UserType.admin,
+                                            groupValue: _selectedUserType,
+                                            onChanged: (UserType? value) {
+                                              setState(() {
+                                                _selectedUserType = value!;
+                                              });
+                                            },
+                                          ),
+                                          const Text('Admin'),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              ListTile(
-                                title: const Text('Admin'),
-                                leading: Radio<UserType>(
-                                  value: UserType.admin,
-                                  groupValue: _selectedUserType,
-                                  onChanged: (UserType? value) {
-                                    setState(() {
-                                      _selectedUserType = value!;
-                                    });
-                                  },
-                                ),
-                              ),
+
                               const SizedBox(height: 20),
                               BlocBuilder<SignInBloc, SignInState>(
                                 builder: (BuildContext context, state) {

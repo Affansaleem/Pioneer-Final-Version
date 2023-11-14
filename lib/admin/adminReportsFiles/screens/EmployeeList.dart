@@ -352,7 +352,7 @@ class _EmployeeListState extends State<EmployeeList> {
                 // crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: ElevatedButton(
                       onPressed: () {
                         showDialog(
@@ -681,7 +681,7 @@ class _EmployeeListState extends State<EmployeeList> {
                       ),
                       Container(
                         padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.all(15),
+                        margin: const EdgeInsets.only(left:15,right:15,bottom:15),
                         decoration: BoxDecoration(
                           color:
                               Colors.white, // Change background color to white
@@ -717,128 +717,109 @@ class _EmployeeListState extends State<EmployeeList> {
                     ],
                   ),
                   ElevatedButton(
-                    style: const ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(AppColors.primaryColor)),
                     onPressed: _toggleSelectAll,
                     child: Text(
                       selectAll ? 'Deselect All' : 'Select All',
                       style: TextStyle(
                         fontSize: 16,
-                        color: AppColors.brightWhite,
                       ),
                     ),
                   ),
 
-                  // Employee List in DataTable form
-                  SingleChildScrollView(
-                    scrollDirection:
-                        Axis.horizontal, // Enable horizontal scrolling
-                    child: Container(
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Colors.black), // Add border styling
-                      ),
-                      child: DataTable(
-                        headingRowColor: const MaterialStatePropertyAll(
-                          AppColors.primaryColor,
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      double cardWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
+                      double screenHeight = MediaQuery.of(context).size.height;
+                      double containerHeight = screenHeight * 0.5;
+                      return Container(
+                        height: containerHeight,
+                        margin: const EdgeInsets.all(20),
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: filterEmployees(employees, searchQuery).length,
+                          itemBuilder: (context, index) {
+                            var employee = filterEmployees(employees, searchQuery)[index];
+
+                            return Card(
+                              margin: const EdgeInsets.all(8),
+                              elevation: 3,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'ID: ${employee.empCode}',
+                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Checkbox(
+                                              value: employee.isSelected,
+                                              onChanged: (_) {
+                                                _toggleEmployeeSelection(employee);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Name: ',
+                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          ),
+                                          TextSpan(
+                                            text: '${employee.empName ?? ""}',
+                                            style: TextStyle(fontSize: 13),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Branch: ',
+                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          ),
+                                          TextSpan(
+                                            text: '${employee.branchNames ?? ""}',
+                                            style: TextStyle(fontSize: 13),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Department: ',
+                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          ),
+                                          TextSpan(
+                                            text: '${employee.deptNames ?? ""}',
+                                            style: TextStyle(fontSize: 13),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        columnSpacing: 20.0,
-                        columns: const [
-                          DataColumn(
-                              label: Text(
-                            'ID',
-                            style: TextStyle(fontSize: 12, color: Colors.white),
-                          )),
-                          DataColumn(
-                              label: Text(
-                            'Name',
-                            style: TextStyle(fontSize: 12, color: Colors.white),
-                          )),
-                          DataColumn(
-                            label: Text(
-                              'Department',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Branch',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              '',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ), // Add Remarks column
-                          DataColumn(
-                            label: Text(
-                              '',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ),
-                        ],
-                        rows: filterEmployees(employees, searchQuery)
-                            .map((employee) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(
-                                employee.empCode.toString(),
-                                style: const TextStyle(fontSize: 12),
-                              )),
-                              DataCell(Text(
-                                employee.empName ?? '',
-                                style: const TextStyle(fontSize: 12),
-                              )),
-                              DataCell(Text(
-                                employee.deptNames ?? '',
-                                style: const TextStyle(fontSize: 12),
-                              )),
-                              DataCell(Text(
-                                employee.branchNames ?? '',
-                                style: const TextStyle(fontSize: 12),
-                              )), // Ensure BranchName data is available
-                              DataCell(
-                                SizedBox(
-                                  width: 100, // Adjust the width as needed
-                                  height: 30, // Adjust the height as needed
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      _showRemarksDialog(employee);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets
-                                          .zero, // Remove padding around the button text
-                                    ),
-                                    child: const Text(
-                                      'Remarks',
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              DataCell(
-                                Checkbox(
-                                  value: employee.isSelected,
-                                  onChanged: (_) {
-                                    _toggleEmployeeSelection(employee);
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
+                      );
+                    },
+                  )
                 ],
               ),
             ),
