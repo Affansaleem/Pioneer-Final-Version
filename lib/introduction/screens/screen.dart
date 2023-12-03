@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project/constants/AppColor_constants.dart';
+import 'package:project/employee/empDashboard/screens/employeeMain.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../../login/screens/loginPage.dart';
 import '../bloc/bloc_internet/internet_checking.dart';
 
 class Screen1 extends StatefulWidget {
@@ -124,11 +125,11 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
                     await setIntroScreenVisited(true);
                     Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) {
-                        return const AfterIntro();
+                        return  LoginPage();
                       },
                     ));
                   },
-                  child: const Text('Next'),
+                  child: const Text('Next',style: TextStyle(color:Colors.white),),
                 ),
             ],
           ),

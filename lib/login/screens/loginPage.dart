@@ -122,10 +122,13 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _loginAsEmployee() async {
-    // await _successScaffoldMessage(context, "Login Successful");
+    addToCartPopUpAnimationController.forward();
+    // Delay for a few seconds and then reverse the animation
+    Timer(const Duration(seconds: 3), () {
+      addToCartPopUpAnimationController.reverse();
+    });
     showPopupWithMessageSuccess("Login Successful");
-    await Future.delayed(Duration(seconds: 3));
-
+    await Future.delayed(Duration(seconds: 5));
     Navigator.pushReplacement(
         context,
         PageTransition(
@@ -143,8 +146,13 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _loginAsAdmin() async {
+    addToCartPopUpAnimationController.forward();
+    // Delay for a few seconds and then reverse the animation
+    Timer(const Duration(seconds: 3), () {
+      addToCartPopUpAnimationController.reverse();
+    });
     showPopupWithMessageSuccess("Login Successful");
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 5));
     Navigator.pushReplacement(
         context,
         PageTransition(
@@ -160,7 +168,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       },
     );
   }
-
   void showPopupWithMessageSuccess(String message) {
     showDialog(
       context: context,
@@ -170,7 +177,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       },
     );
   }
-
   void showPopupWithMessage(String message) {
     showDialog(
       context: context,
@@ -459,8 +465,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                 ],
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Column(
                                 children: [
                                   GestureDetector(
                                     onTap: () {
@@ -468,52 +473,57 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         _selectedUserType = UserType.employee;
                                       });
                                     },
-                                    child: Container(
-                                      padding: EdgeInsets.all(8),
-                                      child: Row(
-                                        children: [
-                                          Radio<UserType>(
-                                            value: UserType.employee,
-                                            groupValue: _selectedUserType,
-                                            onChanged: (UserType? value) {
-                                              setState(() {
-                                                _selectedUserType = value!;
-                                              });
-                                            },
-                                          ),
-                                          const Text('Employee'),
-                                        ],
-                                      ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Radio<UserType>(
+                                              value: UserType.employee,
+                                              groupValue: _selectedUserType,
+                                              onChanged: (UserType? value) {
+                                                setState(() {
+                                                  _selectedUserType = value!;
+                                                });
+                                              },
+                                            ),
+                                            const Text('Employee'),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(width: 16), // Adjust the spacing between Employee and Admin
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
                                         _selectedUserType = UserType.admin;
                                       });
                                     },
-                                    child: Container(
-                                      padding: EdgeInsets.all(8),
-
-                                      child: Row(
-                                        children: [
-                                          Radio<UserType>(
-                                            value: UserType.admin,
-                                            groupValue: _selectedUserType,
-                                            onChanged: (UserType? value) {
-                                              setState(() {
-                                                _selectedUserType = value!;
-                                              });
-                                            },
-                                          ),
-                                          const Text('Admin'),
-                                        ],
-                                      ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Radio<UserType>(
+                                              value: UserType.admin,
+                                              groupValue: _selectedUserType,
+                                              onChanged: (UserType? value) {
+                                                setState(() {
+                                                  _selectedUserType = value!;
+                                                });
+                                              },
+                                            ),
+                                            SizedBox(width: 20,),
+                                            const Text('Admin'),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
+
+
 
                               const SizedBox(height: 20),
                               BlocBuilder<SignInBloc, SignInState>(

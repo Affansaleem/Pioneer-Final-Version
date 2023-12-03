@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppColor_constants.dart';
-import 'package:project/constants/globalObjects.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../No_internet/no_internet.dart';

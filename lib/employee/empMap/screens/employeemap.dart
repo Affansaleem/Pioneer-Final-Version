@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:ui' as ui; // Import ui and use its alias
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image/image.dart' as img;
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
@@ -243,7 +246,11 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
     if (selectedImage == null) {
       _imageError();
     } else {
-      final base64Image = base64Encode(selectedImage!.readAsBytesSync());
+      final originalImageBytes = await selectedImage!.readAsBytes();
+      final resizedImageBytes = await resizeImage(originalImageBytes, 256, 256);
+
+      final base64Image = base64Encode(resizedImageBytes);
+
       final geoFenceModel = GeofenceModel(
         cardno: cardNo.toString(),
         location: fullAddress,
@@ -267,7 +274,6 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
         Timer(const Duration(seconds: 3), () {
           addToCartPopUpAnimationController.reverse();
           Navigator.pop(context);
-
         });
         showPopupWithSuccessMessage("Attendance successfully marked!");
       } catch (e) {
@@ -276,13 +282,19 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
         Timer(const Duration(seconds: 3), () {
           addToCartPopUpAnimationController.reverse();
           Navigator.pop(context);
-
         });
-        showPopupWithFailedMessage("Failed to mark.Check your internet!");
+        showPopupWithFailedMessage("Failed to mark. Check your internet!");
       }
     }
   }
 
+  Future<List<int>> resizeImage(Uint8List imageBytes, int targetWidth, int targetHeight) async {
+    img.Image image = img.decodeImage(imageBytes)!;
+
+    img.Image resizedImage = img.copyResize(image, width: targetWidth, height: targetHeight);
+
+    return img.encodePng(resizedImage);
+  }
   Future<void> display() async {
     await checkLocationPermissionAndFetchLocation();
   }
@@ -371,17 +383,36 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
   }
 
   Future<void> chooseImage() async {
-    var image;
-    image = await ImagePicker()
-        .pickImage(source: ImageSource.camera, imageQuality: 10);
+    var image = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 10);
 
     if (image != null) {
+      // Read image bytes
+      final imageBytes = await image.readAsBytes();
+
+      // Resize image to exactly 256x256 pixels
+      final resizedImage = await resizeImage(imageBytes, 256, 256);
+
+      // Get dimensions of the original and resized images
+      final originalDimensions = await getImageDimensions(imageBytes);
+      final resizedDimensions = await getImageDimensions(resizedImage);
+
+      print('Original Image Dimensions: $originalDimensions');
+      print('Resized Image Dimensions: $resizedDimensions');
+
       setState(() {
         selectedImage = File(image.path);
-        base64Image = base64Encode(selectedImage!.readAsBytesSync());
+        base64Image = base64Encode(resizedImage);
       });
     }
   }
+
+
+
+  Future<List<int>> getImageDimensions(List<int> imageBytes) async {
+    final image = await decodeImageFromList(Uint8List.fromList(imageBytes));
+    return [image.width, image.height];
+  }
+
 
 
   String remarks = "";
@@ -412,9 +443,7 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
           elevation: 0,
           title: const Text(
             "Attendance Portal",
-            style: TextStyle(
-              color: Colors.white,
-            ),
+            style: AppBarStyles.appBarTextStyle
           ),
           iconTheme: const IconThemeData(
             color: Colors.white,
@@ -443,17 +472,18 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
                   ClipOval(
                     child: selectedImage != null
                         ? Image.file(
-                            selectedImage!,
-                            fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.height / 4.5,
-                            height: MediaQuery.of(context).size.height / 4.5,
-                          )
+                      selectedImage!,
+                      fit: BoxFit.cover,
+                      width: 256,
+                      height: 256,
+                    )
                         : Image.asset(
-                            "assets/icons/userr.png",
-                            width: MediaQuery.of(context).size.height / 5,
-                            height: MediaQuery.of(context).size.height / 5,
-                          ),
+                      "assets/icons/userr.png",
+                      width: 256,
+                      height: 256,
+                    ),
                   ),
+
                 ],
               ),
               if (Street.isNotEmpty)

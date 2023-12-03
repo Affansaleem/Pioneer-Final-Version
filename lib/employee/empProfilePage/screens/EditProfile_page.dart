@@ -128,13 +128,13 @@ class _EmpEditProfilePageState extends State<EmpEditProfilePage> with TickerProv
     if (pickedFile != null) {
       final imageBytes = await pickedFile.readAsBytes();
       base64Image = base64Encode(imageBytes);
-      if (imageBytes.length < 5 * 1024 * 1024) {
+      if (imageBytes.length < 3 * 1024 * 1024) {
         addToCartPopUpAnimationController.forward();
         Timer(const Duration(seconds: 3), () {
           addToCartPopUpAnimationController.reverse();
           Navigator.pop(context);
         });
-        showPopupWithMessage("Image size should be less than 5MB!");
+        showPopupWithMessage("Image size should be less than 3MB!");
       } else {
         setState(() {
           base64Image = base64Encode(imageBytes);
@@ -153,14 +153,14 @@ class _EmpEditProfilePageState extends State<EmpEditProfilePage> with TickerProv
     if (pickedFile != null) {
       final imageBytes = await pickedFile.readAsBytes();
       base64Image = base64Encode(imageBytes);
-      if ((imageBytes.length < 5 * 1024)) {
+      if ((imageBytes.length < 3 * 1024)) {
         addToCartPopUpAnimationController.forward();
         // Delay for a few seconds and then reverse the animation
         Timer(const Duration(seconds: 3), () {
           addToCartPopUpAnimationController.reverse();
           Navigator.pop(context);
         });
-        showPopupWithMessage("Image size should be less than 5MB!");
+        showPopupWithMessage("Image size should be less than 3MB!");
       } else {
         setState(() {
           GlobalObjects.empProfilePic = base64Image = base64Encode(imageBytes);
@@ -518,6 +518,7 @@ class _EmpEditProfilePageState extends State<EmpEditProfilePage> with TickerProv
                                             Navigator.pop(context);
                                             Navigator.pop(context,true);
                                           });
+
                                           showPopupWithSuccessMessage("Profile updated successfully!");
 
                                         } else if (state is EmpEditProfileError) {
