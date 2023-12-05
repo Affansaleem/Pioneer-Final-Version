@@ -9,6 +9,8 @@ import 'package:project/constants/globalObjects.dart';
 import 'package:project/employee/empDashboard/screens/empAppbar.dart';
 import 'package:project/employee/empDashboard/screens/empHomePage.dart';
 import 'package:project/employee/empReportsOnDash/screens/leaveReportMainPage.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
@@ -207,31 +209,34 @@ class EmpMainPageState extends State<EmpMainPage> {
           return EmpDashboard();
         } else if (state is NavigateToReportsState) {
           return ReportsMainPage(viaDrawer: true);
-        } else if (state is NavigateToLogoutState) {
-          return AlertDialog(
-            title: const Text("Confirm Logout"),
-            content: const Text("Are you sure?"),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EmpMainPage(),
-                    ),
-                  ); // Close the dialog
-                },
-              ),
-              TextButton(
-                child: const Text('Logout'),
-                onPressed: () {
-                  _logout(context); // Close the dialog
-                },
-              ),
-            ],
-          );
-        } else {
+        }
+        else if (state is NavigateToLogoutState) {
+          // Use Future.delayed to execute after the build is complete
+          Future.delayed(Duration.zero, () {
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.confirm,
+              title: 'Confirm Logout',
+              text: 'Are you sure?',
+              confirmBtnText: 'Logout',
+              cancelBtnText: 'Cancel',
+              onConfirmBtnTap: () async {
+                await _logout(context);
+              },
+              onCancelBtnTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EmpMainPage(),
+                  ),
+                );
+              },
+            );
+          });
+
+          return const EmpDashboard(); // Assuming AdminDashboard is the default screen
+        }
+        else {
           return EmpDashboard();
         }
       },

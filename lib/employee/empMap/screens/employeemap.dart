@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -27,7 +29,7 @@ class EmployeeMap extends StatefulWidget {
   _EmployeeMapState createState() => _EmployeeMapState();
 }
 
-class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin{
+class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin {
   double? getLat;
   double? getLong;
   double? geofenceRadius = 100;
@@ -53,6 +55,7 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
       },
     );
   }
+
   void showPopupWithFailedMessage(String message) {
     showDialog(
       context: context,
@@ -64,11 +67,12 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
       },
     );
   }
+
   @override
   void initState() {
     addToCartPopUpAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1000),
     );
     super.initState();
     checkLocationPermission();
@@ -112,17 +116,20 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
   Future<void> _startGeoFencingUpdate() async {
     final double? geofenceLatitude = getLat;
     final double? geofenceLongitude = getLong;
-
+print("hi1");
     if (geofenceLatitude != null &&
         geofenceLongitude != null &&
         currentLat != null &&
         currentLong != null) {
+      print("hi3");
+
       double distance = Geolocator.distanceBetween(
         geofenceLatitude,
         geofenceLongitude,
         currentLat!,
         currentLong!,
       );
+      print("hi2");
 
       print("This is the distanceeeeeeeee! ${distance} ");
 
@@ -170,17 +177,14 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
               Navigator.pop(context);
             });
             showPopupWithSuccessMessage("Attendance marked successfully!");
-
           } catch (e) {
             addToCartPopUpAnimationController.forward();
             // Delay for a few seconds and then reverse the animation
             Timer(const Duration(seconds: 3), () {
               addToCartPopUpAnimationController.reverse();
               Navigator.pop(context);
-
             });
             showPopupWithFailedMessage("Failed to mark.Check your internet!");
-
           }
         }
       } else if (distance >= geofenceRadius!) {
@@ -189,48 +193,41 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
         Timer(const Duration(seconds: 3), () {
           addToCartPopUpAnimationController.reverse();
           Navigator.pop(context);
-
         });
         showPopupWithFailedMessage("Failed to mark.Check your internet!");
       }
-    } else if (geofenceLatitude == null || geofenceLongitude == null) {
-      addToCartPopUpAnimationController.forward();
-      // Delay for a few seconds and then reverse the animation
-      Timer(const Duration(seconds: 3), () {
-        addToCartPopUpAnimationController.reverse();
-        Navigator.pop(context);
-      });
-      showPopupWithFailedMessage("Geofence not started by office!");
-    } else {
-      addToCartPopUpAnimationController.forward();
-      // Delay for a few seconds and then reverse the animation
-      Timer(const Duration(seconds: 3), () {
-        addToCartPopUpAnimationController.reverse();
-        Navigator.pop(context);
+    }
+    else if (geofenceLatitude == null || geofenceLongitude == null) {
+      print("hi4");
+      Navigator.pop(context);
+      QuickAlert.show(context: context, type: QuickAlertType.error,text: "GeoFence not started by office!");
+    }
+    else {
+      print("hi5");
 
+      addToCartPopUpAnimationController.forward();
+      // Delay for a few seconds and then reverse the animation
+      Timer(const Duration(seconds: 3), () {
+        addToCartPopUpAnimationController.reverse();
+        Navigator.pop(context);
       });
       showPopupWithFailedMessage("Failed to mark.Check your internet!");
     }
   }
 
   void _imageError() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: const Text('Please take a photo before proceeding.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        });
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+      title: 'Error',
+      text: 'Please take a photo before proceeding.',
+      confirmBtnText: 'OK',
+      onConfirmBtnTap: () {
+        Navigator.pop(context);
+      },
+    );
   }
+
 
   Future<void> _markAttendance() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -268,6 +265,7 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
       final geoFenceRepository = GeoFenceRepository("Location");
 
       try {
+        Navigator.pop(context);
         await geoFenceRepository.postData(geoFenceModel);
         addToCartPopUpAnimationController.forward();
         // Delay for a few seconds and then reverse the animation
@@ -327,32 +325,24 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
 
 
   void CheckOfficeOrLocation() {
-    showDialog(
+    QuickAlert.show(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Attendance'),
-          content: const Text('Mark Attendance From Office/Location'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                _startGeoFencingUpdate();
-                Navigator.pop(context);
-              },
-              child: const Text('Office'),
-            ),
-            TextButton(
-              onPressed: () {
-                _markAttendance();
-                Navigator.pop(context);
-              },
-              child: const Text('Location'),
-            ),
-          ],
-        );
+      type: QuickAlertType.confirm,
+      title: 'Attendance',
+      text: 'Mark Attendance From Office/Location',
+      confirmBtnText: 'Office',
+      cancelBtnText: 'Location',
+      onConfirmBtnTap: () {
+        _startGeoFencingUpdate();
+
+      },
+      onCancelBtnTap: () {
+        _markAttendance();
+
       },
     );
   }
+
 
   Future<void> getAddress(double lat, double long) async {
     try {
@@ -494,8 +484,6 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25.0),
                     ),
-                    // Use LinearGradient for a gradient background
-
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -505,45 +493,52 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            "Street: $Street",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                          Center(
+                            child: Text(
+                              "Street: $Street",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              textAlign: TextAlign.center, // Align text in the center
                             ),
                           ),
                           if (sublocaity.isNotEmpty)
-                            Text(
-                              "Sublocality: $sublocaity",
+                            Center(
+                              child: Text(
+                                "Sublocality: $sublocaity",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center, // Align text in the center
+                              ),
+                            ),
+                          Center(
+                            child: Text(
+                              "Country: $countryName",
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
-                            ),
-                          Text(
-                            "Country: $countryName",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+                              textAlign: TextAlign.center, // Align text in the center
                             ),
                           ),
                           const SizedBox(height: 7),
                           Container(
-                            padding: const EdgeInsets.all(
-                                2.0), // Adjust padding as needed
+                            padding: const EdgeInsets.all(2.0),
                             decoration: BoxDecoration(
-                              // Background color for the date capsule
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: Text(
-                              "$currentDateTime",
+                              currentDateTime,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black, // Text color for the date
+                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -552,6 +547,7 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
                     ),
                   ),
                 ),
+
 
               // Add Remarks TextField
               Padding(

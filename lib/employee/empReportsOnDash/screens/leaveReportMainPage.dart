@@ -118,7 +118,7 @@ class CardWidget extends StatelessWidget {
           0.8, // Adjust card width as needed
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
+        color: AppColors.secondaryColor,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
@@ -137,7 +137,7 @@ class CardWidget extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               text,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, color: Colors.white,fontWeight: FontWeight.bold),
             ),
           ],
         ),

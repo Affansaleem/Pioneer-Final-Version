@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/admin/adminOptionsReport/screens/AdminMonthlyAndDailyReportsMainPage.dart';
 import 'package:project/admin/adminReportsFiles/screens/AdminReportsMainPage.dart';
 import 'package:project/constants/globalObjects.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 import '../../../constants/AppColor_constants.dart';
@@ -197,41 +199,48 @@ class AdminMainPageState extends State<AdminMainPage> {
             return AdminProfilePage(onRefreshData: () {
               fetchAdminProfileData(corporateId, username);
             });
-          } else if (state is NavigateToLeavesState) {
+          }
+          else if (state is NavigateToLeavesState) {
             return AdminReportsMainPage(viaDrawer: true,);
-          } else if (state is NavigateToGeofenceState) {
+          }
+          else if (state is NavigateToGeofenceState) {
             return const GeoFenceMainPage();
-          } else if (state is NavigateToHomeState) {
+          }
+          else if (state is NavigateToHomeState) {
             return const AdminDashboard();
-          } else if (state is NavigateToReportsState) {
+          }
+          else if (state is NavigateToReportsState) {
             return AdminMonthlyAndDailyReportsMainPage(
               viaDrawer: true,
             );
-          } else if (state is NavigateToLogoutState) {
-            return AlertDialog(
-              title: const Text("Confirm Logout"),
-              content: const Text("Are you sure?"),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AdminMainPage(),
-                      ),
-                    );
-                  },
-                ),
-                TextButton(
-                  child: const Text('Logout'),
-                  onPressed: () {
-                    _logout(context);
-                  },
-                ),
-              ],
-            );
-          } else {
+          }
+          else if (state is NavigateToLogoutState) {
+            // Use Future.delayed to execute after the build is complete
+            Future.delayed(Duration.zero, () {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.warning,
+                title: 'Confirm Logout',
+                text: 'Are you sure?',
+                confirmBtnText: 'Logout',
+                cancelBtnText: 'Cancel',
+                onConfirmBtnTap: () async {
+                  await _logout(context);
+                },
+                onCancelBtnTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AdminMainPage(),
+                    ),
+                  );
+                },
+              );
+            });
+
+            return const AdminDashboard(); // Assuming AdminDashboard is the default screen
+          }
+          else {
             return const AdminDashboard();
           }
         });

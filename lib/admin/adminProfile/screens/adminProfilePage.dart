@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +10,8 @@ import 'package:project/constants/AppColor_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/globalObjects.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
@@ -31,43 +35,32 @@ class AdminProfilePage extends StatefulWidget {
 class AdminProfilePageState extends State<AdminProfilePage> {
   late AdminProfileBloc adminProfileBloc;
 
-  Future<void> _logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', false);
-    prefs.setBool('isEmployee', false);
-
-    await showDialog(
+  void _logout(BuildContext context) {
+    QuickAlert.show(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Confirm Logout"),
-          content: const Text("Are you sure?"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-            TextButton(
-              child: const Text('Logout'),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return Builder(
-                        builder: (context) => BlocProvider(
-                          create: (context) => SignInBloc(),
-                          child: LoginPage(),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
+      type: QuickAlertType.warning,
+      text: 'Do you want to logout?',
+      confirmBtnText: 'Logout!',
+      cancelBtnText: 'No',
+      confirmBtnColor: Colors.blue,
+      onConfirmBtnTap: () async {
+        // Handle logout logic
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isLoggedIn', false);
+        prefs.setBool('isEmployee', false);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return Builder(
+                builder: (context) => BlocProvider(
+                  create: (context) => SignInBloc(),
+                  child: LoginPage(),
+                ),
+              );
+            },
+          ),
         );
       },
     );
@@ -108,6 +101,7 @@ class AdminProfilePageState extends State<AdminProfilePage> {
     );
 
     if (exitConfirmed == true) {
+      print("Exiting the app");
       exitApp();
       return true;
     } else {
@@ -116,8 +110,9 @@ class AdminProfilePageState extends State<AdminProfilePage> {
   }
 
   void exitApp() {
-    SystemNavigator.pop();
+    exit(0);
   }
+
 
   String formatDate(String dateString) {
     final DateTime? joinedDate = DateTime.tryParse(dateString);

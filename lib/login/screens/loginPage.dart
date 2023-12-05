@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../No_internet/no_internet.dart';
 import '../../admin/adminDashboard/screen/adminMain.dart';
@@ -55,6 +57,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final UserRepository userRepository = UserRepository();
   String? corporateId;
 
+
   void handleAdminLogin(
     String enteredCorporateID,
     String enteredUsername,
@@ -73,12 +76,10 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         _saveAdminDataToSharedPreferences(enteredUsername, enteredCorporateID);
         _loginAsAdmin();
       } else {
-        showPopupWithMessageFailed(
-            "User not found!"); // Show "User not found" message
+        showAlertAndNavigateFailure(context,"User Not Found!");
       }
     } catch (e) {
-      showPopupWithMessageFailed(
-          "User not found!"); // Show "User not found" message
+      showAlertAndNavigateFailure(context,"User Not Found!");
     }
   }
 
@@ -112,27 +113,17 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         _saveCardNoToSharedPreferences(cardNo, empCode, employeeId);
         _loginAsEmployee();
       } else {
-        showPopupWithMessageFailed(
-            "User not found!"); // Show "User not found" message
+        showAlertAndNavigateFailure(context,"User Not Found!");
+
       }
     } catch (e) {
-      showPopupWithMessageFailed(
-          "User not found!"); // Show "User not found" message
+      showAlertAndNavigateFailure(context,"User Not Found!");
+
     }
   }
 
   void _loginAsEmployee() async {
-    addToCartPopUpAnimationController.forward();
-    // Delay for a few seconds and then reverse the animation
-    Timer(const Duration(seconds: 3), () {
-      addToCartPopUpAnimationController.reverse();
-    });
-    showPopupWithMessageSuccess("Login Successful");
-    await Future.delayed(Duration(seconds: 5));
-    Navigator.pushReplacement(
-        context,
-        PageTransition(
-            child: const EmpMainPage(), type: PageTransitionType.rightToLeft));
+    showAlertAndNavigate(context, const EmpMainPage(),"Login Successful!");
   }
 
   void _saveCardNoToSharedPreferences(
@@ -146,19 +137,13 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _loginAsAdmin() async {
-    addToCartPopUpAnimationController.forward();
-    // Delay for a few seconds and then reverse the animation
-    Timer(const Duration(seconds: 3), () {
-      addToCartPopUpAnimationController.reverse();
-    });
-    showPopupWithMessageSuccess("Login Successful");
-    await Future.delayed(Duration(seconds: 5));
-    Navigator.pushReplacement(
-        context,
-        PageTransition(
-            child: const AdminMainPage(),
-            type: PageTransitionType.rightToLeft));
+
+    showAlertAndNavigate(context, const AdminMainPage(),"Login Succesful!");
+
   }
+
+
+
 
   void showPopupWithMessageFailed(String message) {
     showDialog(
@@ -168,6 +153,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       },
     );
   }
+
   void showPopupWithMessageSuccess(String message) {
     showDialog(
       context: context,
@@ -177,14 +163,13 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       },
     );
   }
+
   void showPopupWithMessage(String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return addToCartPopUpNoCrossMessage(
-          addToCartPopUpAnimationController,
-          message
-        );
+            addToCartPopUpAnimationController, message);
       },
     );
   }
@@ -207,21 +192,10 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       // Set the role based on the selected user type
       if (_selectedUserType == UserType.employee) {
         enteredRole = 'employee';
-        addToCartPopUpAnimationController.forward();
 
-        // Delay for a few seconds and then reverse the animation
-        Timer(const Duration(seconds: 3), () {
-          addToCartPopUpAnimationController.reverse();
-          Navigator.pop(context);
-        });
       } else if (_selectedUserType == UserType.admin) {
         enteredRole = 'admin';
-        addToCartPopUpAnimationController.forward();
 
-        Timer(const Duration(seconds: 3), () {
-          addToCartPopUpAnimationController.reverse();
-          Navigator.pop(context);
-        });
       }
       sharedPref.setString('role', enteredRole);
       // saving corporateId
@@ -266,14 +240,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         _isButtonPressed = false;
       });
     } else {
-      addToCartPopUpAnimationController.forward();
-
-      // Delay for a few seconds and then reverse the animation
-      Timer(const Duration(seconds: 2), () {
-        addToCartPopUpAnimationController.reverse();
-        Navigator.pop(context);
-      });
-      showPopupWithMessage("Please filled out all fields!");
+      showAlertAndNavigateWarning(context);
     }
   }
 
@@ -287,11 +254,11 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         if (state is InternetLostState) {
           // Set the flag to true when internet is lost
           isInternetLost = true;
-          Future.delayed(Duration(seconds: 2), () {
+          Future.delayed(const Duration(seconds: 2), () {
             Navigator.push(
               context,
               PageTransition(
-                child: NoInternet(),
+                child: const NoInternet(),
                 type: PageTransitionType.rightToLeft,
               ),
             );
@@ -318,7 +285,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         height: MediaQuery.of(context).size.height * 0.5,
                         width: MediaQuery.of(context).size.width,
                         color: AppColors.primaryColor,
-                        child: Column(
+                        child: const Column(
                           children: [
                             SizedBox(
                               height: 100,
@@ -476,7 +443,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     child: Column(
                                       children: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Radio<UserType>(
                                               value: UserType.employee,
@@ -502,7 +470,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     child: Column(
                                       children: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Radio<UserType>(
                                               value: UserType.admin,
@@ -513,8 +482,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                 });
                                               },
                                             ),
-                                            SizedBox(width: 20,),
-                                            const Text('Admin'),
+                                            const Text('Admin     '),
                                           ],
                                         ),
                                       ],
@@ -522,9 +490,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                 ],
                               ),
-
-
-
                               const SizedBox(height: 20),
                               BlocBuilder<SignInBloc, SignInState>(
                                 builder: (BuildContext context, state) {
@@ -580,7 +545,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             ),
           );
         } else {
-          return Scaffold(
+          return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }

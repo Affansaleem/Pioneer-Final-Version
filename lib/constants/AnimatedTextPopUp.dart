@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class CustomDialog extends StatelessWidget {
   final String message;
@@ -85,10 +88,7 @@ addToCartPopUpSuccess(AnimationController animationController, String message) {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Icon(FontAwesomeIcons.check, color: Colors.green),
-                  ),
+
                   const SizedBox(width: 15),
                   Expanded(
                     child: Column(
@@ -97,8 +97,7 @@ addToCartPopUpSuccess(AnimationController animationController, String message) {
                         Text(
                           message,
                           style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -107,11 +106,9 @@ addToCartPopUpSuccess(AnimationController animationController, String message) {
                     ),
                   ),
                   const SizedBox(width: 15),
-                  InkWell(
-                    onTap: () {
-                      animationController.reverse();
-                    },
-                    child: const Icon(Icons.cancel,color: Colors.red,),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Icon(FontAwesomeIcons.check, color: Colors.green),
                   ),
                 ],
               ),
@@ -160,8 +157,7 @@ addToCartPopUpFailed(AnimationController animationController, String message) {
                         Text(
                           message,
                           style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -236,8 +232,7 @@ addToCartPopUpNoCrossMessage(AnimationController animationController, String mes
                                 Text(
                                   message,
                                   style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -315,3 +310,48 @@ addToCartPopUpMessage(AnimationController animationController,String message,Voi
     ),
   );
 }
+
+void showAlertAndNavigate(BuildContext context, Widget nextScreen,String text) {
+  QuickAlert.show(
+    context: context,
+    type: QuickAlertType.success,
+    text: text,
+  );
+
+  // Delay for 2 seconds and then navigate to the next screen
+  Future.delayed(Duration(seconds: 2), () {
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        child: nextScreen,
+        type: PageTransitionType.rightToLeft,
+      ),
+    );
+  });
+}
+void showAlertAndNavigateFailure(BuildContext context, String text) {
+  QuickAlert.show(
+    context: context,
+    type: QuickAlertType.error,
+    text: text,
+  );
+
+  // Delay for 1 second and then close the alert
+  Future.delayed(const Duration(seconds: 2), () {
+    Navigator.pop(context);
+  });
+}
+void showAlertAndNavigateWarning(BuildContext context) {
+  QuickAlert.show(
+    context: context,
+    type: QuickAlertType.warning,
+    text: 'Please fill out all fields!',
+  );
+  Future.delayed(const Duration(seconds: 2), () {
+    Navigator.pop(context);
+  });
+}
+
+
+
+
