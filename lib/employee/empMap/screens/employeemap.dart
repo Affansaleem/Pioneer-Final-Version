@@ -116,7 +116,7 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
   Future<void> _startGeoFencingUpdate() async {
     final double? geofenceLatitude = getLat;
     final double? geofenceLongitude = getLong;
-print("hi1");
+    print("hi1");
     if (geofenceLatitude != null &&
         geofenceLongitude != null &&
         currentLat != null &&
@@ -194,11 +194,13 @@ print("hi1");
           addToCartPopUpAnimationController.reverse();
           Navigator.pop(context);
         });
-        showPopupWithFailedMessage("Failed to mark.Check your internet!");
+        showPopupWithFailedMessage("GeoPunch not allowed at this location!");
       }
     }
     else if (geofenceLatitude == null || geofenceLongitude == null) {
       print("hi4");
+      print(geofenceLatitude);
+      print(geofenceLongitude);
       Navigator.pop(context);
       QuickAlert.show(context: context, type: QuickAlertType.error,text: "GeoFence not started by office!");
     }
@@ -378,16 +380,14 @@ print("hi1");
     if (image != null) {
       // Read image bytes
       final imageBytes = await image.readAsBytes();
-
-      // Resize image to exactly 256x256 pixels
       final resizedImage = await resizeImage(imageBytes, 256, 256);
-
-      // Get dimensions of the original and resized images
       final originalDimensions = await getImageDimensions(imageBytes);
       final resizedDimensions = await getImageDimensions(resizedImage);
 
+
       print('Original Image Dimensions: $originalDimensions');
       print('Resized Image Dimensions: $resizedDimensions');
+
 
       setState(() {
         selectedImage = File(image.path);
