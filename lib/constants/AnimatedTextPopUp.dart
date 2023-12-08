@@ -1,10 +1,13 @@
 import 'dart:ui';
 
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../admin/adminDashboard/screen/adminMain.dart';
+import '../employee/empDashboard/screens/employeeMain.dart';
+
 
 class CustomDialog extends StatelessWidget {
   final String message;
@@ -311,46 +314,76 @@ addToCartPopUpMessage(AnimationController animationController,String message,Voi
   );
 }
 
-void showAlertAndNavigate(BuildContext context, Widget nextScreen,String text) {
-  QuickAlert.show(
+void showCustomSuccessAlertEmployee(BuildContext context, String successMessage) {
+  CoolAlert.show(
     context: context,
-    type: QuickAlertType.success,
-    text: text,
+    type: CoolAlertType.success,
+    title: 'Success',
+    text: successMessage,
+    confirmBtnText: '', // Set confirm button text to an empty string
+    confirmBtnColor: Colors.transparent,
+    borderRadius: 10.0,
   );
 
-  // Delay for 2 seconds and then navigate to the next screen
-  Future.delayed(Duration(seconds: 2), () {
-    Navigator.pushReplacement(
-      context,
-      PageTransition(
-        child: nextScreen,
-        type: PageTransitionType.rightToLeft,
-      ),
-    );
+  // Delay the navigation until after the animation completes
+  Future.delayed(Duration(seconds: 3), () {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => EmpMainPage()));
   });
 }
-void showAlertAndNavigateFailure(BuildContext context, String text) {
-  QuickAlert.show(
+void showCustomSuccessAlertAdmin(BuildContext context, String successMessage) {
+  CoolAlert.show(
     context: context,
-    type: QuickAlertType.error,
-    text: text,
+    type: CoolAlertType.success,
+    title: 'Success',
+    text: successMessage,
+    confirmBtnText: '', // Set confirm button text to an empty string
+    confirmBtnColor: Colors.transparent,
+    borderRadius: 10.0,
   );
 
-  // Delay for 1 second and then close the alert
-  Future.delayed(const Duration(seconds: 2), () {
-    Navigator.pop(context);
+  // Delay the navigation until after the animation completes
+  Future.delayed(Duration(seconds: 3), () {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdminMainPage()));
   });
 }
-void showAlertAndNavigateWarning(BuildContext context) {
-  QuickAlert.show(
+
+
+
+
+void showCustomFailureAlert(BuildContext context, String errorMessage) {
+  CoolAlert.show(
     context: context,
-    type: QuickAlertType.warning,
-    text: 'Please fill out all fields!',
+    type: CoolAlertType.error,
+    title: 'Oops...',
+    text: errorMessage,
+    backgroundColor: Colors.red,
+    autoCloseDuration: Duration(seconds: 2), // Auto-close after 2 seconds
+    borderRadius: 10.0,
+    confirmBtnColor: Colors.transparent, // Set button color to transparent
+    confirmBtnText: '', // Set confirm button text to an empty string
   );
-  Future.delayed(const Duration(seconds: 2), () {
-    Navigator.pop(context);
-  });
 }
+
+
+void showCustomWarningAlert(BuildContext context, String warningMessage) {
+  CoolAlert.show(
+    context: context,
+    type: CoolAlertType.warning,
+    title: 'Warning',
+    text: warningMessage,
+    autoCloseDuration: Duration(seconds: 2), // Auto-close after 2 seconds
+    confirmBtnText: '', // Set confirm button text to an empty string
+    borderRadius: 10.0,
+    confirmBtnColor: Colors.transparent, // Set button color to transparent
+
+  );
+}
+
+
+
+
+
+
 
 
 

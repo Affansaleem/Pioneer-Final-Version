@@ -324,7 +324,8 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
         if (state is InternetGainedState) {
           return Scaffold(
             appBar: AppBar(
-              iconTheme: const IconThemeData(color: AppBarStyles.appBarIconColor),
+              iconTheme:
+                  const IconThemeData(color: AppBarStyles.appBarIconColor),
               backgroundColor: AppBarStyles.appBarBackgroundColor,
               title: const Text('Manual Punch',
                   style: AppBarStyles.appBarTextStyle),
@@ -334,14 +335,14 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                   onPressed: () {
                     _navigateToNextScreen();
                   },
-                  child: const Text(
-                    'mark',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400),
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.green,
+                    size: 36, // Adjust the size of the check icon
                   ),
-                ),
+                )
+
+
               ],
               centerTitle: true,
             ),
@@ -350,8 +351,8 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                 // crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child:  Row(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
@@ -364,7 +365,7 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                       0), // Remove default padding
                                   shape: const RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
+                                        BorderRadius.all(Radius.circular(10)),
                                   ),
                                   content: SingleChildScrollView(
                                     child: Container(
@@ -377,7 +378,7 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                             padding: const EdgeInsets.all(20.0),
                                             child: Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
+                                                  CrossAxisAlignment.stretch,
                                               children: <Widget>[
                                                 Text(
                                                   "FILTERS",
@@ -385,7 +386,8 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                     textStyle: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 18,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                   textAlign: TextAlign.center,
@@ -395,17 +397,18 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                 // Department Dropdown
                                                 Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       'Department:',
-                                                      style: GoogleFonts.openSans(
+                                                      style:
+                                                          GoogleFonts.openSans(
                                                         textStyle:
-                                                        const TextStyle(
+                                                            const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 16,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),
@@ -417,15 +420,15 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                           width: 2.0,
                                                         ),
                                                         borderRadius:
-                                                        BorderRadius.circular(
-                                                            4.0),
+                                                            BorderRadius
+                                                                .circular(4.0),
                                                       ),
                                                       child:
-                                                      DropdownButtonFormField<
-                                                          String>(
+                                                          DropdownButtonFormField<
+                                                              String>(
                                                         isExpanded: true,
                                                         value:
-                                                        departmentDropdownValue,
+                                                            departmentDropdownValue,
                                                         onChanged: (newValue) {
                                                           departmentDropdownValue =
                                                               newValue;
@@ -439,37 +442,39 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                               style: GoogleFonts
                                                                   .openSans(
                                                                 textStyle:
-                                                                const TextStyle(
+                                                                    const TextStyle(
                                                                   fontSize: 14,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
-                                                          ...departmentNames.map(
-                                                                  (String value) {
-                                                                return DropdownMenuItem<
-                                                                    String>(
-                                                                  value: value,
-                                                                  child: Text(
-                                                                    value,
-                                                                    style: GoogleFonts
-                                                                        .openSans(
-                                                                      textStyle:
+                                                          ...departmentNames
+                                                              .map((String
+                                                                  value) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: value,
+                                                              child: Text(
+                                                                value,
+                                                                style: GoogleFonts
+                                                                    .openSans(
+                                                                  textStyle:
                                                                       const TextStyle(
-                                                                        fontSize: 14,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontWeight:
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                      ),
-                                                                    ),
                                                                   ),
-                                                                );
-                                                              }).toList(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
                                                         ],
                                                       ),
                                                     ),
@@ -480,17 +485,18 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                 // Branch Dropdown
                                                 Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       'Branch:',
-                                                      style: GoogleFonts.openSans(
+                                                      style:
+                                                          GoogleFonts.openSans(
                                                         textStyle:
-                                                        const TextStyle(
+                                                            const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 16,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),
@@ -502,18 +508,18 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                           width: 2.0,
                                                         ),
                                                         borderRadius:
-                                                        BorderRadius.circular(
-                                                            4.0),
+                                                            BorderRadius
+                                                                .circular(4.0),
                                                       ),
                                                       child:
-                                                      DropdownButtonFormField<
-                                                          String>(
+                                                          DropdownButtonFormField<
+                                                              String>(
                                                         isExpanded: true,
                                                         value:
-                                                        branchDropdownValue,
+                                                            branchDropdownValue,
                                                         onChanged: (newValue) {
                                                           branchDropdownValue =
-                                                          newValue!;
+                                                              newValue!;
                                                         },
                                                         items: [
                                                           DropdownMenuItem<
@@ -524,37 +530,38 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                               style: GoogleFonts
                                                                   .openSans(
                                                                 textStyle:
-                                                                const TextStyle(
+                                                                    const TextStyle(
                                                                   fontSize: 14,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
                                                           ...branchNames.map(
-                                                                  (String value) {
-                                                                return DropdownMenuItem<
-                                                                    String>(
-                                                                  value: value,
-                                                                  child: Text(
-                                                                    value,
-                                                                    style: GoogleFonts
-                                                                        .openSans(
-                                                                      textStyle:
+                                                              (String value) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: value,
+                                                              child: Text(
+                                                                value,
+                                                                style: GoogleFonts
+                                                                    .openSans(
+                                                                  textStyle:
                                                                       const TextStyle(
-                                                                        fontSize: 14,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontWeight:
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                      ),
-                                                                    ),
                                                                   ),
-                                                                );
-                                                              }).toList(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
                                                         ],
                                                       ),
                                                     ),
@@ -564,17 +571,18 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                 // Company Dropdown
                                                 Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
                                                       'Company:',
-                                                      style: GoogleFonts.openSans(
+                                                      style:
+                                                          GoogleFonts.openSans(
                                                         textStyle:
-                                                        const TextStyle(
+                                                            const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 16,
                                                           fontWeight:
-                                                          FontWeight.bold,
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),
@@ -586,18 +594,18 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                           width: 2.0,
                                                         ),
                                                         borderRadius:
-                                                        BorderRadius.circular(
-                                                            4.0),
+                                                            BorderRadius
+                                                                .circular(4.0),
                                                       ),
                                                       child:
-                                                      DropdownButtonFormField<
-                                                          String>(
+                                                          DropdownButtonFormField<
+                                                              String>(
                                                         isExpanded: true,
                                                         value:
-                                                        companyDropdownValue,
+                                                            companyDropdownValue,
                                                         onChanged: (newValue) {
                                                           companyDropdownValue =
-                                                          newValue!;
+                                                              newValue!;
                                                         },
                                                         items: [
                                                           DropdownMenuItem<
@@ -608,37 +616,38 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                               style: GoogleFonts
                                                                   .openSans(
                                                                 textStyle:
-                                                                const TextStyle(
+                                                                    const TextStyle(
                                                                   fontSize: 14,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
                                                           ...companyNames.map(
-                                                                  (String value) {
-                                                                return DropdownMenuItem<
-                                                                    String>(
-                                                                  value: value,
-                                                                  child: Text(
-                                                                    value,
-                                                                    style: GoogleFonts
-                                                                        .openSans(
-                                                                      textStyle:
+                                                              (String value) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: value,
+                                                              child: Text(
+                                                                value,
+                                                                style: GoogleFonts
+                                                                    .openSans(
+                                                                  textStyle:
                                                                       const TextStyle(
-                                                                        fontSize: 14,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontWeight:
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
                                                                         FontWeight
                                                                             .bold,
-                                                                      ),
-                                                                    ),
                                                                   ),
-                                                                );
-                                                              }).toList(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
                                                         ],
                                                       ),
                                                     ),
@@ -647,7 +656,9 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                 const SizedBox(height: 10),
                                                 // Search Bar
                                                 Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     ElevatedButton(
                                                       onPressed: () {
@@ -655,17 +666,17 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                                                         Navigator.of(context)
                                                             .pop();
                                                       },
-                                                      child: const Text("Apply"),
+                                                      child:
+                                                          const Text("Apply"),
                                                     ),
                                                     ElevatedButton(
                                                       onPressed: () {
                                                         Navigator.of(context)
                                                             .pop();
                                                       },
-                                                      child: const Text("Close"),
+                                                      child:
+                                                          const Text("Close"),
                                                     ),
-
-
                                                   ],
                                                 ),
                                               ],
@@ -686,8 +697,7 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                           child: Text(
                             selectAll ? 'Deselect All' : 'Select All',
                             style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.blueAccent,
+                              fontSize: 15,
                             ),
                           ),
                         ),
@@ -709,10 +719,10 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                       ),
                       Container(
                         padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.all(15),
+                        margin: const EdgeInsets.only(bottom:15,left: 15,right:15),
                         decoration: BoxDecoration(
                           color:
-                          Colors.white, // Change background color to white
+                              Colors.white, // Change background color to white
                           border: Border.all(
                             color: Colors.black,
                           ),
@@ -745,11 +755,12 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                     ],
                   ),
 
-
                   // Employee List in DataTable form
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      double cardWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
+                      double cardWidth = constraints.maxWidth > 600
+                          ? 600
+                          : constraints.maxWidth;
                       double screenHeight = MediaQuery.of(context).size.height;
                       double containerHeight = screenHeight * 0.6;
                       return Container(
@@ -757,92 +768,77 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                         margin: const EdgeInsets.all(20),
                         child: ListView.builder(
                           scrollDirection: Axis.vertical,
-                          itemCount: filterEmployees(employees, searchQuery).length,
+                          itemCount:
+                              filterEmployees(employees, searchQuery).length,
                           itemBuilder: (context, index) {
-                            var employee = filterEmployees(employees, searchQuery)[index];
+                            var employee =
+                                filterEmployees(employees, searchQuery)[index];
 
                             return Card(
                               margin: const EdgeInsets.all(8),
                               elevation: 3,
                               child: Padding(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(
+                                    12), // Adjusted padding
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'ID: ${employee.empCode}',
-                                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                        Row(
-                                          children: [
-                                            Checkbox(
-                                              value: employee.isSelected,
-                                              onChanged: (_) {
-                                                _toggleEmployeeSelection(employee);
-                                              },
-                                            ),
-                                          ],
+                                        Checkbox(
+                                          value: employee.isSelected,
+                                          onChanged: (_) {
+                                            _toggleEmployeeSelection(employee);
+                                          },
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          const TextSpan(
-                                            text: 'Name: ',
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                          ),
-                                          TextSpan(
-                                            text: '${employee.empName ?? ""}',
-                                            style: const TextStyle(fontSize: 13),
-                                          ),
-                                        ],
-                                      ),
+                                    Text(
+                                      '${employee.empName ?? ""}',
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          const TextSpan(
-                                            text: 'Branch: ',
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${employee.branchNames ?? ""}',
+                                          style: const TextStyle(
+                                              fontSize: 12, color: Colors.grey),
+                                        ),
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            _showRemarksDialog(employee);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const CircleBorder(), // Make the button circular
+                                            padding: const EdgeInsets.all(0), // No padding around the icon
+                                            minimumSize: Size(36, 36), // Set a fixed size for the button
                                           ),
-                                          TextSpan(
-                                            text: '${employee.branchNames ?? ""}',
-                                            style: const TextStyle(fontSize: 13),
+                                          icon: CircleAvatar(
+                                            backgroundColor: Colors.blue, // Set your desired background color
+                                            radius: 18, // Adjust the radius to control the size
+                                            child: Icon(Icons.comment, size: 18, color: Colors.white), // Adjust icon size and color
                                           ),
-                                        ],
-                                      ),
+                                          label: Text(""), // Set label to null
+                                        ),
+                                      ],
                                     ),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          const TextSpan(
-                                            text: 'Department: ',
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                          ),
-                                          TextSpan(
-                                            text: '${employee.deptNames ?? ""}',
-                                            style: const TextStyle(fontSize: 13),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _showRemarksDialog(employee);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets
-                                            .all(10), // Remove padding around the button text
-                                      ),
-                                      child: const Text(
-                                        'Remarks',
-                                        style: TextStyle(fontSize: 12),
-                                      ),
+                                    Text(
+                                      employee.deptNames ?? "",
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors
+                                              .grey), // Use the same color
                                     ),
                                   ],
                                 ),
@@ -852,7 +848,7 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                         ),
                       );
                     },
-                  ),
+                  )
                 ],
               ),
             ),

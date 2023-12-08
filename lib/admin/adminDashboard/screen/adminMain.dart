@@ -1,11 +1,10 @@
 import 'dart:async';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project/admin/adminOptionsReport/screens/AdminMonthlyAndDailyReportsMainPage.dart';
 import 'package:project/admin/adminReportsFiles/screens/AdminReportsMainPage.dart';
 import 'package:project/constants/globalObjects.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 import '../../../constants/AppColor_constants.dart';
@@ -217,9 +216,9 @@ class AdminMainPageState extends State<AdminMainPage> {
           else if (state is NavigateToLogoutState) {
             // Use Future.delayed to execute after the build is complete
             Future.delayed(Duration.zero, () {
-              QuickAlert.show(
+              CoolAlert.show(
                 context: context,
-                type: QuickAlertType.warning,
+                type: CoolAlertType.confirm,
                 title: 'Confirm Logout',
                 text: 'Are you sure?',
                 confirmBtnText: 'Logout',

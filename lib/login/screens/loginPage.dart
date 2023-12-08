@@ -6,8 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../No_internet/no_internet.dart';
 import '../../admin/adminDashboard/screen/adminMain.dart';
@@ -57,7 +55,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final UserRepository userRepository = UserRepository();
   String? corporateId;
 
-
   void handleAdminLogin(
     String enteredCorporateID,
     String enteredUsername,
@@ -76,10 +73,10 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         _saveAdminDataToSharedPreferences(enteredUsername, enteredCorporateID);
         _loginAsAdmin();
       } else {
-        showAlertAndNavigateFailure(context,"User Not Found!");
+        showCustomFailureAlert(context, "User Not Found!");
       }
     } catch (e) {
-      showAlertAndNavigateFailure(context,"User Not Found!");
+      showCustomFailureAlert(context, "User Not Found!");
     }
   }
 
@@ -113,17 +110,15 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         _saveCardNoToSharedPreferences(cardNo, empCode, employeeId);
         _loginAsEmployee();
       } else {
-        showAlertAndNavigateFailure(context,"User Not Found!");
-
+        showCustomFailureAlert(context, "User Not Found!");
       }
     } catch (e) {
-      showAlertAndNavigateFailure(context,"User Not Found!");
-
+      showCustomFailureAlert(context, "User Not Found!");
     }
   }
 
   void _loginAsEmployee() async {
-    showAlertAndNavigate(context, const EmpMainPage(),"Login Successful!");
+    showCustomSuccessAlertEmployee(context, "Login Successful!");
   }
 
   void _saveCardNoToSharedPreferences(
@@ -137,13 +132,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _loginAsAdmin() async {
-
-    showAlertAndNavigate(context, const AdminMainPage(),"Login Succesful!");
-
+    showCustomSuccessAlertAdmin(context, "Login Succesful!");
   }
-
-
-
 
   void showPopupWithMessageFailed(String message) {
     showDialog(
@@ -192,10 +182,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       // Set the role based on the selected user type
       if (_selectedUserType == UserType.employee) {
         enteredRole = 'employee';
-
       } else if (_selectedUserType == UserType.admin) {
         enteredRole = 'admin';
-
       }
       sharedPref.setString('role', enteredRole);
       // saving corporateId
@@ -240,7 +228,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         _isButtonPressed = false;
       });
     } else {
-      showAlertAndNavigateWarning(context);
+      showCustomWarningAlert(context, "Please fill out all required fields");
     }
   }
 

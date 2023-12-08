@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui' as ui; // Import ui and use its alias
+import 'package:cool_alert/cool_alert.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,8 +11,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -202,7 +200,7 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
       print(geofenceLatitude);
       print(geofenceLongitude);
       Navigator.pop(context);
-      QuickAlert.show(context: context, type: QuickAlertType.error,text: "GeoFence not started by office!");
+      showCustomWarningAlert(context, "Geofence not started by office");
     }
     else {
       print("hi5");
@@ -218,16 +216,7 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
   }
 
   void _imageError() {
-    QuickAlert.show(
-      context: context,
-      type: QuickAlertType.error,
-      title: 'Error',
-      text: 'Please take a photo before proceeding.',
-      confirmBtnText: 'OK',
-      onConfirmBtnTap: () {
-        Navigator.pop(context);
-      },
-    );
+    showCustomWarningAlert(context, "Please take photo before proceeding");
   }
 
 
@@ -327,9 +316,9 @@ class _EmployeeMapState extends State<EmployeeMap> with TickerProviderStateMixin
 
 
   void CheckOfficeOrLocation() {
-    QuickAlert.show(
+    CoolAlert.show(
       context: context,
-      type: QuickAlertType.confirm,
+      type: CoolAlertType.confirm,
       title: 'Attendance',
       text: 'Mark Attendance From Office/Location',
       confirmBtnText: 'Office',

@@ -1,17 +1,14 @@
 import 'dart:io';
-
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/admin/adminProfile/models/AdminProfileRepository.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/globalObjects.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
@@ -36,9 +33,9 @@ class AdminProfilePageState extends State<AdminProfilePage> {
   late AdminProfileBloc adminProfileBloc;
 
   void _logout(BuildContext context) {
-    QuickAlert.show(
+    CoolAlert.show(
       context: context,
-      type: QuickAlertType.warning,
+      type: CoolAlertType.warning,
       text: 'Do you want to logout?',
       confirmBtnText: 'Logout!',
       cancelBtnText: 'No',

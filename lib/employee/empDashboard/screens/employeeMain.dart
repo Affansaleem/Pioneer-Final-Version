@@ -1,26 +1,20 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
-import 'package:project/employee/empDashboard/screens/empAppbar.dart';
-import 'package:project/employee/empDashboard/screens/empHomePage.dart';
 import 'package:project/employee/empReportsOnDash/screens/leaveReportMainPage.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
 import '../../../login/screens/loginPage.dart';
-import '../../empProfilePage/bloc/emProfileApiFiles/emp_profile_api_bloc.dart';
 import '../../empProfilePage/models/empProfileModel.dart';
 import '../../empProfilePage/models/empProfileRepository.dart';
 import '../../empProfilePage/screens/profilepage.dart';
-import '../../empReports/screens/reports_page_employee.dart';
 import '../../empReportsOnDash/screens/ReportsMainPage.dart';
 import '../bloc/employeeDashboardBloc/EmpDashboardk_bloc.dart';
 import 'empDashHome.dart';
@@ -213,9 +207,9 @@ class EmpMainPageState extends State<EmpMainPage> {
         else if (state is NavigateToLogoutState) {
           // Use Future.delayed to execute after the build is complete
           Future.delayed(Duration.zero, () {
-            QuickAlert.show(
+            CoolAlert.show(
               context: context,
-              type: QuickAlertType.confirm,
+              type: CoolAlertType.confirm,
               title: 'Confirm Logout',
               text: 'Are you sure?',
               confirmBtnText: 'Logout',
