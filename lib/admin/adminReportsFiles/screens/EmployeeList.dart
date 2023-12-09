@@ -12,6 +12,7 @@ import '../../../No_internet/no_internet.dart';
 import '../bloc/getActiveEmployeeApiFiles/get_active_employee_bloc.dart';
 import '../bloc/getActiveEmployeeApiFiles/get_active_employee_event.dart';
 import '../bloc/getActiveEmployeeApiFiles/get_active_employee_state.dart';
+import '../models/branchModel.dart';
 import '../models/branchRepository.dart';
 import '../models/companyRepository.dart';
 import '../models/departmentModel.dart';
@@ -402,7 +403,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                     textStyle: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 16,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -417,16 +419,15 @@ class _EmployeeListState extends State<EmployeeList> {
                                                         BorderRadius.circular(
                                                             4.0),
                                                   ),
-                                                  child: DropdownButtonFormField<
-                                                      String>(
+                                                  child:
+                                                      DropdownButtonFormField<
+                                                          String>(
                                                     isExpanded: true,
                                                     value:
                                                         departmentDropdownValue,
                                                     onChanged: (newValue) {
-
-                                                        departmentDropdownValue =
-                                                            newValue;
-
+                                                      departmentDropdownValue =
+                                                          newValue;
                                                     },
                                                     items: [
                                                       DropdownMenuItem<String>(
@@ -439,7 +440,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                                 const TextStyle(
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight.bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
@@ -456,8 +458,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                               textStyle:
                                                                   const TextStyle(
                                                                 fontSize: 14,
-                                                                color:
-                                                                    Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -484,7 +486,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                     textStyle: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 16,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -499,14 +502,14 @@ class _EmployeeListState extends State<EmployeeList> {
                                                         BorderRadius.circular(
                                                             4.0),
                                                   ),
-                                                  child: DropdownButtonFormField<
-                                                      String>(
+                                                  child:
+                                                      DropdownButtonFormField<
+                                                          String>(
                                                     isExpanded: true,
                                                     value: branchDropdownValue,
                                                     onChanged: (newValue) {
-
-                                                        branchDropdownValue =
-                                                            newValue!;
+                                                      branchDropdownValue =
+                                                          newValue!;
                                                     },
                                                     items: [
                                                       DropdownMenuItem<String>(
@@ -519,7 +522,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                                 const TextStyle(
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight.bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
@@ -536,8 +540,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                               textStyle:
                                                                   const TextStyle(
                                                                 fontSize: 14,
-                                                                color:
-                                                                    Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -563,7 +567,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                     textStyle: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 16,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -578,13 +583,14 @@ class _EmployeeListState extends State<EmployeeList> {
                                                         BorderRadius.circular(
                                                             4.0),
                                                   ),
-                                                  child: DropdownButtonFormField<
-                                                      String>(
+                                                  child:
+                                                      DropdownButtonFormField<
+                                                          String>(
                                                     isExpanded: true,
                                                     value: companyDropdownValue,
                                                     onChanged: (newValue) {
-                                                        companyDropdownValue =
-                                                            newValue!;
+                                                      companyDropdownValue =
+                                                          newValue!;
                                                     },
                                                     items: [
                                                       DropdownMenuItem<String>(
@@ -597,7 +603,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                                 const TextStyle(
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight.bold,
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
@@ -614,8 +621,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                               textStyle:
                                                                   const TextStyle(
                                                                 fontSize: 14,
-                                                                color:
-                                                                    Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -632,12 +639,13 @@ class _EmployeeListState extends State<EmployeeList> {
                                             const SizedBox(height: 10),
                                             // Search Bar
                                             Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 ElevatedButton(
                                                   onPressed: () {
-                                                    setState(() {
-                                                    });
+                                                    setState(() {});
                                                     Navigator.of(context).pop();
                                                   },
                                                   child: const Text("Apply"),
@@ -648,10 +656,8 @@ class _EmployeeListState extends State<EmployeeList> {
                                                   },
                                                   child: const Text("close"),
                                                 ),
-
                                               ],
                                             ),
-
                                           ],
                                         ),
                                       ),
@@ -681,7 +687,8 @@ class _EmployeeListState extends State<EmployeeList> {
                       ),
                       Container(
                         padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.only(left:15,right:15,bottom:15),
+                        margin: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 15),
                         decoration: BoxDecoration(
                           color:
                               Colors.white, // Change background color to white
@@ -725,101 +732,155 @@ class _EmployeeListState extends State<EmployeeList> {
                       ),
                     ),
                   ),
+                  FutureBuilder<List<Branch>>(
+                      future:
+                          BranchRepository().getAllActiveBranches(corporateId),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Display a CircularProgressIndicator while waiting for data
+                          return Padding(
+                              padding: EdgeInsets.only(
+                                  top:
+                                      MediaQuery.of(context).size.height * 0.3),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ));
+                        } else if (snapshot.hasError) {
+                          // Display an error message if there's an error
+                          return Center(
+                            child: Text('Error: ${snapshot.error}'),
+                          );
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Center(
+                            child: Text('No data available'),
+                          );
+                        } else {
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              double cardWidth = constraints.maxWidth > 600
+                                  ? 600
+                                  : constraints.maxWidth;
+                              double screenHeight =
+                                  MediaQuery.of(context).size.height;
+                              double containerHeight = screenHeight;
+                              return Container(
+                                height: containerHeight,
+                                margin: const EdgeInsets.all(20),
+                                child: ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  itemCount:
+                                      filterEmployees(employees, searchQuery)
+                                          .length,
+                                  itemBuilder: (context, index) {
+                                    var employee = filterEmployees(
+                                        employees, searchQuery)[index];
 
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      double cardWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
-                      double screenHeight = MediaQuery.of(context).size.height;
-                      double containerHeight = screenHeight * 0.5;
-                      return Container(
-                        height: containerHeight,
-                        margin: const EdgeInsets.all(20),
-                        child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          itemCount: filterEmployees(employees, searchQuery).length,
-                          itemBuilder: (context, index) {
-                            var employee = filterEmployees(employees, searchQuery)[index];
-
-                            return Card(
-                              margin: const EdgeInsets.all(8),
-                              elevation: 3,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'ID: ${employee.empCode}',
-                                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                        ),
-                                        Row(
+                                    return Card(
+                                      margin: const EdgeInsets.all(8),
+                                      elevation: 3,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Checkbox(
-                                              value: employee.isSelected,
-                                              onChanged: (_) {
-                                                _toggleEmployeeSelection(employee);
-                                              },
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'ID: ${employee.empCode}',
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Checkbox(
+                                                      value:
+                                                          employee.isSelected,
+                                                      onChanged: (_) {
+                                                        _toggleEmployeeSelection(
+                                                            employee);
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Name: ',
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  TextSpan(
+                                                    text:
+                                                        '${employee.empName ?? ""}',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Branch: ',
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  TextSpan(
+                                                    text:
+                                                        '${employee.branchNames ?? ""}',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Text.rich(
+                                              TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: 'Department: ',
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  TextSpan(
+                                                    text:
+                                                        '${employee.deptNames ?? ""}',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'Name: ',
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                          ),
-                                          TextSpan(
-                                            text: '${employee.empName ?? ""}',
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ],
                                       ),
-                                    ),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'Branch: ',
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                          ),
-                                          TextSpan(
-                                            text: '${employee.branchNames ?? ""}',
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'Department: ',
-                                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                          ),
-                                          TextSpan(
-                                            text: '${employee.deptNames ?? ""}',
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                  ],
+                                    );
+                                  },
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  )
+                              );
+                            },
+                          );
+                        }
+                      })
                 ],
               ),
             ),

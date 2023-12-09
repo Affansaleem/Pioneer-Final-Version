@@ -13,6 +13,7 @@ import '../../../constants/AnimatedTextPopUp.dart';
 import '../../adminReportsFiles/bloc/getActiveEmployeeApiFiles/get_active_employee_bloc.dart';
 import '../../adminReportsFiles/bloc/getActiveEmployeeApiFiles/get_active_employee_event.dart';
 import '../../adminReportsFiles/bloc/getActiveEmployeeApiFiles/get_active_employee_state.dart';
+import '../../adminReportsFiles/models/branchModel.dart';
 import '../../adminReportsFiles/models/branchRepository.dart';
 import '../../adminReportsFiles/models/companyRepository.dart';
 import '../../adminReportsFiles/models/departmentModel.dart';
@@ -27,7 +28,8 @@ class AdminGeofencing extends StatefulWidget {
   State<AdminGeofencing> createState() => _AdminGeofencingState();
 }
 
-class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderStateMixin{
+class _AdminGeofencingState extends State<AdminGeofencing>
+    with TickerProviderStateMixin {
   String corporateId = '';
   List<GetActiveEmpModel> employees = [];
   List<GetActiveEmpModel> selectedEmployees = [];
@@ -50,6 +52,7 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
     addToCartPopUpAnimationController.dispose();
     super.dispose();
   }
+
   @override
   void initState() {
     addToCartPopUpAnimationController = AnimationController(
@@ -63,14 +66,13 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
     _fetchCompanyNames(); // Fetch company names when the widget initializes
     companyDropdownValue = null;
   }
+
   void showPopupWithMessage(String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return addToCartPopUpNoCrossMessage(
-          addToCartPopUpAnimationController,
-          message
-        );
+            addToCartPopUpAnimationController, message);
       },
     );
   }
@@ -371,7 +373,7 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                           }
                         },
                         style: selectedEmployees != null &&
-                            selectedEmployees.isNotEmpty
+                                selectedEmployees.isNotEmpty
                             ? ElevatedButton.styleFrom(
                                 primary: Colors.blue,
                                 padding: const EdgeInsets.symmetric(
@@ -413,8 +415,8 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                       contentPadding: const EdgeInsets.all(
                                           0), // Remove default padding
                                       shape: const RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
                                       ),
                                       content: SingleChildScrollView(
                                         child: SizedBox(
@@ -424,79 +426,98 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                             child: Card(
                                               color: AppColors.primaryColor,
                                               child: Padding(
-                                                padding: const EdgeInsets.all(20.0),
+                                                padding:
+                                                    const EdgeInsets.all(20.0),
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
+                                                      CrossAxisAlignment
+                                                          .stretch,
                                                   children: <Widget>[
                                                     Text(
                                                       "FILTERS",
-                                                      style: GoogleFonts.openSans(
-                                                        textStyle: const TextStyle(
+                                                      style:
+                                                          GoogleFonts.openSans(
+                                                        textStyle:
+                                                            const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 18,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
                                                     const SizedBox(height: 10),
                                                     // Department Dropdown
                                                     // Department Dropdown
                                                     Column(
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           'Department:',
-                                                          style: GoogleFonts.openSans(
-                                                            textStyle: const TextStyle(
-                                                              color: Colors.white,
+                                                          style: GoogleFonts
+                                                              .openSans(
+                                                            textStyle:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
                                                         Container(
-                                                          decoration: BoxDecoration(
+                                                          decoration:
+                                                              BoxDecoration(
                                                             color: Colors.white,
                                                             border: Border.all(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               width: 2.0,
                                                             ),
                                                             borderRadius:
-                                                            BorderRadius.circular(
-                                                                4.0),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4.0),
                                                           ),
-                                                          child: DropdownButtonFormField<
-                                                              String>(
+                                                          child:
+                                                              DropdownButtonFormField<
+                                                                  String>(
                                                             isExpanded: true,
                                                             value:
-                                                            departmentDropdownValue,
-                                                            onChanged: (newValue) {
-
+                                                                departmentDropdownValue,
+                                                            onChanged:
+                                                                (newValue) {
                                                               departmentDropdownValue =
                                                                   newValue;
-
                                                             },
                                                             items: [
-                                                              DropdownMenuItem<String>(
+                                                              DropdownMenuItem<
+                                                                  String>(
                                                                 value: '',
                                                                 child: Text(
                                                                   'All',
                                                                   style: GoogleFonts
                                                                       .openSans(
                                                                     textStyle:
-                                                                    const TextStyle(
-                                                                      fontSize: 14,
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          14,
                                                                       fontWeight:
-                                                                      FontWeight.bold,
+                                                                          FontWeight
+                                                                              .bold,
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
                                                               ...departmentNames
-                                                                  .map((String value) {
+                                                                  .map((String
+                                                                      value) {
                                                                 return DropdownMenuItem<
                                                                     String>(
                                                                   value: value,
@@ -505,13 +526,13 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                                                     style: GoogleFonts
                                                                         .openSans(
                                                                       textStyle:
-                                                                      const TextStyle(
-                                                                        fontSize: 14,
-                                                                        color:
-                                                                        Colors.black,
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .black,
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight.bold,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -527,56 +548,71 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                                     // Branch Dropdown
                                                     Column(
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           'Branch:',
-                                                          style: GoogleFonts.openSans(
-                                                            textStyle: const TextStyle(
-                                                              color: Colors.white,
+                                                          style: GoogleFonts
+                                                              .openSans(
+                                                            textStyle:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
                                                         Container(
-                                                          decoration: BoxDecoration(
+                                                          decoration:
+                                                              BoxDecoration(
                                                             color: Colors.white,
                                                             border: Border.all(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               width: 2.0,
                                                             ),
                                                             borderRadius:
-                                                            BorderRadius.circular(
-                                                                4.0),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4.0),
                                                           ),
-                                                          child: DropdownButtonFormField<
-                                                              String>(
+                                                          child:
+                                                              DropdownButtonFormField<
+                                                                  String>(
                                                             isExpanded: true,
-                                                            value: branchDropdownValue,
-                                                            onChanged: (newValue) {
-
+                                                            value:
+                                                                branchDropdownValue,
+                                                            onChanged:
+                                                                (newValue) {
                                                               branchDropdownValue =
-                                                              newValue!;
+                                                                  newValue!;
                                                             },
                                                             items: [
-                                                              DropdownMenuItem<String>(
+                                                              DropdownMenuItem<
+                                                                  String>(
                                                                 value: '',
                                                                 child: Text(
                                                                   'All',
                                                                   style: GoogleFonts
                                                                       .openSans(
                                                                     textStyle:
-                                                                    const TextStyle(
-                                                                      fontSize: 14,
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          14,
                                                                       fontWeight:
-                                                                      FontWeight.bold,
+                                                                          FontWeight
+                                                                              .bold,
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
                                                               ...branchNames
-                                                                  .map((String value) {
+                                                                  .map((String
+                                                                      value) {
                                                                 return DropdownMenuItem<
                                                                     String>(
                                                                   value: value,
@@ -585,13 +621,13 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                                                     style: GoogleFonts
                                                                         .openSans(
                                                                       textStyle:
-                                                                      const TextStyle(
-                                                                        fontSize: 14,
-                                                                        color:
-                                                                        Colors.black,
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .black,
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight.bold,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -606,55 +642,71 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                                     // Company Dropdown
                                                     Column(
                                                       crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           'Company:',
-                                                          style: GoogleFonts.openSans(
-                                                            textStyle: const TextStyle(
-                                                              color: Colors.white,
+                                                          style: GoogleFonts
+                                                              .openSans(
+                                                            textStyle:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
                                                         Container(
-                                                          decoration: BoxDecoration(
+                                                          decoration:
+                                                              BoxDecoration(
                                                             color: Colors.white,
                                                             border: Border.all(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               width: 2.0,
                                                             ),
                                                             borderRadius:
-                                                            BorderRadius.circular(
-                                                                4.0),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4.0),
                                                           ),
-                                                          child: DropdownButtonFormField<
-                                                              String>(
+                                                          child:
+                                                              DropdownButtonFormField<
+                                                                  String>(
                                                             isExpanded: true,
-                                                            value: companyDropdownValue,
-                                                            onChanged: (newValue) {
+                                                            value:
+                                                                companyDropdownValue,
+                                                            onChanged:
+                                                                (newValue) {
                                                               companyDropdownValue =
-                                                              newValue!;
+                                                                  newValue!;
                                                             },
                                                             items: [
-                                                              DropdownMenuItem<String>(
+                                                              DropdownMenuItem<
+                                                                  String>(
                                                                 value: '',
                                                                 child: Text(
                                                                   'All',
                                                                   style: GoogleFonts
                                                                       .openSans(
                                                                     textStyle:
-                                                                    const TextStyle(
-                                                                      fontSize: 14,
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          14,
                                                                       fontWeight:
-                                                                      FontWeight.bold,
+                                                                          FontWeight
+                                                                              .bold,
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
                                                               ...companyNames
-                                                                  .map((String value) {
+                                                                  .map((String
+                                                                      value) {
                                                                 return DropdownMenuItem<
                                                                     String>(
                                                                   value: value,
@@ -663,13 +715,13 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                                                     style: GoogleFonts
                                                                         .openSans(
                                                                       textStyle:
-                                                                      const TextStyle(
-                                                                        fontSize: 14,
-                                                                        color:
-                                                                        Colors.black,
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .black,
                                                                         fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                                            FontWeight.bold,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -683,26 +735,31 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                                                     const SizedBox(height: 10),
                                                     // Search Bar
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
                                                         ElevatedButton(
                                                           onPressed: () {
-                                                            setState(() {
-                                                            });
-                                                            Navigator.of(context).pop();
+                                                            setState(() {});
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
-                                                          child: const Text("Apply"),
+                                                          child: const Text(
+                                                              "Apply"),
                                                         ),
                                                         ElevatedButton(
                                                           onPressed: () {
-                                                            Navigator.of(context).pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
-                                                          child: const Text("close"),
+                                                          child: const Text(
+                                                              "close"),
                                                         ),
-
                                                       ],
                                                     ),
-
                                                   ],
                                                 ),
                                               ),
@@ -728,112 +785,175 @@ class _AdminGeofencingState extends State<AdminGeofencing> with TickerProviderSt
                         ),
                       ),
                       // Employee List in DataTable form
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          double cardWidth = constraints.maxWidth > 600 ? 600 : constraints.maxWidth;
-                          double screenHeight = MediaQuery.of(context).size.height;
-                          double containerHeight = screenHeight * 0.6;
-                          return Container(
-                            height: containerHeight,
-                            margin: const EdgeInsets.all(20),
-                            child: ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              itemCount: filterEmployees(employees, searchQuery).length,
-                              itemBuilder: (context, index) {
-                                var employee = filterEmployees(employees, searchQuery)[index];
+                      FutureBuilder<List<Branch>>(
+                          future: BranchRepository()
+                              .getAllActiveBranches(corporateId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              // Display a CircularProgressIndicator while waiting for data
+                              return Padding(
+                                  padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.height *
+                                          0.3),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ));
+                            } else if (snapshot.hasError) {
+                              // Display an error message if there's an error
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(
+                                child: Text('No data available'),
+                              );
+                            } else {
+                              return LayoutBuilder(
+                                builder: (context, constraints) {
+                                  double cardWidth = constraints.maxWidth > 600
+                                      ? 600
+                                      : constraints.maxWidth;
+                                  double screenHeight =
+                                      MediaQuery.of(context).size.height;
+                                  double containerHeight = screenHeight;
+                                  return Container(
+                                    height: containerHeight,
+                                    margin: const EdgeInsets.all(20),
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: filterEmployees(
+                                              employees, searchQuery)
+                                          .length,
+                                      itemBuilder: (context, index) {
+                                        var employee = filterEmployees(
+                                            employees, searchQuery)[index];
 
-                                return Card(
-                                  margin: const EdgeInsets.all(8),
-                                  elevation: 3,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'ID: ${employee.empCode}',
-                                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                            ),
-                                            Row(
+                                        return Card(
+                                          margin: const EdgeInsets.all(8),
+                                          elevation: 3,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Checkbox(
-                                                  value: employee.isSelected,
-                                                  onChanged: (_) {
-                                                    _toggleEmployeeSelection(employee);
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      'ID: ${employee.empCode}',
+                                                      style: const TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Checkbox(
+                                                          value: employee
+                                                              .isSelected,
+                                                          onChanged: (_) {
+                                                            _toggleEmployeeSelection(
+                                                                employee);
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text.rich(
+                                                  TextSpan(
+                                                    children: [
+                                                      const TextSpan(
+                                                        text: 'Name: ',
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            '${employee.empName ?? ""}',
+                                                        style: const TextStyle(
+                                                            fontSize: 13),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text.rich(
+                                                  TextSpan(
+                                                    children: [
+                                                      const TextSpan(
+                                                        text: 'Branch: ',
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            '${employee.branchNames ?? ""}',
+                                                        style: const TextStyle(
+                                                            fontSize: 13),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text.rich(
+                                                  TextSpan(
+                                                    children: [
+                                                      const TextSpan(
+                                                        text: 'Department: ',
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            '${employee.deptNames ?? ""}',
+                                                        style: const TextStyle(
+                                                            fontSize: 13),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    _showRemarksDialog(
+                                                        employee);
                                                   },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    padding: const EdgeInsets
+                                                        .all(
+                                                        10), // Remove padding around the button text
+                                                  ),
+                                                  child: const Text(
+                                                    'Remarks',
+                                                    style:
+                                                        TextStyle(fontSize: 12),
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              const TextSpan(
-                                                text: 'Name: ',
-                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                              ),
-                                              TextSpan(
-                                                text: '${employee.empName ?? ""}',
-                                                style: const TextStyle(fontSize: 13),
-                                              ),
-                                            ],
                                           ),
-                                        ),
-                                        Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              const TextSpan(
-                                                text: 'Branch: ',
-                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                              ),
-                                              TextSpan(
-                                                text: '${employee.branchNames ?? ""}',
-                                                style: const TextStyle(fontSize: 13),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              const TextSpan(
-                                                text: 'Department: ',
-                                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                              ),
-                                              TextSpan(
-                                                text: '${employee.deptNames ?? ""}',
-                                                style: const TextStyle(fontSize: 13),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            _showRemarksDialog(employee);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets
-                                                .all(10), // Remove padding around the button text
-                                          ),
-                                          child: const Text(
-                                            'Remarks',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                        ),
-                                      ],
+                                        );
+                                      },
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
+                                  );
+                                },
+                              );
+                            }
+                          })
                     ],
                   ),
                 ],
