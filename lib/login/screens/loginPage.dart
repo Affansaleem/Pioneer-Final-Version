@@ -8,9 +8,8 @@ import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../No_internet/no_internet.dart';
-import '../../admin/adminDashboard/screen/adminMain.dart';
+import '../../Sqlite/sqlite_helper.dart';
 import '../../employee/empDashboard/models/user_repository.dart';
-import '../../employee/empDashboard/screens/employeeMain.dart';
 import '../../employee/empProfilePage/models/empProfileModel.dart';
 import '../../employee/empProfilePage/models/empProfileRepository.dart';
 import '../../introduction/bloc/bloc_internet/internet_bloc.dart';
@@ -109,6 +108,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         final cardNo = employeeData[0].cardNo;
         final empCode = employeeData[0].empCode;
         final employeeId = employeeData[0].empId;
+        await saveEmployeeToDatabase(employeeId, enteredUsername, enteredCorporateID);
+
         _saveCardNoToSharedPreferences(cardNo, empCode, employeeId);
         _loginAsEmployee();
       } else {
@@ -116,6 +117,25 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       }
     } catch (e) {
       showCustomFailureAlert(context, "User Not Found!");
+    }
+  }
+
+  Future<void> saveEmployeeToDatabase(int employeeId, String username, String corporateId) async {
+    try {
+      final dbHelper = DatabaseHelper();
+      await dbHelper.insertEmployee(employeeId, corporateId);
+
+      // Check if the data is saved by querying the database
+      final List<Map<String, dynamic>> savedData = await dbHelper.getEmployees();
+
+      if (savedData.isNotEmpty) {
+        print("Data saved successfully!");
+        print(savedData); // Log the saved data
+      } else {
+        print("Failed to save data!");
+      }
+    } catch (e) {
+      print("Error saving employee data to SQLite: $e");
     }
   }
 

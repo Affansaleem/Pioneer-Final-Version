@@ -9,6 +9,7 @@ import 'package:project/constants/globalObjects.dart';
 import 'package:project/employee/empDashboard/screens/empHomePage.dart';
 import 'package:project/employee/empReportsOnDash/screens/leaveReportMainPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Sqlite/sqlite_helper.dart';
 import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
@@ -35,24 +36,56 @@ class EmpMainPageState extends State<EmpMainPage> {
   EmpDrawerItem item = EmpDrawerItems.home;
   final PageStorageBucket bucket = PageStorageBucket();
 
-  Future<void> _logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLoggedIn', false);
-    prefs.setBool('isEmployee', false);
+  Future<bool> _logout(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('isLoggedIn', false);
+      prefs.setBool('isEmployee', false);
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return Builder(
-            builder: (context) => BlocProvider(
-              create: (context) => SignInBloc(),
-              child: LoginPage(),
-            ),
-          ); // Navigate back to LoginPage
-        },
-      ),
-    );
+      // Get the employee ID from the SQLite table
+      final dbHelper = DatabaseHelper();
+      int employeeId = await dbHelper.getLoggedInEmployeeId();
+
+      // Delete employee data from the SQLite table
+      if (employeeId > 0) {
+        // Delete employee data
+        await dbHelper.deleteEmployee(employeeId);
+
+        // Delete profile data
+        await dbHelper.deleteProfileData(employeeId);
+
+        // Check if the data was successfully deleted
+        List<Map<String, dynamic>> remainingEmployees = await dbHelper.getEmployees();
+        bool isDataDeleted = remainingEmployees.isEmpty;
+
+        if (!isDataDeleted) {
+          // Data not deleted
+          return false;
+        }
+      }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return Builder(
+              builder: (context) => BlocProvider(
+                create: (context) => SignInBloc(),
+                child: LoginPage(),
+              ),
+            ); // Navigate back to LoginPage
+          },
+        ),
+      );
+      print("After deletion");
+      await DatabaseHelper.instance.printProfileData();
+
+      // Data successfully deleted
+      return true;
+    } catch (e) {
+      print("Error during logout: $e");
+      return false; // Return false in case of an error
+    }
   }
 
 
@@ -61,6 +94,10 @@ class EmpMainPageState extends State<EmpMainPage> {
     super.initState();
     profileRepository = EmpProfileRepository();
     fetchProfileData();
+  }
+
+  void openDrawer(BuildContext context) {
+    Scaffold.of(context).openDrawer();
   }
 
   EmpProfileRepository profileRepository = EmpProfileRepository();

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,8 +12,10 @@ import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
+import 'package:project/employee/empDashboard/screens/employeeMain.dart';
 import 'package:project/employee/empDashboard/screens/generalAppBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Sqlite/sqlite_helper.dart';
 import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../../empMap/screens/employeemap.dart';
@@ -44,7 +47,7 @@ class HomePageState extends State<EmpDashHome> {
   double? lat;
   double? long;
   var initProfile = EmpProfilePageState();
-
+  bool isFetchingProfileData = true;
   EmpDrawerItem item = EmpDrawerItems.home;
 
   @override
@@ -53,7 +56,7 @@ class HomePageState extends State<EmpDashHome> {
     super.initState();
     checkLocationPermission();
     checkLocationPermissionAndFetchLocation();
-    _retrieveCorporateID();
+    isFetchingProfileData = true;
     fetchProfileData();
   }
 
@@ -62,28 +65,44 @@ class HomePageState extends State<EmpDashHome> {
 
   Future<void> fetchProfileData() async {
     try {
-      final profileData = await _profileRepository.getData();
-      if (profileData.isNotEmpty) {
-        EmpProfileModel? empProfile = profileData.first;
-        final profileImage = empProfile.profilePic;
+      // Fetch employee ID from the 'employee' table
+      final dbHelper = DatabaseHelper.instance;
+      int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
 
-        if (profileImage != null && profileImage.isNotEmpty) {
+      if (loggedInEmployeeId > 0) {
+        // Fetch profile data using the employee ID from the repository
+        final profileRepository = EmpProfileRepository();
+        final profileData = await profileRepository.getData();
+
+        if (profileData.isNotEmpty) {
+          EmpProfileModel? empProfile = profileData.first;
+          final profileImage = empProfile.profilePic;
+
+          // Insert or replace data in the 'employeeProfileData' table with the employee ID
+          final db = await dbHelper.database;
+          await db.transaction((txn) async {
+            await txn.rawInsert('''
+            INSERT OR REPLACE INTO employeeProfileData (id, empCode, profilePic, empName, emailAddress)
+            VALUES (?, ?, ?, ?, ?)
+          ''', [loggedInEmployeeId, empProfile.empCode, profileImage, empProfile.empName, empProfile.emailAddress]);
+          });
+
+          // Update the state variables with the fetched data
           setState(() {
-            EmpProfileModel? empProfile = profileData.first;
+            savedEmpCode = empProfile.empCode;
             profileImageUrl = profileImage;
-            GlobalObjects.empProfilePic = empProfile.profilePic;
-            GlobalObjects.empName = empProfile.empName;
-            GlobalObjects.empMail = empProfile.emailAddress;
           });
         }
-        if (profileImage == null) {
-          setState(() {
-            GlobalObjects.empProfilePic = null;
-          });
-        }
+
+        // Print the profile data for verification
+        await dbHelper.printProfileData();
       }
     } catch (e) {
       print("Error fetching profile data: $e");
+    } finally {
+      setState(() {
+        isFetchingProfileData = false;
+      });
     }
   }
 
@@ -122,36 +141,35 @@ class HomePageState extends State<EmpDashHome> {
     SystemNavigator.pop();
   }
 
-  Widget buildProfileImage() {
-    if (GlobalObjects.empProfilePic != null &&
-        GlobalObjects.empProfilePic!.isNotEmpty) {
-      return ClipOval(
-        child: Image.memory(
-          Uint8List.fromList(base64Decode(GlobalObjects.empProfilePic!)),
+  Widget buildProfileImage(String? profileImage) {
+    if (profileImage != null && profileImage.isNotEmpty) {
+      try {
+        return ClipOval(
+          child: Image.memory(
+            Uint8List.fromList(
+              base64Decode(profileImage),
+            ),
+            width: 100,
+            height: 45,
+          ),
+        );
+      } catch (e) {
+        print("Error decoding profile image: $e");
+        // Return a default image if there's an error decoding the image
+        return Image.asset(
+          'assets/icons/userrr.png',
           width: 100,
           height: 45,
-        ),
-      );
-    } else if (GlobalObjects.empProfilePic == null) {
-      return Image.asset(
-        'assets/icons/userrr.png',
-        width: 100,
-        height: 45,
-      );
+        );
+      }
     } else {
+      // Load default image if profileImage is null or empty
       return Image.asset(
         'assets/icons/userrr.png',
         width: 100,
         height: 45,
       );
     }
-  }
-
-  Future<void> _retrieveCorporateID() async {
-    final sharedPref = await SharedPreferences.getInstance();
-    savedCorporateID = sharedPref.getString('corporate_id');
-    savedEmpCode = sharedPref.getString('empCode');
-    setState(() {});
   }
 
   Future<void> checkLocationPermission() async {
@@ -237,338 +255,419 @@ class HomePageState extends State<EmpDashHome> {
     }
 
     //FIRST APPROACH
-    return WillPopScope(
-      onWillPop: () async {
-        // Add your custom logic here
-        // If you want to prevent popping, return false; otherwise, return true.
-        return false;
+    return BlocProvider(
+      create: (context) {
+        return EmpAttendanceBloc(
+          RepositoryProvider.of<EmpAttendanceRepository>(context),
+        )..add(EmpAttendanceLoadingEvent());
       },
-      child: BlocProvider(
-        create: (context) {
-          return EmpAttendanceBloc(
-            RepositoryProvider.of<EmpAttendanceRepository>(context),
-          )..add(EmpAttendanceLoadingEvent());
+      child: BlocConsumer<InternetBloc, InternetStates>(
+        listener: (context, state) {
+          // TODO: implement listener
         },
-        child: BlocConsumer<InternetBloc, InternetStates>(
-          listener: (context, state) {
-            // TODO: implement listener
-          },
-          builder: (context, state) {
-            if (state is InternetGainedState) {
-              return RefreshIndicator(
-                onRefresh: () async {
-                  // Dispatch the refresh event to reload data
-                  context
-                      .read<EmpAttendanceBloc>()
-                      .add(EmpAttendanceLoadingEvent());
+        builder: (context, state) {
+          if (state is InternetGainedState) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                // Dispatch the refresh event to reload data
+                context
+                    .read<EmpAttendanceBloc>()
+                    .add(EmpAttendanceLoadingEvent());
+              },
+              child: BlocProvider(
+                create: (context) {
+                  return EmpDashBloc(EmpDashRepository())
+                    ..add(EmpDashLoadingEvent());
                 },
-                child: BlocProvider(
-                  create: (context) {
-                    return EmpDashBloc(EmpDashRepository())
-                      ..add(EmpDashLoadingEvent());
-                  },
-                  child: BlocBuilder<EmpDashBloc, EmpDashState>(
-                    builder: (context, empDashState) {
-                      if (empDashState is EmpDashLoadedState) {
-                        // Handle the loaded state here
-                        List<EmpDashModel> userList = empDashState.users;
-                        final employee = userList[0];
+                child: BlocBuilder<EmpDashBloc, EmpDashState>(
+                  builder: (context, empDashState) {
+                    if (empDashState is EmpDashLoadedState) {
+                      // Handle the loaded state here
+                      List<EmpDashModel> userList = empDashState.users;
+                      final employee = userList[0];
 
-                        return BlocBuilder<EmpAttendanceBloc, EmpAttendanceState>(
-                          builder: (context, state) {
-                            if (state is EmpAttendanceLoadedState) {
-                              List<EmpAttendanceModel> userList = state.users;
-                              final employeeAttendance = userList[0];
-                              return Builder(builder: (context) {
-                                return Scaffold(
-                                  appBar: PreferredSize(
-                                    preferredSize: Size.fromHeight(35.0), // Adjust the height as needed
-                                    child: AppBar(
-                                      backgroundColor: AppBarStyles.appBarBackgroundColor,
-                                      actions: [
-                                        Align(
-                                          alignment: Alignment.topRight,
+                      return BlocBuilder<EmpAttendanceBloc, EmpAttendanceState>(
+                        builder: (context, state) {
+                          if (state is EmpAttendanceLoadedState) {
+                            List<EmpAttendanceModel> userList = state.users;
+                            final employeeAttendance = userList[0];
+                            return Builder(builder: (context) {
+                              return isFetchingProfileData
+                                  ? Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : Scaffold(
+                                      appBar: AppBar(
+                                        leading: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 30, 0, 0),
                                           child: IconButton(
-                                            onPressed: () async{
-                                              context
-                                                  .read<EmpAttendanceBloc>()
-                                                  .add(EmpAttendanceLoadingEvent());
+                                            icon: const FaIcon(
+                                                FontAwesomeIcons.bars),
+                                            color: Colors.white,
+                                            onPressed: () {
+                                              Scaffold.of(context).openDrawer();
                                             },
-                                            icon: Icon(Icons.refresh, color: Colors.white),
                                           ),
                                         ),
-                                      ],
-
-                                    ),
-                                  ),
-                                  body: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        WillPopScope(
-                                          onWillPop: () async {
-                                            return _onBackPressed(context)
-                                                .then((value) => value ?? false);
-                                          },
-                                          child: const SizedBox(),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: screenHeight / 80),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                        backgroundColor: AppColors.primaryColor,
+                                        elevation: 0,
+                                        title: Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  4.5,
+                                              30,
+                                              0,
+                                              0),
+                                          child: const Row(
                                             children: [
-                                              GridView.count(
-                                                shrinkWrap: true,
-                                                crossAxisCount: 2,
-                                                crossAxisSpacing: 70,
-                                                mainAxisSpacing: 20,
-                                                children: [
-                                                  Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: ClipOval(
-                                                      child: buildProfileImage(),
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: onTapMaps,
-                                                    child: ItemDashboard(
-                                                      showShadow: false,
-                                                      title: 'Mark Attendance',
-                                                      customIcon: Image.asset(
-                                                        "assets/icons/locate.png",
-                                                        width: 100,
-                                                        height: 45,
-                                                      ),
-                                                      background: AppColors
-                                                          .secondaryColor,
-                                                    ),
-                                                  ),
-                                                ],
+                                              Text(
+                                                "Home",
+                                                style: AppBarStyles
+                                                    .appBarTextStyle,
                                               ),
                                             ],
                                           ),
                                         ),
-                                        Container(
-                                          height: 75,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: <Widget>[
-                                              const SizedBox(
-                                                width: 10,
+                                        actions: [
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 35, 10, 0),
+                                            child: Align(
+                                              alignment: Alignment.topRight,
+                                              child: IconButton(
+                                                onPressed: () async {
+                                                  context
+                                                      .read<EmpAttendanceBloc>()
+                                                      .add(
+                                                          EmpAttendanceLoadingEvent());
+                                                },
+                                                icon: Icon(Icons.refresh,
+                                                    color: Colors.white),
                                               ),
-                                              ProfileInfoCard(
-                                                firstText: "IN",
-                                                secondText:
-                                                    employeeAttendance.in1 != null
+                                            ),
+                                          ),
+                                        ],
+                                        toolbarHeight:
+                                            MediaQuery.of(context).size.height /
+                                                10,
+                                      ),
+                                      body: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            WillPopScope(
+                                              onWillPop: () async {
+                                                return _onBackPressed(context)
+                                                    .then((value) =>
+                                                        value ?? false);
+                                              },
+                                              child: const SizedBox(),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                  vertical: screenHeight / 80),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  GridView.count(
+                                                    shrinkWrap: true,
+                                                    crossAxisCount: 2,
+                                                    crossAxisSpacing: 70,
+                                                    mainAxisSpacing: 20,
+                                                    children: [
+                                                      Container(
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                        child: ClipOval(
+                                                          child: buildProfileImage(
+                                                              profileImageUrl),
+                                                        ),
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: onTapMaps,
+                                                        child: ItemDashboard(
+                                                          showShadow: false,
+                                                          title:
+                                                              'Mark Attendance',
+                                                          customIcon:
+                                                              Image.asset(
+                                                            "assets/icons/locate.png",
+                                                            width: 100,
+                                                            height: 45,
+                                                          ),
+                                                          background: AppColors
+                                                              .secondaryColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              height: 75,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: <Widget>[
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  ProfileInfoCard(
+                                                    firstText: "IN",
+                                                    secondText: employeeAttendance
+                                                                .in1 !=
+                                                            null
                                                         ? DateFormat('HH:mm:ss')
                                                             .format(
                                                                 employeeAttendance
                                                                     .in1!)
                                                         : "---",
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              ProfileInfoCard(
-                                                  firstText: "Status",
-                                                  secondText:
-                                                      employeeAttendance.status ??
-                                                          "---"),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              ProfileInfoCard(
-                                                firstText: "OUT",
-                                                secondText: employeeAttendance
-                                                            .out2 !=
-                                                        null
-                                                    ? DateFormat('HH:mm:ss')
-                                                        .format(employeeAttendance
-                                                            .out2!)
-                                                    : "---",
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 14),
-                                        Text(
-                                          'ID ${savedEmpCode ?? ''}',
-                                          style: const TextStyle(
-                                              fontSize: 21,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black87),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          formattedDate,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.darkGrey,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Table(
-                                          children: [
-                                            TableRow(
-                                              children: [
-                                                ProfileInfoBigCard(
-                                                  firstText: employee.presentCount
-                                                      .toString(),
-                                                  secondText: "Total Present",
-                                                  icon: Image.asset(
-                                                    "assets/icons/Attend.png",
-                                                    width: screenWidth / 15,
                                                   ),
-                                                ),
-                                                ProfileInfoBigCard(
-                                                  firstText: employee.absentCount
-                                                      .toString(),
-                                                  secondText: "Total Absent",
-                                                  icon: Image.asset(
-                                                    "assets/icons/absence.png",
-                                                    width: 28,
+                                                  const SizedBox(
+                                                    width: 10,
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Table(
-                                          children: [
-                                            TableRow(
-                                              children: [
-                                                ProfileInfoBigCard(
-                                                  firstText: employee.leaveCount
-                                                      .toString(),
-                                                  secondText: "Total Leaves",
-                                                  icon: Image.asset(
-                                                    "assets/icons/leave.png",
-                                                    width: 28,
+                                                  ProfileInfoCard(
+                                                      firstText: "Status",
+                                                      secondText:
+                                                          employeeAttendance
+                                                                  .status ??
+                                                              "---"),
+                                                  const SizedBox(
+                                                    width: 10,
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          width: screenWidth,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: lowerButtonsVertical,
-                                              horizontal: lowerButtonsHorizontal),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              GridView.count(
-                                                shrinkWrap: true,
-                                                crossAxisCount: 2,
-                                                crossAxisSpacing: 50,
-                                                mainAxisSpacing: 20,
-                                                children: [
-                                                  GestureDetector(
-                                                    child: ItemDashboard(
-                                                      showShadow: false,
-                                                      title: 'Leave Request',
-                                                      customIcon: Image.asset(
-                                                        "assets/icons/leave.png",
-                                                        width: 100,
-                                                        height: 45,
-                                                      ),
-                                                      background: AppColors
-                                                          .secondaryColor,
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.push(context,
-                                                          CupertinoPageRoute(
-                                                        builder: (context) {
-                                                          // return LeaveRequestForm();
-                                                          return LeaveRequestPage(
-                                                            viaDrawer: false,
-                                                          );
-                                                        },
-                                                      ));
-                                                    },
+                                                  const SizedBox(
+                                                    width: 10,
                                                   ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          PageTransition(
-                                                              child:
-                                                                  ReportsMainPage(
-                                                                viaDrawer: false,
-                                                              ),
-                                                              type: PageTransitionType
-                                                                  .rightToLeft));
-                                                    },
-                                                    child: ItemDashboard(
-                                                      showShadow: false,
-                                                      title: 'Reports',
-                                                      customIcon: Image.asset(
-                                                        "assets/icons/report.png",
-                                                        width: 50,
-                                                        height: 45,
-                                                      ),
-                                                      background: AppColors
-                                                          .secondaryColor,
-                                                    ),
+                                                  ProfileInfoCard(
+                                                    firstText: "OUT",
+                                                    secondText: employeeAttendance
+                                                                .out2 !=
+                                                            null
+                                                        ? DateFormat('HH:mm:ss')
+                                                            .format(
+                                                                employeeAttendance
+                                                                    .out2!)
+                                                        : "---",
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 10,
                                                   ),
                                                 ],
                                               ),
-
-                                            ],
-                                          ),
+                                            ),
+                                            const SizedBox(height: 14),
+                                            Text(
+                                              'ID ${savedEmpCode ?? ''}',
+                                              style: const TextStyle(
+                                                  fontSize: 21,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.black87),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              formattedDate,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: AppColors.darkGrey,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Table(
+                                              children: [
+                                                TableRow(
+                                                  children: [
+                                                    ProfileInfoBigCard(
+                                                      firstText: employee
+                                                          .presentCount
+                                                          .toString(),
+                                                      secondText:
+                                                          "Total Present",
+                                                      icon: Image.asset(
+                                                        "assets/icons/Attend.png",
+                                                        width: screenWidth / 15,
+                                                      ),
+                                                    ),
+                                                    ProfileInfoBigCard(
+                                                      firstText: employee
+                                                          .absentCount
+                                                          .toString(),
+                                                      secondText:
+                                                          "Total Absent",
+                                                      icon: Image.asset(
+                                                        "assets/icons/absence.png",
+                                                        width: 28,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Table(
+                                              children: [
+                                                TableRow(
+                                                  children: [
+                                                    ProfileInfoBigCard(
+                                                      firstText: employee
+                                                          .leaveCount
+                                                          .toString(),
+                                                      secondText:
+                                                          "Total Leaves",
+                                                      icon: Image.asset(
+                                                        "assets/icons/leave.png",
+                                                        width: 28,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Container(
+                                              width: screenWidth,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical:
+                                                      lowerButtonsVertical,
+                                                  horizontal:
+                                                      lowerButtonsHorizontal),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  GridView.count(
+                                                    shrinkWrap: true,
+                                                    crossAxisCount: 2,
+                                                    crossAxisSpacing: 50,
+                                                    mainAxisSpacing: 20,
+                                                    children: [
+                                                      GestureDetector(
+                                                        child: ItemDashboard(
+                                                          showShadow: false,
+                                                          title:
+                                                              'Leave Request',
+                                                          customIcon:
+                                                              Image.asset(
+                                                            "assets/icons/leave.png",
+                                                            width: 100,
+                                                            height: 45,
+                                                          ),
+                                                          background: AppColors
+                                                              .secondaryColor,
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              CupertinoPageRoute(
+                                                            builder: (context) {
+                                                              // return LeaveRequestForm();
+                                                              return LeaveRequestPage(
+                                                                viaDrawer:
+                                                                    false,
+                                                              );
+                                                            },
+                                                          ));
+                                                        },
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              PageTransition(
+                                                                  child:
+                                                                      ReportsMainPage(
+                                                                    viaDrawer:
+                                                                        false,
+                                                                  ),
+                                                                  type: PageTransitionType
+                                                                      .rightToLeft));
+                                                        },
+                                                        child: ItemDashboard(
+                                                          showShadow: false,
+                                                          title: 'Reports',
+                                                          customIcon:
+                                                              Image.asset(
+                                                            "assets/icons/report.png",
+                                                            width: 50,
+                                                            height: 45,
+                                                          ),
+                                                          background: AppColors
+                                                              .secondaryColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              });
-                            } else if (state is EmpAttendanceLoadingState) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (state is EmpAttendanceErrorState) {
-                              return Text("Error: ${state.message}");
-                            } else {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                          },
-                        );
-                      } else if (empDashState is EmpDashErrorState) {
-                        // Handle the error state here
-                        return Text("Error: ${empDashState.message}");
-                      } else {
-                        // Handle other states or return a loading indicator
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
+                                      ),
+                                    );
+                            });
+                          } else if (state is EmpAttendanceLoadingState) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (state is EmpAttendanceErrorState) {
+                            return Text("Error: ${state.message}");
+                          } else {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                        },
+                      );
+                    } else if (empDashState is EmpDashErrorState) {
+                      // Handle the error state here
+                      return Text("Error: ${empDashState.message}");
+                    } else {
+                      // Handle other states or return a loading indicator
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ),
+            );
+          } else if (state is InternetLostState) {
+            return Expanded(
+              child: Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Slow or No Internet Connection!",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Lottie.asset('assets/no_wifi.json'),
+                    ],
                   ),
                 ),
-              );
-            } else if (state is InternetLostState) {
-              return Expanded(
-                child: Scaffold(
-                  body: Center(
+              ),
+            );
+          } else {
+            return Expanded(
+              child: Scaffold(
+                body: Container(
+                  child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Slow or No Internet Connection!",
+                          "No Internet Connection!",
                           style: TextStyle(
                             color: Colors.red,
                             fontSize: 30,
@@ -583,42 +682,15 @@ class HomePageState extends State<EmpDashHome> {
                     ),
                   ),
                 ),
-              );
-            } else {
-              return Expanded(
-                child: Scaffold(
-                  body: Container(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "No Internet Connection!",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Lottie.asset('assets/no_wifi.json'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }
-          },
-        ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
 }
 
-// ... The rest of code for ItemDashboard, ProfileInfoCard, TwoLineItem, ProfileInfoBigCard.
 class ItemDashboard extends StatelessWidget {
   final String title;
   final Widget customIcon;
@@ -808,22 +880,5 @@ class ProfileInfoBigCard extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-String _getStyledTitle(EmpDrawerItem item) {
-  switch (item) {
-    case EmpDrawerItems.leaves:
-      return "Leaves";
-    case EmpDrawerItems.home:
-      return "Home";
-    case EmpDrawerItems.reports:
-      return "Reports";
-    case EmpDrawerItems.profile:
-      return "Profile";
-    case EmpDrawerItems.logout:
-      return ""; // You can return an empty string if needed
-    default:
-      return "Home"; // Set the default title
   }
 }
