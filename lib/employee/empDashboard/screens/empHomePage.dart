@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:project/constants/globalObjects.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,10 +12,6 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
-import 'package:project/constants/globalObjects.dart';
-import 'package:project/employee/empDashboard/screens/employeeMain.dart';
-import 'package:project/employee/empDashboard/screens/generalAppBar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
@@ -47,7 +44,6 @@ class HomePageState extends State<EmpDashHome> {
   double? lat;
   double? long;
   var initProfile = EmpProfilePageState();
-  bool isFetchingProfileData = true;
   EmpDrawerItem item = EmpDrawerItems.home;
 
   @override
@@ -56,52 +52,31 @@ class HomePageState extends State<EmpDashHome> {
     super.initState();
     checkLocationPermission();
     checkLocationPermissionAndFetchLocation();
-    isFetchingProfileData = true;
-    fetchProfileData();
+    if (GlobalObjects.empProfilePic == null || GlobalObjects.empCode == null || GlobalObjects.empCode!.isEmpty) {
+      fetchProfileData();
+    }
   }
 
-  EmpProfileRepository _profileRepository = EmpProfileRepository();
   String? profileImageUrl;
 
   Future<void> fetchProfileData() async {
     try {
-      // Fetch employee ID from the 'employee' table
       final dbHelper = DatabaseHelper.instance;
       int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
 
       if (loggedInEmployeeId > 0) {
-        // Fetch profile data using the employee ID from the repository
-        final profileRepository = EmpProfileRepository();
-        final profileData = await profileRepository.getData();
+        final profileData = await dbHelper.getEmployeeProfileData();
 
-        if (profileData.isNotEmpty) {
-          EmpProfileModel? empProfile = profileData.first;
-          final profileImage = empProfile.profilePic;
-
-          // Insert or replace data in the 'employeeProfileData' table with the employee ID
-          final db = await dbHelper.database;
-          await db.transaction((txn) async {
-            await txn.rawInsert('''
-            INSERT OR REPLACE INTO employeeProfileData (id, empCode, profilePic, empName, emailAddress)
-            VALUES (?, ?, ?, ?, ?)
-          ''', [loggedInEmployeeId, empProfile.empCode, profileImage, empProfile.empName, empProfile.emailAddress]);
-          });
-
-          // Update the state variables with the fetched data
-          setState(() {
-            savedEmpCode = empProfile.empCode;
-            profileImageUrl = profileImage;
-          });
-        }
-
-        // Print the profile data for verification
-        await dbHelper.printProfileData();
+        // Update the state variables with the fetched data
+        setState(() {
+          GlobalObjects.empCode = profileData['empCode'];
+          GlobalObjects.empProfilePic = profileData['profilePic'];
+        });
       }
     } catch (e) {
       print("Error fetching profile data: $e");
     } finally {
       setState(() {
-        isFetchingProfileData = false;
       });
     }
   }
@@ -292,11 +267,7 @@ class HomePageState extends State<EmpDashHome> {
                             List<EmpAttendanceModel> userList = state.users;
                             final employeeAttendance = userList[0];
                             return Builder(builder: (context) {
-                              return isFetchingProfileData
-                                  ? Center(
-                                      child: CircularProgressIndicator(),
-                                    )
-                                  : Scaffold(
+                              return Scaffold(
                                       appBar: AppBar(
                                         leading: Padding(
                                           padding: const EdgeInsets.fromLTRB(
@@ -387,7 +358,7 @@ class HomePageState extends State<EmpDashHome> {
                                                         ),
                                                         child: ClipOval(
                                                           child: buildProfileImage(
-                                                              profileImageUrl),
+                                                              GlobalObjects.empProfilePic),
                                                         ),
                                                       ),
                                                       GestureDetector(
@@ -467,7 +438,7 @@ class HomePageState extends State<EmpDashHome> {
                                             ),
                                             const SizedBox(height: 14),
                                             Text(
-                                              'ID ${savedEmpCode ?? ''}',
+                                              'ID ${GlobalObjects.empCode }',
                                               style: const TextStyle(
                                                   fontSize: 21,
                                                   fontWeight: FontWeight.w600,

@@ -120,6 +120,58 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
+  String? savedEmpCode;
+
+  Future<void> fetchProfileData() async {
+    try {
+      // Fetch employee ID from the 'employee' table
+      final dbHelper = DatabaseHelper.instance;
+      int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
+
+      if (loggedInEmployeeId > 0) {
+        // Fetch profile data using the employee ID from the repository
+        final profileRepository = EmpProfileRepository();
+        final profileData = await profileRepository.getData();
+
+        if (profileData.isNotEmpty) {
+          EmpProfileModel? empProfile = profileData.first;
+          final profileImage = empProfile.profilePic;
+
+          // Insert or replace data in the 'employeeProfileData' table with the employee ID
+          final db = await dbHelper.database;
+          await db.transaction((txn) async {
+            await txn.rawInsert('''
+            INSERT OR REPLACE INTO employeeProfileData (empCode, profilePic, empName, emailAddress)
+            VALUES (?, ?, ?, ?)
+          ''', [empProfile.empCode, profileImage, empProfile.empName, empProfile.emailAddress]);
+          });
+
+          GlobalObjects.empCode=empProfile.empCode;
+          GlobalObjects.empProfilePic=profileImage;
+          GlobalObjects.empName=empProfile.empName;
+          GlobalObjects.empMail=empProfile.emailAddress;
+          // Update the state variables with the fetched data
+          setState(() {
+            GlobalObjects.empCode=empProfile.empCode;
+            GlobalObjects.empProfilePic=profileImage;
+            GlobalObjects.empName=empProfile.empName;
+            GlobalObjects.empMail=empProfile.emailAddress;
+            savedEmpCode = empProfile.empCode;
+            profileImageUrl = profileImage;
+          });
+        }
+
+        // Print the profile data for verification
+        await dbHelper.printProfileData();
+      }
+    } catch (e) {
+      print("Error fetching profile data: $e");
+    } finally {
+      setState(() {
+      });
+    }
+  }
+
   Future<void> saveEmployeeToDatabase(int employeeId, String username, String corporateId) async {
     try {
       final dbHelper = DatabaseHelper();
@@ -129,6 +181,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       final List<Map<String, dynamic>> savedData = await dbHelper.getEmployees();
 
       if (savedData.isNotEmpty) {
+        fetchProfileData();
         print("Data saved successfully!");
         print(savedData); // Log the saved data
       } else {
@@ -141,6 +194,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   void _loginAsEmployee() async {
     showCustomSuccessAlertEmployee(context, "Login Successful!");
+    await fetchProfileData();
   }
 
   EmpProfileRepository profileRepository = EmpProfileRepository();

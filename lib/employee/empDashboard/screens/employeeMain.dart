@@ -49,32 +49,34 @@ class EmpMainPageState extends State<EmpMainPage> {
       // Delete employee data from the SQLite table
       if (employeeId > 0) {
         // Delete employee data
-        await dbHelper.deleteEmployee(employeeId);
+        await dbHelper.deleteAllEmployeeData();
 
         // Delete profile data
-        await dbHelper.deleteProfileData(employeeId);
+        await dbHelper.deleteProfileData();
 
         // Check if the data was successfully deleted
         List<Map<String, dynamic>> remainingEmployees = await dbHelper.getEmployees();
+        print("Remaining Employees: $remainingEmployees");
+
         bool isDataDeleted = remainingEmployees.isEmpty;
 
         if (!isDataDeleted) {
           // Data not deleted
+          print("data not deleted");
           return false;
         }
+
       }
 
+      print("Executing return");
+      Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) {
-            return Builder(
-              builder: (context) => BlocProvider(
-                create: (context) => SignInBloc(),
-                child: LoginPage(),
-              ),
-            ); // Navigate back to LoginPage
-          },
+          builder: (context) => BlocProvider(
+            create: (context) => SignInBloc(),
+            child: LoginPage(),
+          ),
         ),
       );
       print("After deletion");
@@ -84,7 +86,8 @@ class EmpMainPageState extends State<EmpMainPage> {
       return true;
     } catch (e) {
       print("Error during logout: $e");
-      return false; // Return false in case of an error
+      print("Logout failed: Data not deleted");
+      return false;
     }
   }
 

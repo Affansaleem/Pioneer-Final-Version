@@ -18,9 +18,8 @@ class DatabaseHelper {
 
   Future<Database> initDatabase() async {
     String path = join(await getDatabasesPath(), 'pioneer.db');
-    return await openDatabase(path, version: 3, onCreate: _createDB);
+    return await openDatabase(path, version: 5, onCreate: _createDB);
   }
-
 
   void _createDB(Database db, int version) async {
     try {
@@ -33,12 +32,11 @@ class DatabaseHelper {
 
       await db.execute('''
       CREATE TABLE IF NOT EXISTS employeeProfileData (
-        id INTEGER PRIMARY KEY,
-        empCode INTEGER,
-        profilePic TEXT,
-        empName TEXT,
-        emailAddress TEXT
-      )
+            empCode TEXT PRIMARY KEY,
+            profilePic TEXT,
+            empName TEXT,
+            emailAddress TEXT
+          )
     ''');
     } catch (e) {
       print('Error creating database tables: $e');
@@ -49,7 +47,6 @@ class DatabaseHelper {
     final db = await database;
     await db.insert('employee', {'id': id, 'corporate_id': corporateId});
     print("data inserted in employee table");
-
   }
 
   Future<void> printProfileData() async {
@@ -58,20 +55,22 @@ class DatabaseHelper {
       List<Map<String, dynamic>> result = await db.query('employeeProfileData');
       print('Employee Profile Data:');
       result.forEach((row) {
-        print('ID: ${row['id']}, EmpCode: ${row['empCode']}, EmpName: ${row['empName']}, EmailAddress: ${row['emailAddress']}');
+        print(
+            'EmpCode: ${row['empCode']}, EmpName: ${row['empName']}, EmailAddress: ${row['emailAddress']}');
       });
     } catch (e) {
       print("Error printing profile data: $e");
     }
   }
 
-
-  Future<Map<String, dynamic>> getProfileDataById(int employeeId) async {
+  Future<Map<String, dynamic>> getProfileDataById() async {
+    // Modify the return type to remove 'id' from the map
     final db = await database;
     List<Map<String, dynamic>> result = await db.query(
       'employeeProfileData',
-      where: 'id = ?',
-      whereArgs: [employeeId],
+      // Remove 'id' from the columns to retrieve
+      columns: ['empCode', 'profilePic', 'empName', 'emailAddress'],
+      // ... other code ...
     );
 
     if (result.isNotEmpty) {
@@ -81,12 +80,12 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> insertProfileData(int id, String empCode, String profilePic, String empName, String emailAddress) async {
+  Future<void> insertProfileData(String empCode, String profilePic,
+      String empName, String emailAddress) async {
     final db = await database;
     await db.insert(
       'employeeProfileData',
       {
-        'id': id,
         'empCode': empCode,
         'profilePic': profilePic,
         'empName': empName,
@@ -94,17 +93,45 @@ class DatabaseHelper {
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    print("Data inserted in profile table for ID: $id");
+    print("Data inserted in profile table");
   }
 
-  Future<void> deleteProfileData(int id) async {
+  Future<void> deleteProfileData() async {
     try {
       final db = await database;
-      await db.delete('employeeProfileData', where: 'id = ?', whereArgs: [id]);
-      print('Data deleted from profile table for ID: $id');
+      await db.delete('employeeProfileData');
+      print('All data deleted from profile table');
     } catch (e) {
       print('Error deleting profile data: $e');
     }
+  }
+
+  Future<Map<String, dynamic>> getEmployeeProfileData() async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query('employeeProfileData');
+
+    if (result.isNotEmpty) {
+      return {
+        'empCode': result.first['empCode'] as String, // Treat empCode as a string
+        'profilePic': result.first['profilePic'] as String,
+        'empName': result.first['empName'] as String,
+        'emailAddress': result.first['emailAddress'] as String,
+      };
+    } else {
+      // or any other default values
+      return {
+        'empCode': '',
+        'profilePic': '',
+        'empName': '',
+        'emailAddress': '',
+      };
+    }
+  }
+
+  Future<void> deleteAllEmployeeData() async {
+    final db = await database;
+    await db.delete('employee'); // Change to delete from 'employee' table
+    print("All data deleted from employee table");
   }
 
   Future<List<Map<String, dynamic>>> getEmployees() async {
@@ -130,11 +157,8 @@ class DatabaseHelper {
 
   Future<String?> getCoorporateId() async {
     final firstEmployee = await getFirstEmployee();
-    return firstEmployee != null ? firstEmployee['corporate_id'] as String : null;
-  }
-
-  Future<void> deleteEmployee(int employeeId) async {
-    final db = await database;
-    await db.delete('employee', where: 'id = ?', whereArgs: [employeeId]);
+    return firstEmployee != null
+        ? firstEmployee['corporate_id'] as String
+        : null;
   }
 }
