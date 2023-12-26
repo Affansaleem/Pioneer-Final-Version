@@ -9,7 +9,7 @@ class MonthlyReportsRepository {
 
   Future<Map<String, dynamic>> getEmployeeData() async {
     try {
-      final dbHelper = DatabaseHelper.instance;
+      final dbHelper = EmployeeDatabaseHelper.instance;
       final firstEmployee = await dbHelper.getFirstEmployee();
 
       if (firstEmployee != null) {

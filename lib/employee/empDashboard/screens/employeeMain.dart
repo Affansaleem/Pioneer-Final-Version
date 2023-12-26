@@ -43,19 +43,19 @@ class EmpMainPageState extends State<EmpMainPage> {
       prefs.setBool('isEmployee', false);
 
       // Get the employee ID from the SQLite table
-      final dbHelper = DatabaseHelper();
+      final dbHelper = EmployeeDatabaseHelper();
       int employeeId = await dbHelper.getLoggedInEmployeeId();
 
-      // Delete employee data from the SQLite table
       if (employeeId > 0) {
-        // Delete employee data
         await dbHelper.deleteAllEmployeeData();
 
         // Delete profile data
         await dbHelper.deleteProfileData();
 
-        // Check if the data was successfully deleted
-        List<Map<String, dynamic>> remainingEmployees = await dbHelper.getEmployees();
+        await dbHelper.deleteAttendenceData();
+
+        List<Map<String, dynamic>> remainingEmployees =
+            await dbHelper.getEmployees();
         print("Remaining Employees: $remainingEmployees");
 
         bool isDataDeleted = remainingEmployees.isEmpty;
@@ -65,7 +65,6 @@ class EmpMainPageState extends State<EmpMainPage> {
           print("data not deleted");
           return false;
         }
-
       }
 
       print("Executing return");
@@ -80,7 +79,7 @@ class EmpMainPageState extends State<EmpMainPage> {
         ),
       );
       print("After deletion");
-      await DatabaseHelper.instance.printProfileData();
+      await EmployeeDatabaseHelper.instance.printProfileData();
 
       // Data successfully deleted
       return true;
@@ -91,11 +90,11 @@ class EmpMainPageState extends State<EmpMainPage> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
     profileRepository = EmpProfileRepository();
+
     fetchProfileData();
   }
 
@@ -120,15 +119,16 @@ class EmpMainPageState extends State<EmpMainPage> {
         });
       } else if (profileData.isNotEmpty) {
         final sharedPrefEmp = await SharedPreferences.getInstance();
-          setState(() {
-            GlobalObjects.empName = sharedPrefEmp.getString('empName');
-            GlobalObjects.empMail = sharedPrefEmp.getString('empMail');
-          });
+        setState(() {
+          GlobalObjects.empName = sharedPrefEmp.getString('empName');
+          GlobalObjects.empMail = sharedPrefEmp.getString('empMail');
+        });
       }
     } catch (e) {
       print("Error fetching profile data: $e");
     }
   }
+
   final PageStorageBucket _bucket = PageStorageBucket();
 
   @override
@@ -240,9 +240,13 @@ class EmpMainPageState extends State<EmpMainPage> {
         bloc: dashBloc,
         builder: (context, state) {
           if (state is NavigateToProfileState) {
-            return EmpProfilePage(onRefreshData: () {
-              fetchProfileData();
-            });
+            return EmpProfilePage(
+
+              onProfileEdit: () {
+                // Call fetchProfileData when the profile is edited
+                fetchProfileData();
+              },
+            );
           } else if (state is NavigateToLeaveState) {
             print("This is leave state");
             return LeaveRequestPage(
@@ -296,7 +300,7 @@ class EmpMainPageState extends State<EmpMainPage> {
       case EmpDrawerItems.profile:
         return "Profile";
       case EmpDrawerItems.logout:
-        return ""; // You can return an empty string if needed
+        return "Home"; // You can return an empty string if needed
       default:
         return "Home"; // Set the default title
     }

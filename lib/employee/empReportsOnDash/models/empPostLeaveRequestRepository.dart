@@ -9,7 +9,7 @@ class SubmissionRepository {
 
   Future<String> getCorporateId() async {
     try {
-      final dbHelper = DatabaseHelper.instance;
+      final dbHelper = EmployeeDatabaseHelper.instance;
       final firstEmployee = await dbHelper.getFirstEmployee();
 
       if (firstEmployee != null) {

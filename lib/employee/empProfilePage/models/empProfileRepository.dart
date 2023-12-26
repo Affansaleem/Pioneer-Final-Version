@@ -17,7 +17,7 @@ class EmpProfileRepository {
 
   Future<void> fetchDatabaseData() async {
     try {
-      final dbHelper = DatabaseHelper();
+      final dbHelper = EmployeeDatabaseHelper();
       coorporateId = await dbHelper.getCoorporateId();
       employeeId = await dbHelper.getLoggedInEmployeeId();
     } catch (e) {
@@ -52,6 +52,8 @@ class EmpProfileRepository {
         return EmpProfileModel(
           empId: item["empId"],
           empName: item["empName"] ?? "",
+          fatherName: item["fatherName"] ?? "",
+          password: item["pwd"] ?? "",
           empCode: item["empCode"] ?? "",
           shiftCode: item["shiftCode"] ?? "",
           emailAddress: item["emailAddress"] ?? "",

@@ -108,7 +108,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         final cardNo = employeeData[0].cardNo;
         final empCode = employeeData[0].empCode;
         final employeeId = employeeData[0].empId;
-        await saveEmployeeToDatabase(employeeId, enteredUsername, enteredCorporateID);
+        await saveEmployeeToDatabase(
+            employeeId, enteredUsername, enteredCorporateID);
 
         _saveCardNoToSharedPreferences(cardNo, empCode, employeeId);
         _loginAsEmployee();
@@ -124,12 +125,10 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   Future<void> fetchProfileData() async {
     try {
-      // Fetch employee ID from the 'employee' table
-      final dbHelper = DatabaseHelper.instance;
+      final dbHelper = EmployeeDatabaseHelper.instance;
       int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
 
       if (loggedInEmployeeId > 0) {
-        // Fetch profile data using the employee ID from the repository
         final profileRepository = EmpProfileRepository();
         final profileData = await profileRepository.getData();
 
@@ -137,53 +136,73 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           EmpProfileModel? empProfile = profileData.first;
           final profileImage = empProfile.profilePic;
 
-          // Insert or replace data in the 'employeeProfileData' table with the employee ID
-          final db = await dbHelper.database;
-          await db.transaction((txn) async {
-            await txn.rawInsert('''
-            INSERT OR REPLACE INTO employeeProfileData (empCode, profilePic, empName, emailAddress)
-            VALUES (?, ?, ?, ?)
-          ''', [empProfile.empCode, profileImage, empProfile.empName, empProfile.emailAddress]);
-          });
+          // Insert or replace into employeeProfileData table
+          await dbHelper.insertProfileData(
+            empCode: empProfile.empCode,
+            profilePic: profileImage,
+            empName: empProfile.empName,
+            emailAddress: empProfile.emailAddress,
+          );
 
-          GlobalObjects.empCode=empProfile.empCode;
-          GlobalObjects.empProfilePic=profileImage;
-          GlobalObjects.empName=empProfile.empName;
-          GlobalObjects.empMail=empProfile.emailAddress;
-          // Update the state variables with the fetched data
+          // Insert or replace into profileTable
+          await dbHelper.insertProfilePageData(
+            empCode: empProfile.empCode,
+            profilePic: profileImage,
+            empName: empProfile.empName,
+            emailAddress: empProfile.emailAddress,
+            joinDate: empProfile.dateofJoin.toIso8601String() ?? '',
+            phoneNumber: empProfile.phoneNo ?? '',
+            password: empProfile.password ?? '',
+            fatherName: empProfile.fatherName ?? '',
+          );
+
+          // Update global objects and UI state
+          GlobalObjects.empCode = empProfile.empCode;
+          GlobalObjects.empProfilePic = profileImage;
+          GlobalObjects.empName = empProfile.empName;
+          GlobalObjects.empMail = empProfile.emailAddress;
+          GlobalObjects.empFatherName=empProfile.fatherName;
+          GlobalObjects.empPassword=empProfile.password;
+          GlobalObjects.empJoinDate=empProfile.dateofJoin;
+          GlobalObjects.empPhone=empProfile.phoneNo;
           setState(() {
-            GlobalObjects.empCode=empProfile.empCode;
-            GlobalObjects.empProfilePic=profileImage;
-            GlobalObjects.empName=empProfile.empName;
-            GlobalObjects.empMail=empProfile.emailAddress;
             savedEmpCode = empProfile.empCode;
             profileImageUrl = profileImage;
+            GlobalObjects.empCode = empProfile.empCode;
+            GlobalObjects.empProfilePic = profileImage;
+            GlobalObjects.empName = empProfile.empName;
+            GlobalObjects.empMail = empProfile.emailAddress;
+            GlobalObjects.empFatherName=empProfile.fatherName;
+            GlobalObjects.empPassword=empProfile.password;
+            GlobalObjects.empJoinDate=empProfile.dateofJoin;
+            GlobalObjects.empPhone=empProfile.phoneNo;
+
           });
         }
 
-        // Print the profile data for verification
+        // Print profile data for debugging
         await dbHelper.printProfileData();
       }
     } catch (e) {
-      print("Error fetching profile data: $e");
+      print("Error fetching and saving profile data: $e");
     } finally {
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
-  Future<void> saveEmployeeToDatabase(int employeeId, String username, String corporateId) async {
+  Future<void> saveEmployeeToDatabase(
+      int employeeId, String username, String corporateId) async {
     try {
-      final dbHelper = DatabaseHelper();
+      final dbHelper = EmployeeDatabaseHelper();
       await dbHelper.insertEmployee(employeeId, corporateId);
 
-      // Check if the data is saved by querying the database
-      final List<Map<String, dynamic>> savedData = await dbHelper.getEmployees();
+      final List<Map<String, dynamic>> savedData =
+          await dbHelper.getEmployees();
 
       if (savedData.isNotEmpty) {
         fetchProfileData();
         print("Data saved successfully!");
-        print(savedData); // Log the saved data
+        print(savedData);
       } else {
         print("Failed to save data!");
       }
@@ -215,7 +234,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       print("Error fetching profile data: $e");
     }
   }
-
 
   void _saveCardNoToSharedPreferences(
       String cardNo, String empCode, int employeeId) async {
