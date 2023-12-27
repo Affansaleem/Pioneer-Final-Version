@@ -180,9 +180,7 @@ class _EmployeeMapState extends State<EmployeeMap>
               Navigator.pop(context);
             });
             showPopupWithSuccessMessage("Attendance marked successfully!");
-            Timer(const Duration(seconds: 4), () {
-              Navigator.pop(context);
-            });
+
           } catch (e) {
             showCustomWarningAlert(context, "Internet not connected attendance will be marked when internet is available");
           }
@@ -284,9 +282,7 @@ class _EmployeeMapState extends State<EmployeeMap>
           Navigator.pop(context);
         });
         showPopupWithSuccessMessage("Attendance successfully marked!");
-        Timer(const Duration(seconds: 4), () {
-          Navigator.pop(context);
-        });
+
       } catch (e) {
 
         showCustomWarningAlert(context, "Internet not connected attendance will be marked when internet is available");
@@ -644,7 +640,6 @@ class _EmployeeMapState extends State<EmployeeMap>
                     child: ElevatedButton(
                       onPressed: () async {
                         if (selectedImage != null) {
-                          CheckOfficeOrLocation();
                           if (state is InternetGainedState) {
                             // If connected, proceed with attendance marking
                             CheckOfficeOrLocation();
