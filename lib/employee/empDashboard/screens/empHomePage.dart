@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -102,19 +103,8 @@ class HomePageState extends State<EmpDashHome> {
         }
         print("Data set to null successfully");
 
-        showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text('GREAT!'),
-            content: const Text('Pending Attendance Marked Sucessfully...'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'OK'),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        showCustomSuccessAlertEmployee(context, "Pending Attendance Marked Successfully $dateTimeConverted");
+
       } else if (empCode == "0" || empCode == null) {
         print("hello");
         return;
