@@ -336,13 +336,11 @@ void showCustomSuccessAlertEditEmployee(BuildContext context, String successMess
     type: CoolAlertType.success,
     title: 'Success',
     text: successMessage,
-    autoCloseDuration: Duration(seconds: 2), // Auto-close after 2 seconds
-    confirmBtnText: '', // Set confirm button text to an empty string
-    confirmBtnColor: Colors.transparent,
+    autoCloseDuration: Duration(seconds: 3), // Auto-close after 2 seconds
+    confirmBtnText: 'Ok', // Set confirm button text to an empty string
+    confirmBtnColor: Colors.blue,
     borderRadius: 10.0,
   );
-
-
 }
 void showCustomSuccessAlertAdmin(BuildContext context, String successMessage) {
   CoolAlert.show(

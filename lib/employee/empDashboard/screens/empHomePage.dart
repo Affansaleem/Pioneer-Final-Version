@@ -103,7 +103,8 @@ class HomePageState extends State<EmpDashHome> {
         }
         print("Data set to null successfully");
 
-        showCustomSuccessAlertEmployee(context, "Pending Attendance Marked Successfully $dateTimeConverted");
+        String formattedDateTime = DateFormat('MMM dd, yyyy hh:mm a').format(dateTimeConverted);
+        showCustomSuccessAlertEditEmployee(context, "Pending Attendance Marked Successfully $formattedDateTime");
 
       } else if (empCode == "0" || empCode == null) {
         print("hello");
