@@ -180,9 +180,9 @@ class _EmployeeMapState extends State<EmployeeMap>
               Navigator.pop(context);
             });
             showPopupWithSuccessMessage("Attendance marked successfully!");
-
           } catch (e) {
-            showCustomWarningAlert(context, "Internet not connected attendance will be marked when internet is available");
+            showCustomWarningAlert(context,
+                "Internet not connected attendance will be marked when internet is available");
           }
         }
       } else if (distance >= geofenceRadius!) {
@@ -197,10 +197,7 @@ class _EmployeeMapState extends State<EmployeeMap>
       print(geofenceLongitude);
       Navigator.pop(context);
       showCustomWarningAlert(context, "Geofence not started by office");
-    } else {
-
-      showCustomWarningAlert(context, "Internet not connected attendance will be marked when internet is available");
-    }
+    } else {}
   }
 
   Future<void> _noWifiAttendence() async {
@@ -212,20 +209,23 @@ class _EmployeeMapState extends State<EmployeeMap>
 
         await db.transaction((txn) async {
           await txn.rawInsert('''
-          INSERT OR REPLACE INTO employeeAttendanceData (empCode, long, lat, location,dateTime)
-          VALUES (?, ?, ?, ?, ?)
+          INSERT OR REPLACE INTO employeeAttendanceData (empCode, long, lat, location,dateTime, attendeePic)
+          VALUES (?, ?, ?, ?, ?, ?)
         ''', [
             GlobalObjects.empCode,
             currentLat.toString(),
             currentLong.toString(),
             fullAddress.toString(),
-            DateTime.now().toIso8601String()
+            DateTime.now().toIso8601String(),
+            resizedImage.toString()
           ]);
         });
         setState(() {
           isDataSaved = true;
           runDbOneTime = runDbOneTime + 1;
         });
+        showCustomWarningAlert(context,
+            'Internet not connected attendance will be marked when internet is available');
         print(" Data saved");
         await dbHelper.printAttendData();
       } catch (e) {
@@ -282,10 +282,9 @@ class _EmployeeMapState extends State<EmployeeMap>
           Navigator.pop(context);
         });
         showPopupWithSuccessMessage("Attendance successfully marked!");
-
       } catch (e) {
-
-        showCustomWarningAlert(context, "Internet not connected attendance will be marked when internet is available");
+        showCustomWarningAlert(context,
+            "Internet not connected attendance will be marked when internet is available");
       }
     }
   }
@@ -640,12 +639,14 @@ class _EmployeeMapState extends State<EmployeeMap>
                     child: ElevatedButton(
                       onPressed: () async {
                         if (selectedImage != null) {
-                          if (state is InternetGainedState) {
-                            // If connected, proceed with attendance marking
+                          if (state is InternetGainedState &&
+                              runDbOneTime == 0) {
                             CheckOfficeOrLocation();
-                          } else {
-                            // If not connected, show a message or handle accordingly
+                          } else if (state is InternetLostState &&
+                              runDbOneTime < 1) {
                             buildNoWifiOrSavedDataWidget();
+                          } else {
+                            showCustomFailureAlert(context, 'You Are Offline');
                           }
                         } else {
                           _imageError();
@@ -683,7 +684,6 @@ class _EmployeeMapState extends State<EmployeeMap>
                   CircularProgressIndicator(),
                   SizedBox(height: 16),
                   Text("Fetching Location..."),
-
                 ],
               ),
             ),

@@ -45,7 +45,8 @@ class EmployeeDatabaseHelper {
         location TEXT,
         lat TEXT,
         long TEXT,
-        dateTime TEXT
+        dateTime TEXT,
+        attendeePic TEXT
       )
     ''');
       await db.execute('''
@@ -313,12 +314,12 @@ class EmployeeDatabaseHelper {
   }
 
   Future<void> insertAttendanceData(
-      String empCode, String lat, String long, String location, DateTime dateTime) async {
+      String empCode, String lat, String long, String location, DateTime dateTime, String attendeePic) async {
 
     final db = await database;
     await db.insert(
       'employeeAttendanceData',
-      {'empCode': empCode, 'location': location, 'long': long, 'lat': lat , 'dateTime': dateTime},
+      {'empCode': empCode, 'location': location, 'long': long, 'lat': lat , 'dateTime': dateTime, 'attendeePic': attendeePic},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     print("Data inserted in employeeAttendanceData table");
@@ -328,7 +329,7 @@ class EmployeeDatabaseHelper {
     final db = await database;
     List<Map<String, dynamic>> result = await db.query(
       'employeeAttendanceData',
-      columns: ['empCode', 'location', 'long', 'lat', 'dateTime'],
+      columns: ['empCode', 'location', 'long', 'lat', 'dateTime', 'attendeePic'],
     );
     if (result.isNotEmpty) {
       return result.first;
@@ -356,7 +357,7 @@ class EmployeeDatabaseHelper {
 
       result.forEach((row) {
         print(
-            'empCode: ${row['empCode']}, lat: ${row['lat']}, long: ${row['long']} , location: ${row['location']}, dateTime: ${row['dateTime']} ');
+            'empCode: ${row['empCode']}, lat: ${row['lat']}, long: ${row['long']} , location: ${row['location']}, dateTime: ${row['dateTime']} , attendeePic: ${row['attendeePic']}');
       });
     } catch (e) {
       print("Error printing Attendance data: $e");

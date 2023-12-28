@@ -54,6 +54,7 @@ class HomePageState extends State<EmpDashHome> {
   final EmpAttendanceRepository _attendanceRepository =
       EmpAttendanceRepository();
   late EmpAttendanceModel empAttendanceData;
+  bool loadingData = false;
 
   Future<void> attendDoneNowNull() async {
     try {
@@ -63,8 +64,8 @@ class HomePageState extends State<EmpDashHome> {
       await db.transaction((txn) async {
         await txn.rawUpdate('''
         UPDATE employeeAttendanceData
-        SET long = ?, lat = ?, location = ?, dateTime = ?
-      ''', [null, null, null, null]);
+        SET long = ?, lat = ?, location = ?, dateTime = ?, attendeePic = ?
+      ''', [null, null, null, null, null]);
       });
       print("Data set to null successfully");
     } catch (e) {
@@ -83,13 +84,17 @@ class HomePageState extends State<EmpDashHome> {
       print("$empCode");
 
       if (empCode != "0" && empCode != null) {
+        String imageInString = attendData['attendeePic'];
+        List<int> imageBytes = imageInString.codeUnits;
+        final base64Image = base64Encode(imageBytes);
+
         DateTime dateTimeConverted = DateTime.parse(attendData['dateTime']);
         final geoFenceModel = GeofenceModel(
           cardno: attendData['empCode'],
           location: attendData['location'],
           lan: attendData['lat'],
           long: attendData['long'],
-          imageData: null,
+          imageData: base64Image,
           imeiNo: null,
           temp1: '',
           temp2: '',
@@ -133,7 +138,11 @@ class HomePageState extends State<EmpDashHome> {
     checkLocationPermissionAndFetchLocation();
     if (GlobalObjects.empProfilePic == null ||
         GlobalObjects.empCode == null ||
-        GlobalObjects.empCode!.isEmpty || GlobalObjects.empAbsent == null || GlobalObjects.empIn1 == null) {
+        GlobalObjects.empAbsent == null ) {
+      setState(() {
+        print("i am in");
+        loadingData = true;
+      });
       fetchProfileData();
     }
 
@@ -174,10 +183,12 @@ class HomePageState extends State<EmpDashHome> {
           GlobalObjects.empIn1 = empAttendanceData.in1;
           GlobalObjects.empOut2 = empAttendanceData.out2;
           GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
-          GlobalObjects.empPresent =
-              empDashData[0].presentCount.toString() ?? '';
+          GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
           GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
           GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
+          setState(() {
+            loadingData = false;
+          });
         });
       }
     } catch (e) {
@@ -399,302 +410,309 @@ class HomePageState extends State<EmpDashHome> {
       },
       builder: (context, state) {
         if (state is InternetGainedState) {
-          return RefreshIndicator(
-              onRefresh: () async {
-                showDialog(
-                  context: context,
-                  barrierDismissible:
-                  false, // Prevent user from dismissing the dialog
-                  builder: (BuildContext context) {
-                    return Scaffold(
-                      body: Center(
-                          child: CircularProgressIndicator()),
-                    );
-                  },
-                );
-
-                // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
-                await Future.delayed(Duration(seconds: 2));
-
-                // Close the dialog
-                Navigator.of(context).pop();
-
-                // Fetch profile data
-                await fetchProfileData();
-              },
-
-              child: Scaffold(
-                appBar: AppBar(
-                  leading: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                    child: IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.bars),
-                      color: Colors.white,
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
+          return loadingData
+              ? Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                )
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    showDialog(
+                      context: context,
+                      barrierDismissible:
+                          false, // Prevent user from dismissing the dialog
+                      builder: (BuildContext context) {
+                        return Scaffold(
+                          body: Center(child: CircularProgressIndicator()),
+                        );
                       },
-                    ),
-                  ),
-                  backgroundColor: AppColors.primaryColor,
-                  elevation: 0,
-                  title: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 4.5, 30, 0, 0),
-                    child: const Row(
-                      children: [
-                        Text(
-                          "Home",
-                          style: AppBarStyles.appBarTextStyle,
+                    );
+
+                    // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
+                    await Future.delayed(Duration(seconds: 2));
+
+                    // Close the dialog
+                    Navigator.of(context).pop();
+
+                    // Fetch profile data
+                    await fetchProfileData();
+                  },
+                  child: Scaffold(
+                    appBar: AppBar(
+                      leading: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                        child: IconButton(
+                          icon: const FaIcon(FontAwesomeIcons.bars),
+                          color: Colors.white,
+                          onPressed: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                        ),
+                      ),
+                      backgroundColor: AppColors.primaryColor,
+                      elevation: 0,
+                      title: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            MediaQuery.of(context).size.width / 4.5, 30, 0, 0),
+                        child: const Row(
+                          children: [
+                            Text(
+                              "Home",
+                              style: AppBarStyles.appBarTextStyle,
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 35, 10, 0),
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              onPressed: () async {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible:
+                                      false, // Prevent user from dismissing the dialog
+                                  builder: (BuildContext context) {
+                                    return Scaffold(
+                                      body: Center(
+                                          child: CircularProgressIndicator()),
+                                    );
+                                  },
+                                );
+
+                                // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
+                                await Future.delayed(Duration(seconds: 2));
+
+                                // Close the dialog
+                                Navigator.of(context).pop();
+
+                                // Fetch profile data
+                                await fetchProfileData();
+                              },
+                              icon: Icon(Icons.refresh, color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
+                      toolbarHeight: MediaQuery.of(context).size.height / 10,
                     ),
-                  ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 35, 10, 0),
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: IconButton(
-                          onPressed: () async {
-                            showDialog(
-                              context: context,
-                              barrierDismissible:
-                                  false, // Prevent user from dismissing the dialog
-                              builder: (BuildContext context) {
-                                return Scaffold(
-                                  body: Center(
-                                      child: CircularProgressIndicator()),
-                                );
-                              },
-                            );
-
-                            // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
-                            await Future.delayed(Duration(seconds: 2));
-
-                            // Close the dialog
-                            Navigator.of(context).pop();
-
-                            // Fetch profile data
-                            await fetchProfileData();
-                          },
-                          icon: Icon(Icons.refresh, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                  toolbarHeight: MediaQuery.of(context).size.height / 10,
-                ),
-                body: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      WillPopScope(
-                        onWillPop: () async {
-                          return _onBackPressed(context)
-                              .then((value) => value ?? false);
-                        },
-                        child: const SizedBox(),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 10, vertical: screenHeight / 80),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GridView.count(
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 70,
-                              mainAxisSpacing: 20,
+                    body: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          WillPopScope(
+                            onWillPop: () async {
+                              return _onBackPressed(context)
+                                  .then((value) => value ?? false);
+                            },
+                            child: const SizedBox(),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: screenHeight / 80),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: ClipOval(
-                                    child: buildProfileImage(
-                                        GlobalObjects.empProfilePic),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: onTapMaps,
-                                  child: ItemDashboard(
-                                    showShadow: false,
-                                    title: 'Mark Attendance',
-                                    customIcon: Image.asset(
-                                      "assets/icons/locate.png",
-                                      width: 100,
-                                      height: 45,
+                                GridView.count(
+                                  shrinkWrap: true,
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 70,
+                                  mainAxisSpacing: 20,
+                                  children: [
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: ClipOval(
+                                        child: buildProfileImage(
+                                            GlobalObjects.empProfilePic),
+                                      ),
                                     ),
-                                    background: AppColors.secondaryColor,
-                                  ),
+                                    GestureDetector(
+                                      onTap: onTapMaps,
+                                      child: ItemDashboard(
+                                        showShadow: false,
+                                        title: 'Mark Attendance',
+                                        customIcon: Image.asset(
+                                          "assets/icons/locate.png",
+                                          width: 100,
+                                          height: 45,
+                                        ),
+                                        background: AppColors.secondaryColor,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 75,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            const SizedBox(
-                              width: 10,
+                          ),
+                          Container(
+                            height: 75,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                ProfileInfoCard(
+                                  firstText: "IN",
+                                  secondText: GlobalObjects.empIn1 ?? "---",
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                ProfileInfoCard(
+                                  firstText: "Status",
+                                  secondText:
+                                      GlobalObjects.empStatus!.isNotEmpty
+                                          ? GlobalObjects.empStatus
+                                          : "---",
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                ProfileInfoCard(
+                                  firstText: "OUT",
+                                  secondText: GlobalObjects.empOut2 ?? "---",
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                              ],
                             ),
-                            ProfileInfoCard(
-                              firstText: "IN",
-                              secondText: GlobalObjects.empIn1 ?? "---",
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'ID ${GlobalObjects.empCode}',
+                            style: const TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: AppColors.darkGrey,
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            ProfileInfoCard(
-                              firstText: "Status",
-                              secondText: GlobalObjects.empStatus!.isNotEmpty ? GlobalObjects.empStatus : "---",
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            ProfileInfoCard(
-                              firstText: "OUT",
-                              secondText: GlobalObjects.empOut2 ?? "---",
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        'ID ${GlobalObjects.empCode}',
-                        style: const TextStyle(
-                            fontSize: 21,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        formattedDate,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.darkGrey,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Table(
-                        children: [
-                          TableRow(
+                          ),
+                          const SizedBox(height: 8),
+                          Table(
                             children: [
-                              ProfileInfoBigCard(
-                                firstText:
-                                    GlobalObjects.empPresent.toString(),
-                                secondText: "Total Present",
-                                icon: Image.asset(
-                                  "assets/icons/Attend.png",
-                                  width: screenWidth / 15,
-                                ),
-                              ),
-                              ProfileInfoBigCard(
-                                firstText: GlobalObjects.empAbsent.toString(),
-                                secondText: "Total Absent",
-                                icon: Image.asset(
-                                  "assets/icons/absence.png",
-                                  width: 28,
-                                ),
+                              TableRow(
+                                children: [
+                                  ProfileInfoBigCard(
+                                    firstText:
+                                        GlobalObjects.empPresent.toString(),
+                                    secondText: "Total Present",
+                                    icon: Image.asset(
+                                      "assets/icons/Attend.png",
+                                      width: screenWidth / 15,
+                                    ),
+                                  ),
+                                  ProfileInfoBigCard(
+                                    firstText:
+                                        GlobalObjects.empAbsent.toString(),
+                                    secondText: "Total Absent",
+                                    icon: Image.asset(
+                                      "assets/icons/absence.png",
+                                      width: 28,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      Table(
-                        children: [
-                          TableRow(
+                          Table(
                             children: [
-                              ProfileInfoBigCard(
-                                firstText: GlobalObjects.empLeaves.toString(),
-                                secondText: "Total Leaves",
-                                icon: Image.asset(
-                                  "assets/icons/leave.png",
-                                  width: 28,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: screenWidth,
-                        padding: EdgeInsets.symmetric(
-                            vertical: lowerButtonsVertical,
-                            horizontal: lowerButtonsHorizontal),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GridView.count(
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 50,
-                              mainAxisSpacing: 20,
-                              children: [
-                                GestureDetector(
-                                  child: ItemDashboard(
-                                    showShadow: false,
-                                    title: 'Leave Request',
-                                    customIcon: Image.asset(
+                              TableRow(
+                                children: [
+                                  ProfileInfoBigCard(
+                                    firstText:
+                                        GlobalObjects.empLeaves.toString(),
+                                    secondText: "Total Leaves",
+                                    icon: Image.asset(
                                       "assets/icons/leave.png",
-                                      width: 100,
-                                      height: 45,
+                                      width: 28,
                                     ),
-                                    background: AppColors.secondaryColor,
                                   ),
-                                  onTap: () {
-                                    Navigator.push(context,
-                                        CupertinoPageRoute(
-                                      builder: (context) {
-                                        // return LeaveRequestForm();
-                                        return LeaveRequestPage(
-                                          viaDrawer: false,
-                                        );
-                                      },
-                                    ));
-                                  },
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        PageTransition(
-                                            child: ReportsMainPage(
+                                ],
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: screenWidth,
+                            padding: EdgeInsets.symmetric(
+                                vertical: lowerButtonsVertical,
+                                horizontal: lowerButtonsHorizontal),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GridView.count(
+                                  shrinkWrap: true,
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 50,
+                                  mainAxisSpacing: 20,
+                                  children: [
+                                    GestureDetector(
+                                      child: ItemDashboard(
+                                        showShadow: false,
+                                        title: 'Leave Request',
+                                        customIcon: Image.asset(
+                                          "assets/icons/leave.png",
+                                          width: 100,
+                                          height: 45,
+                                        ),
+                                        background: AppColors.secondaryColor,
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            CupertinoPageRoute(
+                                          builder: (context) {
+                                            // return LeaveRequestForm();
+                                            return LeaveRequestPage(
                                               viaDrawer: false,
-                                            ),
-                                            type: PageTransitionType
-                                                .rightToLeft));
-                                  },
-                                  child: ItemDashboard(
-                                    showShadow: false,
-                                    title: 'Reports',
-                                    customIcon: Image.asset(
-                                      "assets/icons/report.png",
-                                      width: 50,
-                                      height: 45,
+                                            );
+                                          },
+                                        ));
+                                      },
                                     ),
-                                    background: AppColors.secondaryColor,
-                                  ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            PageTransition(
+                                                child: ReportsMainPage(
+                                                  viaDrawer: false,
+                                                ),
+                                                type: PageTransitionType
+                                                    .rightToLeft));
+                                      },
+                                      child: ItemDashboard(
+                                        showShadow: false,
+                                        title: 'Reports',
+                                        customIcon: Image.asset(
+                                          "assets/icons/report.png",
+                                          width: 50,
+                                          height: 45,
+                                        ),
+                                        background: AppColors.secondaryColor,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ));
+                    ),
+                  ));
         } else if (state is InternetLostState) {
           return Expanded(
             child: Scaffold(
