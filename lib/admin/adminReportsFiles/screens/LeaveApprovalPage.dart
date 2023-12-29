@@ -167,6 +167,7 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
                                   fromDate: leaveRequest.fromdate,
                                   status: leaveRequest.approvedStatus,
                                   applicationDate: leaveRequest.applicationDate,
+                                  toDate: leaveRequest.todate,
                                 );
                               },
                             );
@@ -365,12 +366,14 @@ class _LeaveRequestCardState extends State<LeaveRequestCard> with TickerProvider
 class LeaveRequestApproveCard extends StatelessWidget {
   final String reason;
   final DateTime fromDate;
+  final DateTime toDate; // Added "To" field
   final String status;
   final DateTime applicationDate;
 
   LeaveRequestApproveCard({
     required this.reason,
     required this.fromDate,
+    required this.toDate,
     required this.status,
     required this.applicationDate,
   });
@@ -417,19 +420,32 @@ class LeaveRequestApproveCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    'From: ${formatDate(fromDate)}', // Format the date
-                    style: GoogleFonts.lato(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'From: ${formatDate(fromDate)}',
+                        style: GoogleFonts.lato(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 20), // Add spacing between From and To
+                      Text(
+                        'To: ${formatDate(toDate)}',
+                        style: GoogleFonts.lato(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Icon(
                         Icons.check_circle,
-                        size: 36.0,
+                        size: 20.0,
                         color: Colors.blue,
                       ),
                       Text(
@@ -442,7 +458,7 @@ class LeaveRequestApproveCard extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    'Application Date: ${formatDate(applicationDate)}', // Format the date
+                    'Application Date: ${formatDate(applicationDate)}',
                     style: GoogleFonts.lato(
                       fontSize: 14,
                       color: Colors.grey,

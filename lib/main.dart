@@ -201,13 +201,13 @@ class MyApp extends StatelessWidget {
             create: (context) {
               return AdminProfileBloc(AdminProfileRepository());
             },
-            child: AdminProfilePage(),
+            child:  AdminProfilePage(onProfileEdit: (){},),
           ),
           BlocProvider(
             create: (context) => AdminEditProfileBloc(
                 AdminEditProfileRepository("http://62.171.184.216:9595")),
             child:
-                const AdminEditProfilePage(), // Replace with your main UI page
+                 AdminEditProfilePage(onSave: () {  },), // Replace with your main UI page
           ),
           BlocProvider(
             create: (context) => AdminReportsBloc(

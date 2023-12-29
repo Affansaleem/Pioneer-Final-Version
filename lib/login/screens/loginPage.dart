@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../No_internet/no_internet.dart';
 import '../../Sqlite/admin_sqliteHelper.dart';
 import '../../Sqlite/sqlite_helper.dart';
+import '../../admin/adminProfile/models/AdminProfileRepository.dart';
 import '../../employee/empDashboard/models/empDashModel.dart';
 import '../../employee/empDashboard/models/empDashRepository.dart';
 import '../../employee/empDashboard/models/emp_attendance_status_model.dart';
@@ -67,11 +65,11 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   String? corporateId;
 
   void handleAdminLogin(
-    String enteredCorporateID,
-    String enteredUsername,
-    String enteredPassword,
-    String enteredRole,
-  ) async {
+      String enteredCorporateID,
+      String enteredUsername,
+      String enteredPassword,
+      String enteredRole,
+      ) async {
     try {
       final employeeData = await userRepository.getData(
         corporateId: enteredCorporateID,
@@ -82,6 +80,11 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
       if (employeeData.isNotEmpty) {
         _saveAdminDataToSharedPreferences(enteredUsername, enteredCorporateID);
+
+        // Set GlobalObjects values
+        GlobalObjects.adminusername = enteredUsername;
+        GlobalObjects.adminCorpId = enteredCorporateID;
+
         _loginAsAdmin();
       } else {
         showCustomFailureAlert(context, "User Not Found!");
@@ -91,14 +94,15 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void _saveAdminDataToSharedPreferences(
-      String username, String corporateId) async {
+
+  void _saveAdminDataToSharedPreferences(String username, String corporateId) async {
     final sharedPref = await SharedPreferences.getInstance();
     GlobalObjects.adminusername = username;
     GlobalObjects.adminCorpId = corporateId;
     sharedPref.setString('admin_username', username);
     sharedPref.setString('admin_corporateId', corporateId);
   }
+
 
   void _handleEmployeeLogin(
     String enteredCorporateID,
@@ -250,18 +254,22 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     await fetchProfileData();
   }
 
-  EmpProfileRepository profileRepository = EmpProfileRepository();
+
   String? profileImageUrl;
   Future<void> saveEmpAllToShared() async {
     try {
-      final profileData = await profileRepository.getData();
-      if (profileData.isNotEmpty) {
-        EmpProfileModel? empProfile = profileData.first;
+      final repository = AdminProfileRepository();
+      final employeeData = await repository
+          .fetchAdminProfile(GlobalObjects.adminCorpId.toString());
+
+      if (employeeData != null) {
         final sharedPrefEmp = await SharedPreferences.getInstance();
 
         setState(() {
-          sharedPrefEmp.setString('empName', empProfile.empName);
-          sharedPrefEmp.setString('empMail', empProfile.emailAddress);
+          sharedPrefEmp.setString('empName', employeeData.userName);
+          sharedPrefEmp.setString('empMail', employeeData.email);
+          GlobalObjects.adminusername = employeeData.userName;
+          GlobalObjects.adminMail = employeeData.email;
         });
       }
     } catch (e) {
@@ -279,16 +287,20 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     GlobalObjects.empId = employeeId;
   }
   void _loginAsAdmin() async {
-    showCustomSuccessAlertAdmin(context, "Login Successful!");
+    print("Start _loginAsAdmin");
 
     // Extract the admin's data
     String? username = GlobalObjects.adminusername;
     String? corporateId = GlobalObjects.adminCorpId;
 
+    print("Username: $username, Corporate ID: $corporateId");
+
     // Check for null values
     if (username != null && corporateId != null) {
       try {
         await saveAdminToDatabase(username, corporateId);
+        showCustomSuccessAlertAdmin(context, "Login Successful!");
+        print("Admin data saved successfully!");
       } catch (e) {
         print("Error saving admin data to SQLite: $e");
         // Handle the error gracefully, e.g., show an error message to the user
@@ -296,15 +308,19 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     } else {
       print("Error: Admin data is null.");
     }
+
+    print("End _loginAsAdmin");
   }
 
   Future<void> saveAdminToDatabase(String username, String corporateId) async {
     try {
-      print(username);
-      print(corporateId);
-      final adminDbHelper = AdminDatabaseHelper();
-      await adminDbHelper.insertAdmin({'username': username, 'corporate_id': corporateId});
-      print("Admin data saved successfully!");
+      if (username != null && corporateId != null) {
+        final adminDbHelper = AdminDatabaseHelper();
+        await adminDbHelper.insertAdmin({'username': username, 'corporate_id': corporateId});
+        print("Admin data saved successfully!");
+      } else {
+        print("Error: Received null values for username or corporateId.");
+      }
     } catch (e) {
       // Rethrow the exception to let the calling function handle it
       throw Exception("Error saving admin data to SQLite: $e");
@@ -418,19 +434,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return BlocConsumer<InternetBloc, InternetStates>(
       listener: (context, state) {
         // TODO: implement listener
-        if (state is InternetLostState) {
-          // Set the flag to true when internet is lost
-          isInternetLost = true;
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.push(
-              context,
-              PageTransition(
-                child: const NoInternet(),
-                type: PageTransitionType.rightToLeft,
-              ),
-            );
-          });
-        } else if (state is InternetGainedState) {
+         if (state is InternetGainedState) {
           // Check if internet was previously lost
           if (isInternetLost) {
             // Navigate back to the original page when internet is regained

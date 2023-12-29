@@ -7,7 +7,6 @@ class AdminProfileRepository {
 
   Future<AdminProfileModel?> fetchAdminProfile(String employeeId) async {
     try {
-      // Retrieve corporate_id from SQLite table
       final adminDbHelper = AdminDatabaseHelper();
       final adminData = await adminDbHelper.getAdmins();
       if (adminData.isNotEmpty) {
@@ -34,7 +33,6 @@ class AdminProfileRepository {
         return null;
       }
     } catch (e) {
-      // Handle any network or exception errors here.
       print('Exception occurred while fetching admin profile data: $e');
       return null;
     }

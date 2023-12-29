@@ -6,20 +6,28 @@ import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Sqlite/admin_sqliteHelper.dart';
 import '../../../constants/AnimatedTextPopUp.dart';
 import '../../../No_internet/no_internet.dart';
 import '../models/AdminEditProfileModel.dart';
 import '../models/AdminEditProfileRepository.dart';
 
 class AdminEditProfilePage extends StatefulWidget {
-  const AdminEditProfilePage({Key? key}) : super(key: key);
+  final VoidCallback onSave;
+  final VoidCallback? onSaveSuccess; // Define the onSaveSuccess callback
+
+  AdminEditProfilePage({Key? key, required this.onSave, this.onSaveSuccess}) : super(key: key);
 
   @override
-  State<AdminEditProfilePage> createState() => _AdminEditProfilePageState();
+  State<AdminEditProfilePage> createState() => _AdminEditProfilePageState(onSave);
 }
 
 class _AdminEditProfilePageState extends State<AdminEditProfilePage>
     with TickerProviderStateMixin {
+  final VoidCallback onSave;
+
+  _AdminEditProfilePageState(this.onSave);
   late AnimationController addToCartPopUpAnimationController;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -51,37 +59,44 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
   }
 
   Future<bool> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
+    final dbHelper = AdminDatabaseHelper();
+    final adminList = await dbHelper.getAdmins();
+
+    if (adminList.isNotEmpty) {
+      final adminData = adminList.first;
       final adminEditProfile = AdminEditProfile(
-        userLoginId: 'ptsadmin',
+        userLoginId: adminData['username'].toString(),
         userName: _usernameController.text,
         userPassword: _passwordController.text,
         email: _emailController.text,
         mobile: _phoneNumberController.text,
       );
 
-      final success =
-          await _editProfileRepository.updateAdminProfile(adminEditProfile);
+      final success = await _editProfileRepository.updateAdminProfile(adminEditProfile);
 
       if (success) {
+        GlobalObjects.adminphonenumber = adminEditProfile.mobile;
         GlobalObjects.adminMail = adminEditProfile.email;
-        GlobalObjects.empName = adminEditProfile.userName;
+        GlobalObjects.adminusername = adminEditProfile.userName;
+        GlobalObjects.adminpassword = adminEditProfile.userPassword;
+
         addToCartPopUpAnimationController.forward();
-        // Delay for a few seconds and then reverse the animation
+
         Timer(const Duration(seconds: 3), () {
           addToCartPopUpAnimationController.reverse();
           Navigator.pop(context);
-          Navigator.pop(context,true);
+          Navigator.pop(context, true);
         });
         showPopupWithSuccessMessage("Profile updated successfully!");
+        onSave();
 
-      }
-      else {
+        // Set the boolean value to true
+        widget.onSaveSuccess?.call();
+      } else {
         addToCartPopUpAnimationController.forward();
-        // Delay for a few seconds and then reverse the animation
         Timer(const Duration(seconds: 3), () {
           addToCartPopUpAnimationController.reverse();
-          Navigator.pop(context,false);
+          Navigator.pop(context, false);
         });
         showPopupWithFailedMessage("Failed to update profile!");
       }

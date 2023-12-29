@@ -962,9 +962,6 @@ class _AdminDailyReportEmployeeListPageState
                           );
                         },
                       ),
-                      Container(
-                        child: Text("End"),
-                      )
                     ],
                   ),
                 ],
