@@ -259,20 +259,20 @@ class HomePageState extends State<EmpDashHome> {
     bool? exitConfirmed = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirm Exit'),
-        content: Text('Are you sure you want to exit the app?'),
+        title: const Text('Confirm Exit'),
+        content: const Text('Are you sure you want to exit the app?'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(false);
             },
-            child: Text('No'),
+            child: const Text('No'),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(true);
             },
-            child: Text('Yes'),
+            child: const Text('Yes'),
           ),
         ],
       ),
@@ -411,7 +411,7 @@ class HomePageState extends State<EmpDashHome> {
       builder: (context, state) {
         if (state is InternetGainedState) {
           return loadingData
-              ? Scaffold(
+              ? const Scaffold(
                   body: Center(child: CircularProgressIndicator()),
                 )
               : RefreshIndicator(
@@ -421,14 +421,14 @@ class HomePageState extends State<EmpDashHome> {
                       barrierDismissible:
                           false, // Prevent user from dismissing the dialog
                       builder: (BuildContext context) {
-                        return Scaffold(
+                        return const Scaffold(
                           body: Center(child: CircularProgressIndicator()),
                         );
                       },
                     );
 
                     // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
-                    await Future.delayed(Duration(seconds: 2));
+                    await Future.delayed(const Duration(seconds: 2));
 
                     // Close the dialog
                     Navigator.of(context).pop();
@@ -474,7 +474,7 @@ class HomePageState extends State<EmpDashHome> {
                                   barrierDismissible:
                                       false, // Prevent user from dismissing the dialog
                                   builder: (BuildContext context) {
-                                    return Scaffold(
+                                    return const Scaffold(
                                       body: Center(
                                           child: CircularProgressIndicator()),
                                     );
@@ -482,7 +482,7 @@ class HomePageState extends State<EmpDashHome> {
                                 );
 
                                 // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
-                                await Future.delayed(Duration(seconds: 2));
+                                await Future.delayed(const Duration(seconds: 2));
 
                                 // Close the dialog
                                 Navigator.of(context).pop();
@@ -490,7 +490,7 @@ class HomePageState extends State<EmpDashHome> {
                                 // Fetch profile data
                                 await fetchProfileData();
                               },
-                              icon: Icon(Icons.refresh, color: Colors.white),
+                              icon: const Icon(Icons.refresh, color: Colors.white),
                             ),
                           ),
                         ),
@@ -721,7 +721,7 @@ class HomePageState extends State<EmpDashHome> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "Slow or No Internet Connection!",
+                      "Slow or No Internet Connection homepage no internet state!",
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 30,
@@ -746,7 +746,7 @@ class HomePageState extends State<EmpDashHome> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        "No Internet Connection!",
+                        "Slow or No Internet Connection homepage no internet state!",
                         style: TextStyle(
                           color: Colors.red,
                           fontSize: 30,

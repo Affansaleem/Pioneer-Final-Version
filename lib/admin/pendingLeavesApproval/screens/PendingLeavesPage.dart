@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -5,12 +6,11 @@ import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
-
 import '../../../No_internet/no_internet.dart';
+import '../../../constants/AnimatedTextPopUp.dart';
 import '../bloc/pending_leaves_bloc.dart';
 import '../bloc/pending_leaves_event.dart';
 import '../bloc/pending_leaves_state.dart';
-import '../model/ApproveManualPunchModel.dart';
 import '../model/ApproveManualPunchRepository.dart';
 import '../model/PendingLeavesModel.dart';
 
@@ -25,20 +25,38 @@ class PendingLeavesPage extends StatefulWidget {
       _PendingLeavesPageState(approveRepository);
 }
 
-class _PendingLeavesPageState extends State<PendingLeavesPage> {
+class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProviderStateMixin{
   String? errorMessage; // Declare the errorMessage variable
   final ApproveManualPunchRepository approveRepository;
 
   // Constructor to inject the repository
   _PendingLeavesPageState(this.approveRepository);
+  late AnimationController addToCartPopUpAnimationController;
 
+  void dispose() {
+    addToCartPopUpAnimationController.dispose();
+    super.dispose();
+  }
   @override
   void initState() {
+    addToCartPopUpAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
     super.initState();
     // Trigger the fetch event when the widget is initialized.
     BlocProvider.of<PendingLeavesBloc>(context).add(FetchPendingLeaves());
   }
 
+  void showPopupWithMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpSuccess(
+            addToCartPopUpAnimationController, message);
+      },
+    );
+  }
   void _refreshPendingLeaves() {
     BlocProvider.of<PendingLeavesBloc>(context).add(FetchPendingLeaves());
   }
@@ -185,9 +203,14 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> {
 
     approveRepository.postApproveManualPunch(data).then((_) {
       // Handle success if needed
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Leave approved successfully')),
-      );
+      addToCartPopUpAnimationController.forward();
+
+      // Delay for a few seconds and then reverse the animation
+      Timer(const Duration(seconds: 2), () {
+        addToCartPopUpAnimationController.reverse();
+        Navigator.pop(context);
+      });
+      showPopupWithMessage("Attendance Approved Successfully!");
       _refreshPendingLeaves();
     }).catchError((error) {
       // Handle the error

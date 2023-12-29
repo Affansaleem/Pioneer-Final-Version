@@ -231,11 +231,7 @@ class _AdminPageState extends State<AdminPage> {
                             if (AdminResponsive.isMobile(context))
                                Column(
                                 children: [
-                                  // Text(
-                                  //   "POWERED BY: PIONEER 2023",
-                                  //   style: TextStyle(
-                                  //       color: Colors.black, fontSize: 10),
-                                  // ),
+
                                   SizedBox(
                                       height: 60,
                                       width: 60,

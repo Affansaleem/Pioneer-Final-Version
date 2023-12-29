@@ -709,6 +709,7 @@ class _EmployeeMapState extends State<EmployeeMap>
         ),
       );
     } else {
+      print("In else part");
       _noWifiAttendence();
       return const Scaffold(
         body: Center(

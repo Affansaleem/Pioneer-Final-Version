@@ -47,7 +47,7 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 150.0),
+          padding: const EdgeInsets.symmetric(vertical: 150.0,horizontal: 20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
@@ -27,7 +29,8 @@ class ManualMarkAttendance extends StatefulWidget {
   _ManualMarkAttendanceState createState() => _ManualMarkAttendanceState();
 }
 
-class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
+class _ManualMarkAttendanceState extends State<ManualMarkAttendance>
+    with TickerProviderStateMixin {
   String corporateId = '';
   List<GetActiveEmpModel> employees = [];
   List<GetActiveEmpModel> selectedEmployees = [];
@@ -45,9 +48,19 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
   List<String> companyNames = [];
   List<Branch> buildCards = [];
   bool showLoading = true;
+  late AnimationController addToCartPopUpAnimationController;
+
+  void dispose() {
+    addToCartPopUpAnimationController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
+    addToCartPopUpAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
     super.initState();
     _fetchCorporateIdFromPrefs();
     _fetchDepartmentNames();
@@ -64,8 +77,7 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
 
   Future<void> loadData() async {
     try {
-      List<Branch> branches =
-          await BranchRepository().getAllActiveBranches();
+      List<Branch> branches = await BranchRepository().getAllActiveBranches();
 
       setState(() {
         buildCards = branches;
@@ -74,6 +86,16 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
       print('Error: $e');
       // Handle the error appropriately
     }
+  }
+
+  void showPopupWithMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return addToCartPopUpNoCrossMessage(
+            addToCartPopUpAnimationController, message);
+      },
+    );
   }
 
   Future<void> _fetchDepartmentNames() async {
@@ -115,14 +137,20 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
         ),
       );
     } else {
-      GlobalObjects.checkForSelection(context);
+      addToCartPopUpAnimationController.forward();
+
+      // Delay for a few seconds and then reverse the animation
+      Timer(const Duration(seconds: 2), () {
+        addToCartPopUpAnimationController.reverse();
+        Navigator.pop(context);
+      });
+      showPopupWithMessage("Please Select Employee!");
     }
   }
 
   Future<void> _fetchBranchNames() async {
     try {
-      final branches =
-          await BranchRepository().getAllActiveBranches();
+      final branches = await BranchRepository().getAllActiveBranches();
 
       // Extract branch names from the branches list and filter out null values
       final branchNames = branches
@@ -142,8 +170,7 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
   Future<void> _fetchCompanyNames() async {
     try {
       // Replace with the actual method to fetch company names
-      final companies =
-          await CompanyRepository().getAllActiveCompanies();
+      final companies = await CompanyRepository().getAllActiveCompanies();
 
       // Extract company names from the companies list and filter out null values
       final companyNames = companies
@@ -925,9 +952,6 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance> {
                             );
                           },
                         ),
-                  Container(
-                    child: Text("End"),
-                  ),
                 ],
               ),
             ),
