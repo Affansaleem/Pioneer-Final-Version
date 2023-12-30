@@ -34,7 +34,7 @@ class PendingLeavesModel {
   factory PendingLeavesModel.fromJson(Map<String, dynamic> json) {
     return PendingLeavesModel(
       id: json['id'] ?? 0,
-      cardNo: json['cardno'] ?? '',
+      cardNo: json['cardNo'] ?? '',
       punchDatetime: parseApiDate(json['punchDatetime'] ?? ''),
       location: json['location'] ?? '',
       latitude: double.tryParse(json['lan'] ?? '') ?? 0.0,

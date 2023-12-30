@@ -124,7 +124,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage> with TickerPr
             return Scaffold(
               appBar: AppBar(
                 title: const Text(
-                  "Leave Submission Page",
+                  "Leave Application",
                   style: AppBarStyles.appBarTextStyle
                 ),
                 centerTitle: true,

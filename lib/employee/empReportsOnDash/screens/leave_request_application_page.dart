@@ -373,6 +373,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                                 0;
 
                                         final submissionModel = SubmissionModel(
+
                                           employeeId: empId.toString(),
                                           fromDate:
                                               "${_fromDate.toLocal().toIso8601String().split('T')[0]}T00:00:00Z",
