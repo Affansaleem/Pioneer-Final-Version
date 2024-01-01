@@ -12,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../CustomPopup.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
 import '../../../login/screens/loginPage.dart';
