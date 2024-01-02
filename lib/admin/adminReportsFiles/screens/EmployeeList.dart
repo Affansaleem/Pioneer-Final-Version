@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
@@ -409,7 +410,7 @@ class _EmployeeListState extends State<EmployeeList>
                   },
                   icon: Icon(
                     Icons.check,
-                    color: Colors.green, // Change color to green
+                    color: Colors.white, // Change color to green
                     size: 24,
                   ),
                 ),
@@ -423,84 +424,96 @@ class _EmployeeListState extends State<EmployeeList>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                onChanged: (value) {
-                                  setState(() {
-                                    searchQuery = value;
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Search by name or code...',
-                                  icon: const Icon(
-                                    Icons.search,
-                                    color: Colors.black,
-                                  ),
-                                  hintStyle: GoogleFonts.openSans(
-                                    textStyle: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                    ),
-                                  ),
+                    Container(
+                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                searchQuery = value;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search by name or code...',
+                              icon: const Icon(
+                                Icons.search,
+                                color: Colors.black,
+                              ),
+                              hintStyle: GoogleFonts.openSans(
+                                textStyle: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
                                 ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                final selectedValues = await showModalBottomSheet<Map<String, String?>>(
-                                  context: context,
-                                  builder: (context) => FilterBottomSheet(
-                                    departmentNames: departmentNames,
-                                    branchNames: branchNames,
-                                    companyNames: companyNames,
-                                    onDepartmentChanged: onDepartmentChanged,
-                                    onBranchChanged: onBranchChanged,
-                                    onCompanyChanged: onCompanyChanged,
-                                    onApplyFilters: () {
-                                      // Apply your filter logic here
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                );
+                              border: InputBorder.none,
 
-                                if (selectedValues != null) {
-                                  final Map<String, String> resultMap = selectedValues.cast<String, String>();
-                                  setState(() {
-                                    departmentDropdownValue = resultMap['department'] ?? '';
-                                    branchDropdownValue = resultMap['branch'] ?? '';
-                                    companyDropdownValue = resultMap['company'] ?? '';
-                                  });
-                                }
-                              },
-                              icon: Icon(Icons.filter_list),
                             ),
-                            IconButton(
-                              onPressed: _toggleSelectAll,
-                              icon: Icon(
-                                color: Colors.blue,
-                                selectAll
-                                    ? Icons.check_box
-                                    : Icons.check_box_outline_blank,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                        Container(
+                          width: 30,
+                          margin: EdgeInsets.only(left: 10,right: 10),
+                          child: IconButton(
+                            onPressed: () async {
+                              final selectedValues =
+                              await showModalBottomSheet<Map<String, String?>>(
+                                context: context,
+                                builder: (context) => FilterBottomSheet(
+                                  departmentNames: departmentNames,
+                                  branchNames: branchNames,
+                                  companyNames: companyNames,
+                                  onDepartmentChanged: onDepartmentChanged,
+                                  onBranchChanged: onBranchChanged,
+                                  onCompanyChanged: onCompanyChanged,
+                                  onApplyFilters: () {
+                                    // Apply your filter logic here
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              );
 
-                    ],
+                              if (selectedValues != null) {
+                                final Map<String, String> resultMap =
+                                selectedValues.cast<String, String>();
+                                setState(() {
+                                  departmentDropdownValue = resultMap['department'] ?? '';
+                                  branchDropdownValue = resultMap['branch'] ?? '';
+                                  companyDropdownValue = resultMap['company'] ?? '';
+                                });
+                              }
+                            },
+                            icon: Icon(FontAwesomeIcons.slidersH),
+                          ),
+                        ),
+                        Container(
+                          width: 30,
+                          margin: EdgeInsets.only(right: 5),
+                          child: IconButton(
+                            onPressed: _toggleSelectAll,
+                            icon: Icon(
+                              color: Colors.black,
+                              selectAll
+                                  ? Icons.library_add_check
+                                  : Icons.library_add_check_outlined,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+
+            ],
                   ),
                   buildCards == null ||
                           filterEmployees(employees, searchQuery).length ==
