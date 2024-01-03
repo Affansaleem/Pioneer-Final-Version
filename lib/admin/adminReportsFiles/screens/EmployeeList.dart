@@ -52,9 +52,9 @@ class _EmployeeListState extends State<EmployeeList>
 
   void dispose() {
     addToCartPopUpAnimationController.dispose();
-    GlobalObjects.globalDep="";
-    GlobalObjects.globalCompany="";
-    GlobalObjects.globalBranch="";
+    GlobalObjects.globalDep = "";
+    GlobalObjects.globalCompany = "";
+    GlobalObjects.globalBranch = "";
     super.dispose();
   }
 
@@ -414,7 +414,6 @@ class _EmployeeListState extends State<EmployeeList>
                     size: 24,
                   ),
                 ),
-
               ],
               centerTitle: true,
             ),
@@ -424,96 +423,97 @@ class _EmployeeListState extends State<EmployeeList>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                    Container(
-                    padding: const EdgeInsets.all(5),
-                    margin: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            onChanged: (value) {
-                              setState(() {
-                                searchQuery = value;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search by name or code...',
-                              icon: const Icon(
-                                Icons.search,
-                                color: Colors.black,
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        margin: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.black,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchQuery = value;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Search by name or code...',
+                                  icon: const Icon(
+                                    Icons.search,
+                                    color: Colors.black,
+                                  ),
+                                  hintStyle: GoogleFonts.openSans(
+                                    textStyle: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  border: InputBorder.none,
+                                ),
                               ),
-                              hintStyle: GoogleFonts.openSans(
-                                textStyle: const TextStyle(
-                                  fontSize: 14,
+                            ),
+                            Container(
+                              width: 30,
+                              margin: EdgeInsets.only(left: 10, right: 10),
+                              child: IconButton(
+                                onPressed: () async {
+                                  final selectedValues =
+                                      await showModalBottomSheet<
+                                          Map<String, String?>>(
+                                    context: context,
+                                    builder: (context) => FilterBottomSheet(
+                                      departmentNames: departmentNames,
+                                      branchNames: branchNames,
+                                      companyNames: companyNames,
+                                      onDepartmentChanged: onDepartmentChanged,
+                                      onBranchChanged: onBranchChanged,
+                                      onCompanyChanged: onCompanyChanged,
+                                      onApplyFilters: () {
+                                        // Apply your filter logic here
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  );
+
+                                  if (selectedValues != null) {
+                                    final Map<String, String> resultMap =
+                                        selectedValues.cast<String, String>();
+                                    setState(() {
+                                      departmentDropdownValue =
+                                          resultMap['department'] ?? '';
+                                      branchDropdownValue =
+                                          resultMap['branch'] ?? '';
+                                      companyDropdownValue =
+                                          resultMap['company'] ?? '';
+                                    });
+                                  }
+                                },
+                                icon: Icon(FontAwesomeIcons.slidersH),
+                              ),
+                            ),
+                            Container(
+                              width: 30,
+                              margin: EdgeInsets.only(right: 5),
+                              child: IconButton(
+                                onPressed: _toggleSelectAll,
+                                icon: Icon(
                                   color: Colors.black,
+                                  selectAll
+                                      ? Icons.library_add_check
+                                      : Icons.library_add_check_outlined,
                                 ),
                               ),
-                              border: InputBorder.none,
-
                             ),
-                          ),
+                          ],
                         ),
-                        Container(
-                          width: 30,
-                          margin: EdgeInsets.only(left: 10,right: 10),
-                          child: IconButton(
-                            onPressed: () async {
-                              final selectedValues =
-                              await showModalBottomSheet<Map<String, String?>>(
-                                context: context,
-                                builder: (context) => FilterBottomSheet(
-                                  departmentNames: departmentNames,
-                                  branchNames: branchNames,
-                                  companyNames: companyNames,
-                                  onDepartmentChanged: onDepartmentChanged,
-                                  onBranchChanged: onBranchChanged,
-                                  onCompanyChanged: onCompanyChanged,
-                                  onApplyFilters: () {
-                                    // Apply your filter logic here
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              );
-
-                              if (selectedValues != null) {
-                                final Map<String, String> resultMap =
-                                selectedValues.cast<String, String>();
-                                setState(() {
-                                  departmentDropdownValue = resultMap['department'] ?? '';
-                                  branchDropdownValue = resultMap['branch'] ?? '';
-                                  companyDropdownValue = resultMap['company'] ?? '';
-                                });
-                              }
-                            },
-                            icon: Icon(FontAwesomeIcons.slidersH),
-                          ),
-                        ),
-                        Container(
-                          width: 30,
-                          margin: EdgeInsets.only(right: 5),
-                          child: IconButton(
-                            onPressed: _toggleSelectAll,
-                            icon: Icon(
-                              color: Colors.black,
-                              selectAll
-                                  ? Icons.library_add_check
-                                  : Icons.library_add_check_outlined,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-
-            ],
+                      ),
+                    ],
                   ),
                   buildCards == null ||
                           filterEmployees(employees, searchQuery).length ==
@@ -679,7 +679,6 @@ class _EmployeeListState extends State<EmployeeList>
 
 // Global variables
 
-
 class FilterBottomSheet extends StatefulWidget {
   final List<String> departmentNames;
   final List<String> branchNames;
@@ -702,6 +701,7 @@ class FilterBottomSheet extends StatefulWidget {
   @override
   _FilterBottomSheetState createState() => _FilterBottomSheetState();
 }
+
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
   String departmentDropdownValue = '';
   String branchDropdownValue = '';
@@ -715,6 +715,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     branchDropdownValue = GlobalObjects.globalBranch;
     companyDropdownValue = GlobalObjects.globalCompany;
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -816,7 +817,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       departmentDropdownValue = newValue!;
-                                      GlobalObjects.globalDep=departmentDropdownValue;
+                                      GlobalObjects.globalDep =
+                                          departmentDropdownValue;
                                     });
                                     widget.onDepartmentChanged!(
                                         newValue!); // Move this outside of setState
@@ -890,8 +892,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     branchDropdownValue = newValue!;
-                                    GlobalObjects.globalBranch=branchDropdownValue;
-
+                                    GlobalObjects.globalBranch =
+                                        branchDropdownValue;
                                   });
                                   widget.onBranchChanged!(
                                       newValue!); // Move this outside of setState
@@ -963,8 +965,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     companyDropdownValue = newValue!;
-                                    GlobalObjects.globalCompany=companyDropdownValue;
-
+                                    GlobalObjects.globalCompany =
+                                        companyDropdownValue;
                                   });
                                   widget.onCompanyChanged!(
                                       newValue!); // Move this outside of setState

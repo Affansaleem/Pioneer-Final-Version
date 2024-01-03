@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/AppColor_constants.dart';
@@ -453,36 +454,48 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ClipPath(
                     clipper: HalfCircleClipper(),
                     child: Container(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        width: MediaQuery.of(context).size.width,
-                        color: AppColors.primaryColor,
-                        child: const Column(
-                          children: [
-                            SizedBox(
-                              height: 100,
-                            ),
-                            Text(
-                              "PIONEER TIME ATTENDANCE",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 25, // Adjust the size as needed
-                                color:
-                                    Colors.white, // Adjust the color as needed
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      width: MediaQuery.of(context).size.width,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.asset(
+                            'assets/images/background.jpeg',
+                            fit: BoxFit.fill,
+                          ),
+                          Container(
+                            color: AppColors.primaryColor.withOpacity(0.8), // Adjust opacity as needed
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 100,),
+                              Text(
+                                "PIONEER TIME ATTENDANCE",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 25,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
-                        )),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+
+
+
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: AnimatedContainer(
                       duration: const Duration(seconds: 2),
-                      margin: const EdgeInsets.all(20),
                       height: MediaQuery.of(context).orientation ==
                               Orientation.portrait
                           ? MediaQuery.of(context).size.height * 0.65
                           : MediaQuery.of(context).size.width * 0.55,
-                      width: MediaQuery.of(context).size.width,
+                      width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
                         color: Colors.white,
@@ -534,14 +547,12 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               TextFormField(
                                 controller: _CoorporateIdController,
                                 decoration: InputDecoration(
-                                  labelText: 'Corporate Id',
-                                  suffixIcon: Image.asset(
-                                    'assets/icons/username.png',
-                                  ),
+                                  labelText: 'Company Id',
+                                  suffixIcon: Icon(FontAwesomeIcons.fileLines)
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please enter Coorporate ID';
+                                    return 'Please enter Company ID';
                                   }
                                   return null;
                                 },
@@ -551,7 +562,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 decoration: InputDecoration(
                                   labelText: 'Username',
                                   suffixIcon:
-                                      Image.asset('assets/icons/profile.png'),
+                                      Icon(FontAwesomeIcons.pen),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -573,7 +584,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 decoration: InputDecoration(
                                   labelText: 'Password',
                                   suffixIcon:
-                                      Image.asset('assets/icons/password.png'),
+                                  Icon(FontAwesomeIcons.lock),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
