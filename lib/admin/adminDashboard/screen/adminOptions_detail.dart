@@ -15,7 +15,9 @@ class AdminStorageDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(defaultPadding),
+      padding: MediaQuery.of(context).size.height > 720
+          ? EdgeInsets.all(defaultPadding)
+          : EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       decoration: const BoxDecoration(
         color: AppColors.secondaryColor,
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -52,7 +54,8 @@ class AdminStorageDetails extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AdminReportsMainPage(viaDrawer: false),
+                    builder: (context) =>
+                        AdminReportsMainPage(viaDrawer: false),
                   ));
             },
             child: const AdminStorageInfoCard(

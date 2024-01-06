@@ -34,8 +34,10 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   double? currentLong;
   double? sendLat;
   double? sendLong;
-  double? sendRadius = 100.0;
+  double? sendRadius = 1.0;
   String address = "";
+
+
 
   bool locationError = false;
   final adminGeoFenceRepository = AdminGeoFenceRepository();
@@ -63,11 +65,11 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
 
       // Use the employee data to create the geofence model
       final geofenceModel = AdminGeoFenceModel(
-        empId: employee.empId ?? 0,
+        empId: employee.empId  ?? 0,
         empName: employee.empName,
         lat: sendLat.toString(),
         lon: sendLong.toString(),
-        radius: sendRadius.toString(),
+        radius: (sendRadius!*1000).toString(),
         emailAddress: null,
         fatherName: null,
         phoneNo: null,
@@ -187,7 +189,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                 child: Padding(
                   padding: EdgeInsets.only(right: 55.0), // Add right padding
                   child: Text(
-                    "GEOFENCE",
+                    "Maps",
                     style: AppBarStyles.appBarTextStyle,
                   ),
                 ),
@@ -217,14 +219,14 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                 ),
                 Positioned(
                   top: (MediaQuery.of(context).size.height /
-                      2.5), // Adjust position as needed
+                      3.5), // Adjust position as needed
                   left: (MediaQuery.of(context).size.width / 1.24),
                   child: Container(
                     child: SfSlider.vertical(
-                      min: 100.0,
-                      max: 300.0,
+                      min: 1.0,
+                      max: 5.0,
                       value: sendRadius,
-                      interval: 50,
+                      interval: 1,
                       showTicks: true,
                       showLabels: true,
                       inactiveColor: AppColors.darkGrey,
@@ -234,7 +236,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                       onChanged: (dynamic value) {
                         setState(() {
                           sendRadius = value;
-                          print(sendRadius);
+                          print("Radius is: $sendRadius");
                         });
                       },
                     ),
@@ -253,7 +255,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                 child: Padding(
                   padding: EdgeInsets.only(right: 55.0), // Add right padding
                   child: Text(
-                    "GEOFENCING",
+                    "Maps",
                     style: AppBarStyles.appBarTextStyle,
                   ),
                 ),
@@ -284,7 +286,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
               child: Padding(
                 padding: EdgeInsets.only(right: 55.0), // Add right padding
                 child: Text(
-                  "GEOFENCING",
+                  "Maps",
                   style: AppBarStyles.appBarTextStyle,
                 ),
               ),

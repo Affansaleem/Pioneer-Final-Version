@@ -241,9 +241,6 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  // Days Row
-                                  // Horizontal Scrollable Date Selection
-                                  // Horizontal Scrollable Date Selection
                                   SizedBox(
                                     height: 80, // Adjust height as needed
                                     child: ListView.builder(

@@ -493,8 +493,8 @@ class _EmployeeMapState extends State<EmployeeMap>
               centerTitle: true,
             ),
             body: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  15, MediaQuery.of(context).size.height / 8.5, 15, 15),
+              padding: MediaQuery.of(context).size.height > 720 ? EdgeInsets.fromLTRB(
+                  15, MediaQuery.of(context).size.height / 8.5, 15, 15) : EdgeInsets.symmetric(vertical: 20),
               child: ListView(
                 children: [
                   Stack(

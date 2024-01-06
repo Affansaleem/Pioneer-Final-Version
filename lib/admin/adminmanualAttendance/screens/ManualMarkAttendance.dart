@@ -529,7 +529,7 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance>
                                 ? 600
                                 : constraints.maxWidth;
                             double screenHeight =
-                                MediaQuery.of(context).size.height * 0.65;
+                                MediaQuery.of(context).size.height > 720 ? MediaQuery.of(context).size.height* 0.73: MediaQuery.of(context).size.height *0.73;
                             double containerHeight = screenHeight;
                             return Container(
                               height: containerHeight,

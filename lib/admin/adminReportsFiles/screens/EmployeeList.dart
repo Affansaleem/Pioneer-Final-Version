@@ -532,7 +532,7 @@ class _EmployeeListState extends State<EmployeeList>
                                 ? 600
                                 : constraints.maxWidth;
                             double screenHeight =
-                                MediaQuery.of(context).size.height * 0.75;
+                            MediaQuery.of(context).size.height > 720 ? MediaQuery.of(context).size.height* 0.73: MediaQuery.of(context).size.height *0.73;
                             double containerHeight = screenHeight;
                             return Container(
                               height: containerHeight,

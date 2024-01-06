@@ -134,7 +134,7 @@ class _AdminPageState extends State<AdminPage> {
             key: _scaffoldKey,
             body: SingleChildScrollView(
               primary: false,
-              padding: const EdgeInsets.all(defaultPadding),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   // TO ASK WANT TO GO BACK OR NOT

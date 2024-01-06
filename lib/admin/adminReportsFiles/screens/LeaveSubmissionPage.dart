@@ -130,7 +130,8 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
             ),
             body: SingleChildScrollView(
               child: Container(
-                margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
+                margin: MediaQuery.of(context).size.height > 720 ? 
+                  const EdgeInsets.only(top: 25, left: 25, right: 25):EdgeInsets.only(top: 25, left: 25, right: 25),
                 child: Column(
                   children: [
                     Row(
@@ -319,7 +320,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                       ),
                     ),
 
-                    SizedBox(height: 30,),
+                    SizedBox(height: MediaQuery.of(context).size.height>720? 30 : 20,),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 50),
                       width: double.infinity, // Set the width to take the full width
@@ -416,7 +417,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          padding: const EdgeInsets.all(20),
+                          padding: MediaQuery.of(context).size.height>720 ? EdgeInsets.all(20): EdgeInsets.all(15),
                         ),
                         child: Text(
                           "Submit",
@@ -427,7 +428,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                         ),
                       ),
                     ),
-                    SizedBox(height: 30,)
+                    SizedBox(height: MediaQuery.of(context).size.height>720 ?  30 : 0,),
                   ],
                 ),
               ),

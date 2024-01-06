@@ -400,7 +400,7 @@ class HomePageState extends State<EmpDashHome> {
       lowerButtonsVertical = 5;
     } else {
       lowerButtonsHorizontal = 10;
-      lowerButtonsVertical = 35;
+      lowerButtonsVertical = 15;
     }
 
     //FIRST APPROACH

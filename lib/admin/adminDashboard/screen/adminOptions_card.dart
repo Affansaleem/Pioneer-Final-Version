@@ -16,10 +16,10 @@ class AdminStorageInfoCard extends StatelessWidget {
     return Card(
       color: const Color(0xFFFAF9F6), //Cream color
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: MediaQuery.of(context).size.height > 720 ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)) : RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Container(
         // margin: EdgeInsets.only(top: defaultPadding),
-        padding: const EdgeInsets.all(20),
+        padding: MediaQuery.of(context).size.height > 720 ? EdgeInsets.all(20) : EdgeInsets.symmetric(vertical: 14,horizontal: 16),
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(
             Radius.circular(defaultPadding),

@@ -147,7 +147,6 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
               },
               child: BlocConsumer<EmpLeaveRequestBloc, EmpLeaveRequestState>(
                 listener: (context, state) {
-                  // TODO: implement listener
                 },
                 builder: (context, state) {
                   if (state is EmpLeaveRequestLoadingState) {
@@ -176,7 +175,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                       scrollDirection: Axis.vertical,
                       child: Center(
                         child: Container(
-                          margin: EdgeInsets.only(top: 50),
+                          margin: MediaQuery.of(context).size.height > 720 ? EdgeInsets.only(top:50.0) : EdgeInsets.all(10.0) ,
                           color: AppColors.brightWhite,
                           width: MediaQuery.of(context).size.width /
                               1.2, // Adjust the width as needed

@@ -259,12 +259,7 @@ class AdminMainPageState extends State<AdminMainPage> {
                   await _logout(context);
                 },
                 onCancelBtnTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AdminMainPage(),
-                    ),
-                  );
+
                 },
               );
             });

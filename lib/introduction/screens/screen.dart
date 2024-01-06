@@ -41,13 +41,20 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
     await prefs.setBool('intro_screen_visited', visited);
   }
 
+
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.height);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 150.0,horizontal: 20.0),
+          padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height > 720
+                ? 150.0
+                : 100,
+            horizontal: 20.0,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,7 +115,7 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(100.0), // Set the circular radius
                       ),
                       color: AppColors.primaryColor,
-                      child: InkWell(
+                      child: GestureDetector(
                         onTap: () async {
                           await setIntroScreenVisited(true);
                           Navigator.pushReplacement(
@@ -131,9 +138,9 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
                         ),
                       ),
                     ),
-
                   ),
                 ),
+
             ],
           ),
         ),

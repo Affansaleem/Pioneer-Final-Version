@@ -66,11 +66,11 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   String? corporateId;
 
   void handleAdminLogin(
-      String enteredCorporateID,
-      String enteredUsername,
-      String enteredPassword,
-      String enteredRole,
-      ) async {
+    String enteredCorporateID,
+    String enteredUsername,
+    String enteredPassword,
+    String enteredRole,
+  ) async {
     try {
       final employeeData = await userRepository.getData(
         corporateId: enteredCorporateID,
@@ -95,15 +95,14 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-
-  void _saveAdminDataToSharedPreferences(String username, String corporateId) async {
+  void _saveAdminDataToSharedPreferences(
+      String username, String corporateId) async {
     final sharedPref = await SharedPreferences.getInstance();
     GlobalObjects.adminusername = username;
     GlobalObjects.adminCorpId = corporateId;
     sharedPref.setString('admin_username', username);
     sharedPref.setString('admin_corporateId', corporateId);
   }
-
 
   void _handleEmployeeLogin(
     String enteredCorporateID,
@@ -195,8 +194,9 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           GlobalObjects.empPhone = empProfile.phoneNo;
           GlobalObjects.empIn1 = empAttendanceData.in1;
           GlobalObjects.empOut2 = empAttendanceData.out2;
-          GlobalObjects.empStatus= empAttendanceData.status?.toString() ?? '';
-          GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
+          GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
+          GlobalObjects.empPresent =
+              empDashData[0].presentCount.toString() ?? '';
           GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
           GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
           setState(() {
@@ -212,10 +212,14 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             GlobalObjects.empPhone = empProfile.phoneNo;
             GlobalObjects.empIn1 = empAttendanceData.in1;
             GlobalObjects.empOut2 = empAttendanceData.out2;
-            GlobalObjects.empStatus= empAttendanceData.status?.toString() ?? '';
-            GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
-            GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
-            GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
+            GlobalObjects.empStatus =
+                empAttendanceData.status?.toString() ?? '';
+            GlobalObjects.empPresent =
+                empDashData[0].presentCount.toString() ?? '';
+            GlobalObjects.empAbsent =
+                empDashData[0].absentCount.toString() ?? '';
+            GlobalObjects.empLeaves =
+                empDashData[0].leaveCount.toString() ?? '';
           });
         }
 
@@ -255,7 +259,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     await fetchProfileData();
   }
 
-
   String? profileImageUrl;
   Future<void> saveEmpAllToShared() async {
     try {
@@ -287,6 +290,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     GlobalObjects.empCode = empCode;
     GlobalObjects.empId = employeeId;
   }
+
   void _loginAsAdmin() async {
     print("Start _loginAsAdmin");
 
@@ -317,7 +321,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     try {
       if (username != null && corporateId != null) {
         final adminDbHelper = AdminDatabaseHelper();
-        await adminDbHelper.insertAdmin({'username': username, 'corporate_id': corporateId});
+        await adminDbHelper
+            .insertAdmin({'username': username, 'corporate_id': corporateId});
         print("Admin data saved successfully!");
       } else {
         print("Error: Received null values for username or corporateId.");
@@ -327,9 +332,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       throw Exception("Error saving admin data to SQLite: $e");
     }
   }
-
-
-
 
   void showPopupWithMessageFailed(String message) {
     showDialog(
@@ -430,12 +432,17 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   bool isInternetLost = false;
 
+
   @override
   Widget build(BuildContext context) {
+    double containerHeight = MediaQuery.of(context).size.height < 730
+        ? MediaQuery.of(context).size.height * 0.7
+        : MediaQuery.of(context).size.height * 0.65;
+    print(MediaQuery.of(context).size.height);
     return BlocConsumer<InternetBloc, InternetStates>(
       listener: (context, state) {
         // TODO: implement listener
-         if (state is InternetGainedState) {
+        if (state is InternetGainedState) {
           // Check if internet was previously lost
           if (isInternetLost) {
             // Navigate back to the original page when internet is regained
@@ -448,44 +455,42 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         if (state is InternetGainedState) {
           return SafeArea(
             child: Scaffold(
-              backgroundColor: Colors.white,
               body: Stack(
                 children: [
-                  ClipPath(
-                    clipper: HalfCircleClipper(),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      width: MediaQuery.of(context).size.width,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.asset(
-                            'assets/images/background.jpeg',
-                            fit: BoxFit.fill,
-                          ),
-                          Container(
-                            color: AppColors.primaryColor.withOpacity(0.8), // Adjust opacity as needed
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 100,),
-                              Text(
-                                "PIONEER TIME ATTENDANCE",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 25,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
+                  Container(
+                    width: double.infinity,
+                    height: 250,
+                    child: Image.asset(
+                      'assets/images/background.jpeg',
+                      fit: BoxFit.fill, // Cover the entire screen
+                      width: double
+                          .infinity, // Make sure the image covers the entire width
+                      height: double
+                          .infinity, // Make sure the image covers the entire height
+                    ),
+                  ),
+                  Container(
+                    color: AppColors.primaryColor.withOpacity(0.7),
+                  ),
+                  Positioned(
+                    top: 90,
+                    right: 50,
+                    child: Text(
+                      'Pioneer Time System',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          BoxShadow(
+                            color: Colors.black
+                                .withOpacity(0.5), // Shadow color with opacity
+                            offset: Offset(2, 2), // Shadow offset
+                            blurRadius: 5, // Blur radius
                           ),
                         ],
                       ),
-                    )
-
-
-
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -493,7 +498,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       duration: const Duration(seconds: 2),
                       height: MediaQuery.of(context).orientation ==
                               Orientation.portrait
-                          ? MediaQuery.of(context).size.height * 0.65
+                          ? containerHeight
                           : MediaQuery.of(context).size.width * 0.55,
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -535,21 +540,34 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   }
                                 },
                               ),
-                              Text(
-                                "LOG IN",
-                                style: GoogleFonts.montserrat(
-                                  textStyle: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Welcome",
+                                      style: TextStyle(
+                                          color: AppColors.primaryColor,
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Text(
+                                      "Please login with your information",
+                                      style:
+                                          const TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
                                 ),
                               ),
                               TextFormField(
                                 controller: _CoorporateIdController,
                                 decoration: InputDecoration(
-                                  labelText: 'Company Id',
-                                  suffixIcon: Icon(FontAwesomeIcons.fileLines)
-                                ),
+                                    labelText: 'Company Id',
+                                    labelStyle: TextStyle(
+                                        fontSize: 14, color: Colors.grey),
+                                    suffixIcon:
+                                        Icon(FontAwesomeIcons.fileLines)),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter Company ID';
@@ -561,8 +579,9 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 controller: _UserController,
                                 decoration: InputDecoration(
                                   labelText: 'Username',
-                                  suffixIcon:
-                                      Icon(FontAwesomeIcons.pen),
+                                  labelStyle: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                  suffixIcon: Icon(FontAwesomeIcons.pen),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -583,8 +602,9 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 obscureText: _obscureText,
                                 decoration: InputDecoration(
                                   labelText: 'Password',
-                                  suffixIcon:
-                                  Icon(FontAwesomeIcons.lock),
+                                  labelStyle: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                  suffixIcon: Icon(FontAwesomeIcons.lock),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -616,60 +636,121 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                               Column(
                                 children: [
-                                  GestureDetector(
-                                    onTap: () {
+                                  ChoiceChip(
+                                    backgroundColor: AppColors.lightGray,
+                                    selectedColor: AppColors.secondaryColor,
+                                    elevation: 5,
+                                    label: Container(
+                                      width: 100, // Adjust the width as needed
+                                      child: Center(
+                                        child: _selectedUserType ==
+                                                UserType.employee
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.account_circle,
+                                                      color: Colors.white),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  const Text(
+                                                    'Employee',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              )
+                                            : Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.account_circle,
+                                                      color: Colors.white),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  const Text(
+                                                    'Employee',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                      ),
+                                    ),
+                                    selected:
+                                        _selectedUserType == UserType.employee,
+                                    onSelected: (selected) {
                                       setState(() {
-                                        _selectedUserType = UserType.employee;
+                                        _selectedUserType =
+                                            selected ? UserType.employee : null;
                                       });
                                     },
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Radio<UserType>(
-                                              value: UserType.employee,
-                                              groupValue: _selectedUserType,
-                                              onChanged: (UserType? value) {
-                                                setState(() {
-                                                  _selectedUserType = value!;
-                                                });
-                                              },
-                                            ),
-                                            const Text('Employee'),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                    shape: StadiumBorder(), // Make it rounded
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    side: BorderSide.none, // Remove the border
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
+
+                                  const SizedBox(
+                                      height: 10), // Add some spacing
+                                  ChoiceChip(
+                                    backgroundColor: AppColors.lightGray,
+                                    selectedColor: AppColors.secondaryColor,
+                                    elevation: 5,
+                                    label: Container(
+                                      width: 100, // Adjust the width as needed
+                                      child: Center(
+                                        child: _selectedUserType ==
+                                                UserType.admin
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.account_circle,
+                                                      color: Colors.white),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  const Text(
+                                                    'Admin',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              )
+                                            : Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Icon(Icons.account_circle,
+                                                      color: Colors.white),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  const Text(
+                                                    'Admin',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                      ),
+                                    ),
+                                    selected:
+                                        _selectedUserType == UserType.admin,
+                                    onSelected: (selected) {
                                       setState(() {
-                                        _selectedUserType = UserType.admin;
+                                        _selectedUserType =
+                                            selected ? UserType.admin : null;
                                       });
                                     },
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Radio<UserType>(
-                                              value: UserType.admin,
-                                              groupValue: _selectedUserType,
-                                              onChanged: (UserType? value) {
-                                                setState(() {
-                                                  _selectedUserType = value!;
-                                                });
-                                              },
-                                            ),
-                                            const Text('Admin     '),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                    shape: StadiumBorder(), // Make it rounded
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    side: BorderSide.none, // Remove the border
+                                  )
                                 ],
                               ),
                               const SizedBox(height: 20),

@@ -96,27 +96,14 @@ class EmpProfilePageState extends State<EmpProfilePage> {
         text: 'Are you sure?',
         confirmBtnText: 'Logout',
         cancelBtnText: 'Cancel',
-        onConfirmBtnTap: () async {
-          if (employeeId > 0) {
-            await dbHelper.deleteAllEmployeeData();
 
+        onConfirmBtnTap: () async {
+            await dbHelper.deleteAllEmployeeData();
             // Delete profile data
             await dbHelper.deleteProfileData();
 
-            List<Map<String, dynamic>> remainingEmployees =
-            await dbHelper.getEmployees();
-            print("Remaining Employees: $remainingEmployees");
-
-            bool isDataDeleted = remainingEmployees.isEmpty;
-
-            if (!isDataDeleted) {
-              // Data not deleted
-              print("data not deleted");
-            }
-          }
-
           // Perform logout after confirmation
-          Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.of(context).pop();
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -126,16 +113,9 @@ class EmpProfilePageState extends State<EmpProfilePage> {
               ),
             ),
           );
-          await EmployeeDatabaseHelper.instance.printProfileData();
         },
         onCancelBtnTap: () {
-          // User canceled logout
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const EmpMainPage(),
-            ),
-          );
+
         },
       );
 

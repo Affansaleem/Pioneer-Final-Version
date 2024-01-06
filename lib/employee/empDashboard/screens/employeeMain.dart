@@ -54,21 +54,8 @@ class EmpMainPageState extends State<EmpMainPage> {
 
         await dbHelper.deleteAttendenceData();
 
-        List<Map<String, dynamic>> remainingEmployees =
-            await dbHelper.getEmployees();
-        print("Remaining Employees: $remainingEmployees");
-
-        bool isDataDeleted = remainingEmployees.isEmpty;
-
-        if (!isDataDeleted) {
-          // Data not deleted
-          print("data not deleted");
-          return false;
-        }
       }
 
-      print("Executing return");
-      Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -78,8 +65,6 @@ class EmpMainPageState extends State<EmpMainPage> {
           ),
         ),
       );
-      print("After deletion");
-      await EmployeeDatabaseHelper.instance.printProfileData();
 
       // Data successfully deleted
       return true;
@@ -270,12 +255,7 @@ class EmpMainPageState extends State<EmpMainPage> {
                   await _logout(context);
                 },
                 onCancelBtnTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const EmpMainPage(),
-                    ),
-                  );
+
                 },
               );
             });

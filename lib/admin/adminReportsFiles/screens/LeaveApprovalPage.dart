@@ -461,7 +461,7 @@ class LeaveRequestApproveCard extends StatelessWidget {
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(width: 20),
+                      SizedBox(width: MediaQuery.of(context).size.height > 720 ? 20 : 15),
                       Text(
                         'To: ${formatDate(toDate)}',
                         style: GoogleFonts.lato(

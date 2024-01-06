@@ -374,7 +374,7 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: MediaQuery.of(context).size.height > 720 ? 20: 0),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Container(
