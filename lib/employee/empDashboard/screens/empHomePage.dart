@@ -175,33 +175,37 @@ class HomePageState extends State<EmpDashHome> {
       if (loggedInEmployeeId > 0) {
         final profileData = await dbHelper.getEmployeeProfileData();
 
+        if (mounted) {  // Add this check to avoid calling setState on a disposed widget
+          setState(() {
+            GlobalObjects.empCode = profileData['empCode'];
+            GlobalObjects.empProfilePic = profileData['profilePic'];
+            GlobalObjects.empName = profileData['empName'];
+            GlobalObjects.empMail = profileData['emailAddress'];
+            GlobalObjects.empIn1 = empAttendanceData.in1;
+            GlobalObjects.empOut2 = empAttendanceData.out2;
+            GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
+            GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
+            GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
+            GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
+            setState(() {
+              loadingData = false;
+            });
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching profile data: $e");
+    } finally {
+      if (mounted) {
         setState(() {
-          GlobalObjects.empCode = profileData['empCode'];
-          GlobalObjects.empProfilePic = profileData['profilePic'];
-          GlobalObjects.empName = profileData['empName'];
-          GlobalObjects.empMail = profileData['emailAddress'];
           GlobalObjects.empIn1 = empAttendanceData.in1;
           GlobalObjects.empOut2 = empAttendanceData.out2;
           GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
           GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
           GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
           GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
-          setState(() {
-            loadingData = false;
-          });
         });
       }
-    } catch (e) {
-      print("Error fetching profile data: $e");
-    } finally {
-      setState(() {
-        GlobalObjects.empIn1 = empAttendanceData.in1;
-        GlobalObjects.empOut2 = empAttendanceData.out2;
-        GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
-        GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
-        GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
-        GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
-      });
     }
   }
 
@@ -379,7 +383,7 @@ class HomePageState extends State<EmpDashHome> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => EmployeeMap(),
+          builder: (context) => EmployeeMap(viaDrawer: false,),
         ),
       );
     }
@@ -410,33 +414,7 @@ class HomePageState extends State<EmpDashHome> {
       },
       builder: (context, state) {
         if (state is InternetGainedState) {
-          return loadingData
-              ? const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                )
-              : RefreshIndicator(
-                  onRefresh: () async {
-                    showDialog(
-                      context: context,
-                      barrierDismissible:
-                          false, // Prevent user from dismissing the dialog
-                      builder: (BuildContext context) {
-                        return const Scaffold(
-                          body: Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                    );
-
-                    // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
-                    await Future.delayed(const Duration(seconds: 2));
-
-                    // Close the dialog
-                    Navigator.of(context).pop();
-
-                    // Fetch profile data
-                    await fetchProfileData();
-                  },
-                  child: Scaffold(
+          return Scaffold(
                     appBar: AppBar(
                       leading: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
@@ -711,8 +689,9 @@ class HomePageState extends State<EmpDashHome> {
                           ),
                         ],
                       ),
-                    ),
-                  ));
+                    )
+          );
+
         } else if (state is InternetLostState) {
           return Expanded(
             child: Scaffold(

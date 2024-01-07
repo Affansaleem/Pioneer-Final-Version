@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
@@ -36,6 +37,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   double? sendLong;
   double? sendRadius = 1.0;
   String address = "";
+  bool isKeyboardVisible = false;
 
 
 
@@ -45,6 +47,11 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   @override
   void initState() {
     super.initState();
+    KeyboardVisibilityController().onChange.listen((bool visible) {
+      setState(() {
+        isKeyboardVisible = visible;
+      });
+    });
     checkLocationPermissionAndFetchLocation();
   }
 
@@ -199,7 +206,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
             body: Stack(
               children: [
                 OpenStreetMapSearchAndPick(
-                  center: LatLong(currentLat!, currentLong!),
+                  // center: LatLong(currentLat!, currentLong!),
                   buttonColor: AppColors.primaryColor,
                   buttonText: 'Set Geofence',
                   onPicked: (pickedData) {
@@ -211,16 +218,18 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                       _submitGeofenceDataForSelectedEmployees();
                       saveLocationToSharedPreferences(sendLat!, sendLong!);
                     });
-                    showSnackbar(context, "Cordinates Are Saved");
+                    showSnackbar(context, "Coordinates Are Saved");
                     popPage();
                   },
                   locationPinIconColor: AppColors.secondaryColor,
                   locationPinText: "${address}",
                 ),
+                if (!isKeyboardVisible)
                 Positioned(
-                  top: (MediaQuery.of(context).size.height /
-                      3.5), // Adjust position as needed
-                  left: (MediaQuery.of(context).size.width / 1.24),
+                  top: MediaQuery.of(context).size.height > 700 ? (MediaQuery.of(context).size.height /
+                      3.3): (MediaQuery.of(context).size.height /
+                      5), // Adjust position as needed
+                  left: (MediaQuery.of(context).size.width / 1.22),
                   child: Container(
                     child: SfSlider.vertical(
                       min: 1.0,

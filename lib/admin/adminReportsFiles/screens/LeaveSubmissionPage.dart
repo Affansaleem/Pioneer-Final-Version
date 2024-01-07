@@ -417,18 +417,18 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          padding: MediaQuery.of(context).size.height>720 ? EdgeInsets.all(20): EdgeInsets.all(15),
+                          padding: MediaQuery.of(context).size.height>700 ? EdgeInsets.all(15): EdgeInsets.all(10),
                         ),
                         child: Text(
                           "Submit",
                           style: TextStyle(
-                            fontSize: 15,
                             color: Colors.white,
+                              fontSize: 18
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height>720 ?  30 : 0,),
+                    SizedBox(height: MediaQuery.of(context).size.height>700 ?  30 : 20,),
                   ],
                 ),
               ),
@@ -497,13 +497,13 @@ class YourBottomSheet extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       child: DraggableScrollableSheet(
-        initialChildSize: 0.97, // Take up the entire screen initially
+        initialChildSize: 1, // Take up the entire screen initially
         minChildSize: 0.1, // Minimum height when fully collapsed
-        maxChildSize: 0.97, // Maximum height when fully expanded
+        maxChildSize: 1, // Maximum height when fully expanded
         expand: true,
         builder: (BuildContext context, ScrollController scrollController) {
           return SingleChildScrollView(
-            controller: scrollController,
+            reverse: false,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -518,12 +518,12 @@ class YourBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
+                SizedBox(height: 20,),
                 // Content
                 Container(
                   height: MediaQuery.of(context).size.height * 0.5,
                   margin: EdgeInsets.zero,
                   child: ListView.separated(
-                    controller: scrollController,
                     separatorBuilder: (context, index) => Divider(),
                     itemCount: selectedEmployees.length,
                     itemBuilder: (context, index) {
@@ -540,11 +540,11 @@ class YourBottomSheet extends StatelessWidget {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             '${employee.empName ?? ""}',
@@ -557,7 +557,7 @@ class YourBottomSheet extends StatelessWidget {
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             employee.remarks.isEmpty

@@ -229,15 +229,7 @@ class _AdminPageState extends State<AdminPage> {
                               const AdminStorageDetails(),
                             const SizedBox(height: defaultPadding),
                             if (AdminResponsive.isMobile(context))
-                               Column(
-                                children: [
 
-                                  SizedBox(
-                                      height: 60,
-                                      width: 60,
-                                      child: Image.asset('assets/images/pioneer_logo_app.png')),
-                                ],
-                              ),
                             const SizedBox(
                               height: 20,
                             ),

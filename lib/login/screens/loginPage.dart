@@ -432,12 +432,30 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   bool isInternetLost = false;
 
+  double getSize() {
+    double containerHeight = MediaQuery.of(context).size.height;
+
+    if(containerHeight > 930)
+      {
+        return 0.78;
+      }
+    else if (containerHeight > 900) {
+      return 0.7;
+    }
+    else if (containerHeight > 720) {
+      return 0.7;
+    } else if (containerHeight > 600) {
+      return 0.68;
+    } else {
+      return 0.65;
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    double containerHeight = MediaQuery.of(context).size.height < 730
-        ? MediaQuery.of(context).size.height * 0.7
-        : MediaQuery.of(context).size.height * 0.65;
+
+
     print(MediaQuery.of(context).size.height);
     return BlocConsumer<InternetBloc, InternetStates>(
       listener: (context, state) {
@@ -498,7 +516,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       duration: const Duration(seconds: 2),
                       height: MediaQuery.of(context).orientation ==
                               Orientation.portrait
-                          ? containerHeight
+                          ? MediaQuery.of(context).size.height * getSize()
                           : MediaQuery.of(context).size.width * 0.55,
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -797,6 +815,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   );
                                 },
                               ),
+                              SizedBox(height: MediaQuery.of(context).size.height >700? 30: 0,),
+                              Text("All Rights Reserved | Powered by PTS",style: TextStyle(color: Colors.grey),),
                             ],
                           ),
                         ),

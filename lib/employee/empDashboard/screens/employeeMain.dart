@@ -14,6 +14,7 @@ import '../../../introduction/bloc/bloc_internet/internet_bloc.dart';
 import '../../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
 import '../../../login/screens/loginPage.dart';
+import '../../empMap/screens/employeemap.dart';
 import '../../empProfilePage/models/empProfileModel.dart';
 import '../../empProfilePage/models/empProfileRepository.dart';
 import '../../empProfilePage/screens/profilepage.dart';
@@ -166,6 +167,9 @@ class EmpMainPageState extends State<EmpMainPage> {
                             case EmpDrawerItems.profile:
                               dashBloc.add(NavigateToProfileEvent());
                               break;
+                            case EmpDrawerItems.geoPunch:
+                              dashBloc.add(NavigateToGeoPunchEvent());
+                              break;
                             case EmpDrawerItems.leaves:
                               dashBloc.add(NavigateToLeaveEvent());
                               break;
@@ -237,6 +241,9 @@ class EmpMainPageState extends State<EmpMainPage> {
             return LeaveRequestPage(
               viaDrawer: true,
             );
+          }else if (state is NavigateToGeoPunchState) {
+            print("This is leave state");
+            return EmployeeMap(viaDrawer: true);
           } else if (state is NavigateToHomeState) {
             return EmpDashHome();
           } else if (state is NavigateToReportsState) {
@@ -279,6 +286,8 @@ class EmpMainPageState extends State<EmpMainPage> {
         return "Reports";
       case EmpDrawerItems.profile:
         return "Profile";
+      case EmpDrawerItems.geoPunch:
+        return "Geo Punch";
       case EmpDrawerItems.logout:
         return "Home"; // You can return an empty string if needed
       default:

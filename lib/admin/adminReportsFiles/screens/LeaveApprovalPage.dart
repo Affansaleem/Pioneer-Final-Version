@@ -28,12 +28,33 @@ class LeaveApprovalPage extends StatefulWidget {
 }
 
 class _LeaveApprovalPageState extends State<LeaveApprovalPage>
-    with TickerProviderStateMixin{
+    with TickerProviderStateMixin {
   bool _isMounted = true; // Add this flag
 
   bool isInternetLost = false;
   late TabController _tabController;
   List<LeaveRequest> leaveRequests = [];
+  List<UnApprovedLeaveRequest> unapprovedLeaveRequests = [];
+
+  bool isFirstTimeLoading = true;
+
+  bool isRefreshing = false;
+
+  Future<void> fetchData() async {
+    // Set the refreshing flag to true
+    setState(() {
+      isRefreshing = true;
+    });
+
+    // Fetch both unapproved and approved leave requests
+     context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
+     context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
+
+    // Set the refreshing flag to false
+    setState(() {
+      isRefreshing = false;
+    });
+  }
 
   @override
   void initState() {
@@ -43,9 +64,7 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
       if (!_tabController.indexIsChanging) {
         if (_tabController.index == 0) {
           // Fetch unapproved leave requests
-          context
-              .read<UnapprovedLeaveRequestBloc>()
-              .add(FetchUnapprovedLeaveRequests());
+          context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
         } else if (_tabController.index == 1) {
           // Fetch approved leave requests
           context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
@@ -53,11 +72,30 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
       }
     });
 
-    // Fetch all data initially
-    context
-        .read<UnapprovedLeaveRequestBloc>()
-        .add(FetchUnapprovedLeaveRequests());
+    // Add a 2-second delay before fetching data
+    Future.delayed(Duration(seconds: 2), fetchData);
+
+    // Fetch and save unapproved leave requests
+    context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
+    context.read<UnapprovedLeaveRequestBloc>().stream.listen((state) {
+      if (state is UnapprovedLeaveRequestLoaded) {
+        setState(() {
+          unapprovedLeaveRequests = state.unapprovedLeaveRequests;
+          isFirstTimeLoading = false;
+        });
+      }
+    });
+
+    // Fetch and save approved leave requests
     context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
+    context.read<LeaveRequestBloc>().stream.listen((state) {
+      if (state is LeaveRequestLoaded) {
+        setState(() {
+          leaveRequests = state.leaveRequests;
+          isFirstTimeLoading = false;
+        });
+      }
+    });
   }
 
   @override
@@ -115,89 +153,66 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      BlocBuilder<UnapprovedLeaveRequestBloc, UnapprovedLeaveRequestState>(
-                        builder: (context, state) {
-                          if (state is UnapprovedLeaveRequestInitial) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (state is UnapprovedLeaveRequestLoading) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
-                          else if (state is UnapprovedLeaveRequestLoaded) {
-
-                            final unapprovedLeaveRequests = state.unapprovedLeaveRequests;
-                            if (unapprovedLeaveRequests.isEmpty) {
-                              return Center(
-                                child: Text('No Data Available'),
-                              );
-                            }
-                            print("Fetched Unapproved Leave Requests:");
-                            for (final leaveRequest in unapprovedLeaveRequests) {
-                              print("Leave Request ID: ${leaveRequest.rwId}");
-                              print("Reason: ${leaveRequest.reason}");
-                              // Add more fields as needed
-                            }
-
-                            return ListView.builder(
-                              itemCount: unapprovedLeaveRequests.length,
-                              itemBuilder: (context, index) {
-                                final leaveRequest = unapprovedLeaveRequests[index];
-                                return LeaveRequestCard(
-                                  id: leaveRequest.rwId,
-                                  reason: leaveRequest.reason,
-                                  fromDate: leaveRequest.fromdate,
-                                  status: "Pending",
-                                  applicationDate: leaveRequest.applicationDate,
-                                  empId: leaveRequest.empId.toString(),
-                                  toDate: leaveRequest.todate,
-                                  customLeaveRequestBloc: context.read<CustomLeaveRequestBloc>(),
-                                );
-                              },
-                            );
-                          } else if (state is UnapprovedLeaveRequestError) {
-                            return Center(
-                              child: Text('Error: ${state.error}'),
-                            );
-                          } else {
-                            return const Center(
-                              child: Text('Unknown state'),
-                            );
-                          }
+                      RefreshIndicator(
+                        onRefresh: () async {
+                          fetchData();
                         },
+                        child: isFirstTimeLoading
+                            ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                            : unapprovedLeaveRequests.isEmpty
+                            ? Center(
+                          child: Text('No Data Available'),
+                        )
+                            : ListView.builder(
+                          itemCount: unapprovedLeaveRequests.length,
+                          itemBuilder: (context, index) {
+                            final leaveRequest = unapprovedLeaveRequests[index];
+                            return LeaveRequestCard(
+                              id: leaveRequest.rwId,
+                              reason: leaveRequest.reason,
+                              fromDate: leaveRequest.fromdate,
+                              status: "Pending",
+                              applicationDate: leaveRequest.applicationDate,
+                              empId: leaveRequest.empId.toString(),
+                              toDate: leaveRequest.todate,
+                              customLeaveRequestBloc: context.read<CustomLeaveRequestBloc>(),
+                            );
+                          },
+                        ),
+                      ),
+                      RefreshIndicator(
+                        onRefresh: () async {
+                          await fetchData();
+                        },
+                        child: isFirstTimeLoading
+                            ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                            : isRefreshing
+                            ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                            : leaveRequests.isEmpty
+                            ? Center(
+                          child: Text('No Data Available'),
+                        )
+                            : ListView.builder(
+                          itemCount: leaveRequests.length,
+                          itemBuilder: (context, index) {
+                            final leaveRequest = leaveRequests[index];
+                            return LeaveRequestApproveCard(
+                              reason: leaveRequest.reason,
+                              fromDate: leaveRequest.fromdate,
+                              status: leaveRequest.approvedStatus,
+                              applicationDate: leaveRequest.applicationDate,
+                              toDate: leaveRequest.todate,
+                            );
+                          },
+                        ),
                       ),
 
-                      BlocBuilder<LeaveRequestBloc, LeaveRequestState>(
-                        builder: (context, state) {
-                          if (state is LeaveRequestInitial) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (state is LeaveRequestLoading) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (state is LeaveRequestLoaded) {
-
-                            leaveRequests = state.leaveRequests;
-                            return ListView.builder(
-                              itemCount: leaveRequests.length,
-                              itemBuilder: (context, index) {
-                                final leaveRequest = leaveRequests[index];
-                                return LeaveRequestApproveCard(
-                                  reason: leaveRequest.reason,
-                                  fromDate: leaveRequest.fromdate,
-                                  status: leaveRequest.approvedStatus,
-                                  applicationDate: leaveRequest.applicationDate,
-                                  toDate: leaveRequest.todate,
-                                );
-                              },
-                            );
-                          } else if (state is LeaveRequestError) {
-                            return Center(
-                              child: Text('Error: ${state.error}'),
-                            );
-                          } else {
-                            return const Center(
-                              child: Text('Unknown state'),
-                            );
-                          }
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -213,6 +228,7 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
     );
   }
 }
+
 
 class LeaveRequestCard extends StatefulWidget {
   final int id;
@@ -424,80 +440,79 @@ class LeaveRequestApproveCard extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.all(8.0),
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.blue,
-              ),
-              child: const Icon(
-                Icons.description,
-                size: 36.0,
-                color: Colors.white,
-              ),
+            Row(
+              children: [
+                Text(
+                  reason,
+                  style: GoogleFonts.lato(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+              ],
+
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    reason,
-                    style: GoogleFonts.lato(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'From: ${formatDate(fromDate)}',
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(width: MediaQuery.of(context).size.height > 720 ? 20 : 15),
+                Text(
+                  'To: ${formatDate(toDate)}',
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+
+              ],
+            ),
+
+            Row(
+              mainAxisAlignment:MainAxisAlignment.spaceBetween ,
+              children: [
+                Text(
+                  'Application Date: ${formatDate(applicationDate)}',
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                Row(
+                  children: [
+
+                    Text(
+                      status,
+                      style: GoogleFonts.lato(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'From: ${formatDate(fromDate)}',
-                        style: GoogleFonts.lato(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.height > 720 ? 20 : 15),
-                      Text(
-                        'To: ${formatDate(toDate)}',
-                        style: GoogleFonts.lato(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.check_circle,
-                        size: 20.0,
-                        color: Colors.blue,
-                      ),
-                      Text(
-                        status,
-                        style: GoogleFonts.lato(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    'Application Date: ${formatDate(applicationDate)}',
-                    style: GoogleFonts.lato(
-                      fontSize: 14,
-                      color: Colors.grey,
+                    const SizedBox(width: 5), // Add some spacing between the icon and text
+                    Icon(
+                      Icons.check_circle,
+                      size: 20.0,
+                      color: Colors.blue,
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                )
+
+
+              ],
             ),
           ],
         ),

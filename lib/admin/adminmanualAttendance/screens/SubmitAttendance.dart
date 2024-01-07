@@ -120,7 +120,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
               ),
               body: Builder(
                 builder: (context) => Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:  EdgeInsets.all(MediaQuery.of(context).size.height>700?8.0:0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,7 +227,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                             ),
                           ),
 
-                          const SizedBox(height: 20),
+                          SizedBox(height: MediaQuery.of(context).size.height>700?20:0),
 
                           // Card for Date Selection
                           Card(
@@ -519,8 +519,9 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            margin: const EdgeInsets.only(left: 50, right: 50),
+                            margin: const EdgeInsets.symmetric(horizontal: 50),
                             child: SizedBox(
+                              width: double.infinity,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
@@ -528,17 +529,17 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
-                                  padding: const EdgeInsets.all(20),
+                                   padding: EdgeInsets.all(MediaQuery.of(context).size.height>700?20:10),
                                 ),
                                 onPressed: () {
                                   _submitAttendance(context);
                                 },
-                                child: const Text('Submit Attendance'),
+                                child: const Text('Submit',style: TextStyle(color: Colors.white,fontSize: 18),),
                               ),
                             ),
                           ),
                           SizedBox(
-                            height: 10,
+                            height: MediaQuery.of(context).size.height > 700?10:5,
                           ),
                         ],
                       ),
@@ -681,13 +682,13 @@ class YourBottomSheet extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       child: DraggableScrollableSheet(
-        initialChildSize: 0.97, // Take up the entire screen initially
+        initialChildSize: 1, // Take up the entire screen initially
         minChildSize: 0.1, // Minimum height when fully collapsed
-        maxChildSize: 0.97, // Maximum height when fully expanded
+        maxChildSize: 1, // Maximum height when fully expanded
         expand: true,
         builder: (BuildContext context, ScrollController scrollController) {
           return SingleChildScrollView(
-            controller: scrollController,
+            reverse: false,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -702,12 +703,12 @@ class YourBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
+                SizedBox(height: 20,),
                 // Content
                 Container(
                   height: MediaQuery.of(context).size.height * 0.5,
                   margin: EdgeInsets.zero,
                   child: ListView.separated(
-                    controller: scrollController,
                     separatorBuilder: (context, index) => Divider(),
                     itemCount: selectedEmployees.length,
                     itemBuilder: (context, index) {

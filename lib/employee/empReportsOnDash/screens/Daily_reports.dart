@@ -140,9 +140,9 @@ class _DailyReportsPageState extends State<DailyReportsPage> {
         backgroundColor: AppColors.primaryColor,
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
                 child: Card(
@@ -304,7 +304,6 @@ class _DailyReportsPageState extends State<DailyReportsPage> {
           Expanded(
             child: Visibility(
               visible: !isLoading, // Show data when not loading
-
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ListView.builder(
@@ -322,6 +321,7 @@ class _DailyReportsPageState extends State<DailyReportsPage> {
             ),
           ),
           Container(
+            margin: EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               color: AppColors.primaryColor,
@@ -346,9 +346,6 @@ class _DailyReportsPageState extends State<DailyReportsPage> {
               ),
             ),
           ),
-          SizedBox(
-            height: 30,
-          )
         ],
       ),
     );
@@ -445,7 +442,6 @@ class DailyInfoCard extends StatelessWidget {
                           Container(
                             margin: EdgeInsets.only(left: 2),
                             padding: EdgeInsets.all(8),
-
                             child: Text(
                               'ID',
                               style: TextStyle(
@@ -529,7 +525,11 @@ class DailyInfoCard extends StatelessWidget {
                                         'YourFont', // Replace 'YourFont' with your preferred font
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height > 700
+                                            ? 8
+                                            : 0),
                                 Container(
                                   width: 80,
                                   padding: EdgeInsets.all(8),
@@ -545,7 +545,11 @@ class DailyInfoCard extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 16),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height > 700
+                                            ? 16
+                                            : 0),
                                 Text(
                                   'Punch In',
                                   style: TextStyle(
@@ -556,7 +560,11 @@ class DailyInfoCard extends StatelessWidget {
                                         'YourFont', // Replace 'YourFont' with your preferred font
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height > 700
+                                            ? 8
+                                            : 0),
                                 Container(
                                   width: 80,
                                   padding: EdgeInsets.all(8),
@@ -576,7 +584,9 @@ class DailyInfoCard extends StatelessWidget {
                             ),
 
                             SizedBox(
-                                width: 16), // Add spacing between the columns
+                                width: MediaQuery.of(context).size.height > 700
+                                    ? 16
+                                    : 10), // Add spacing between the columns
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -590,7 +600,11 @@ class DailyInfoCard extends StatelessWidget {
                                         'YourFont', // Replace 'YourFont' with your preferred font
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height > 700
+                                            ? 8
+                                            : 0),
                                 Container(
                                   width: 80,
                                   padding: EdgeInsets.all(8),
@@ -606,7 +620,11 @@ class DailyInfoCard extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 16),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height > 700
+                                            ? 16
+                                            : 0),
                                 Text(
                                   'Punch Out',
                                   style: TextStyle(
@@ -617,7 +635,11 @@ class DailyInfoCard extends StatelessWidget {
                                         'YourFont', // Replace 'YourFont' with your preferred font
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height > 700
+                                            ? 8
+                                            : 0),
                                 Container(
                                   width: 80,
                                   padding: EdgeInsets.all(8),
@@ -627,7 +649,6 @@ class DailyInfoCard extends StatelessWidget {
                                   ),
                                   child: Row(
                                     children: [
-                                      // Add some spacing between the icon and text
                                       Text(
                                         formatTime(report.out2) ?? '---',
                                         style: TextStyle(
@@ -654,31 +675,3 @@ class DailyInfoCard extends StatelessWidget {
     );
   }
 }
-
-// Row(
-//   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//   children: [
-//     EnhancedInfoCard(
-//       title: 'ID',
-//       value: empCode ?? '---',
-//     ),
-//     EnhancedInfoCard(
-//       title: 'Status',
-//       value: report.status ?? '---',
-//     ),
-//     EnhancedInfoCard(
-//       title: 'Hrs',
-//       value: report.hoursWorked.toString() ?? '---',
-//     ),
-//   ],
-// ),
-// SizedBox(height: 16),
-// EnhancedShiftCard(
-//   startTime: formatTime(report.shiftStartTime) ?? '---',
-//   endTime: formatTime(report.shiftEndTime) ?? '---',
-// ),
-// SizedBox(height: 16),
-// EnhancedInOutCard(
-//   punchInTime: formatTime(report.in1) ?? '---',
-//   punchOutTime: formatTime(report.out2) ?? '---',
-// ),

@@ -17,7 +17,7 @@ class MyDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height > 720? 30 : 30),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: MediaQuery.of(context).size.height > 720? 30 : 30),
         child: buildDrawerItems(context),
       ),
     );
@@ -47,7 +47,7 @@ class MyDrawer extends StatelessWidget {
                 item.title,
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
 
                 ),

@@ -41,6 +41,17 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
     await prefs.setBool('intro_screen_visited', visited);
   }
 
+  double getHeightValue(double screenHeight) {
+    if (screenHeight > 1000) {
+      return 200.0;
+    } else if (screenHeight > 720) {
+      return 150.0;
+    } else if (screenHeight > 500) {
+      return 100.0;
+    } else {
+      return 80.0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +61,11 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
       home: Scaffold(
         body: Padding(
           padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height > 720
-                ? 150.0
-                : 100,
+            vertical: getHeightValue(MediaQuery.of(context).size.height),
             horizontal: 20.0,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Welcome text with a simpler font
@@ -102,40 +111,35 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              // SizedBox(height: (MediaQuery.of(context).size.height) > 720 ? 40 : 20 ),
 
               // Next button (conditionally displayed)
               if (allPointsDisplayed)
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Card(
-                      elevation: 5.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100.0), // Set the circular radius
-                      ),
-                      color: AppColors.primaryColor,
-                      child: GestureDetector(
-                        onTap: () async {
-                          await setIntroScreenVisited(true);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return LoginPage();
-                              },
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 150,
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          child: const Text(
-                            'Next',
-                            style: TextStyle(color: Colors.white),
-                            textAlign: TextAlign.center,
-                          ),
+                Card(
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100.0), // Set the circular radius
+                  ),
+                  color: AppColors.primaryColor,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await setIntroScreenVisited(true);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return LoginPage();
+                          },
                         ),
+                      );
+                    },
+                    child: Container(
+                      width: 150,
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: const Text(
+                        'Next',
+                        style: TextStyle(color: Colors.white),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),

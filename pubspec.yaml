@@ -51,6 +51,7 @@ dependencies:
   cool_alert: ^2.0.1
   sqflite: ^2.3.0
   device_preview: ^1.1.0
+  flutter_keyboard_visibility: ^6.0.0
 
 flutter_native_splash:
   color: "#FFFFFF"    # Set the background color of your splash screen

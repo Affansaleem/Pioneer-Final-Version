@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project/admin/adminOptionsReport/screens/AdminMonthlyAndDailyReportsMainPage.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import '../../adminReportsFiles/screens/AdminReportsMainPage.dart';
@@ -26,7 +27,7 @@ class AdminStorageDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Options",
+            "Quick Access",
             style: TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -43,10 +44,11 @@ class AdminStorageDetails extends StatelessWidget {
                     builder: (context) => ManualMarkAttendance(),
                   ));
             },
-            child: const AdminStorageInfoCard(
-              svgSrc: "assets/icons/present.png",
-              title: "Manual Punch",
-            ),
+            child: AdminStorageInfoCard(
+              title: 'Manual Punch',
+              imageOrIcon: Image.asset('assets/icons/manualPunchAdmin.png'),
+            )
+
           ),
           const SizedBox(height: 5),
           GestureDetector(
@@ -58,10 +60,11 @@ class AdminStorageDetails extends StatelessWidget {
                         AdminReportsMainPage(viaDrawer: false),
                   ));
             },
-            child: const AdminStorageInfoCard(
-              svgSrc: "assets/icons/leave.png",
-              title: "Leave",
+            child:AdminStorageInfoCard(
+              title: 'Leave',
+              imageOrIcon: Icon(FontAwesomeIcons.solidCalendar),
             ),
+
           ),
           const SizedBox(height: 5),
           GestureDetector(
@@ -72,10 +75,11 @@ class AdminStorageDetails extends StatelessWidget {
                     viaDrawer: false,
                   ),
                 )),
-            child: const AdminStorageInfoCard(
-              svgSrc: "assets/icons/report.png",
-              title: "Report",
-            ),
+            child: AdminStorageInfoCard(
+              title: 'Report',
+              imageOrIcon: Icon(FontAwesomeIcons.solidClipboard),
+            )
+
           ),
           const SizedBox(height: 5),
         ],
