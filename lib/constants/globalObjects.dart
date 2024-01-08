@@ -19,14 +19,20 @@ class GlobalObjects {
   static String? empAbsent;
   static String? empLeaves;
 
+  // DropDowns
+
+  static String globalDep = "";
+  static String globalBranch = "";
+  static String globalCompany = "";
+
   // admin objects
   static String? adminCorpId;
   int? adminId;
   static String? adminMail;
   static String? adminusername;
   static String? adminpassword;
-  static String? adminemail;
   static String? adminphonenumber;
+  static String? adminJoinedDate;
 
   static void checkForSelection(BuildContext context) {
     showDialog(
