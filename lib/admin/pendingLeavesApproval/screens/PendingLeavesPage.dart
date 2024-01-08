@@ -126,6 +126,16 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
   }
 
   Widget _buildList(List<PendingLeavesModel> leaves) {
+    if(leaves.isEmpty)
+      {
+        return Center(
+          child: Text(
+            'No Data Available',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        );
+      }
+
     return ListView.builder(
       itemCount: leaves.length,
       itemBuilder: (context, index) {
@@ -167,7 +177,7 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
                   ElevatedButton(
                     onPressed: () {
                       // Call the method to approve the leave and show feedback with FutureBuilder
-                      _approveLeave(leave.cardNo, leave.punchDatetime);
+                      _approveLeave(leave.cardNo, leave.punchDatetime, leave.id);
                     },
                     child: Text('Approve'),
                   ),
@@ -180,13 +190,15 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
     );
   }
 
-  void _approveLeave(String cardNo, DateTime punchDatetime) {
+  void _approveLeave(String cardNo, DateTime punchDatetime, int id) {
     final dateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     final formattedPunchDatetime = dateFormat.format(punchDatetime);
     final formattedDateTime1 = dateFormat.format(DateTime.now().toUtc());
 
     final data = [
       {
+        "id": id,
+        // id should be added same
         "cardNo": cardNo, // Pass cardNo as leave.cardNo
         "punchDatetime":
             formattedPunchDatetime, // Punch Date-Time = formatted punchDatetime

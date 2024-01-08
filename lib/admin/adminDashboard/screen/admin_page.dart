@@ -134,7 +134,7 @@ class _AdminPageState extends State<AdminPage> {
             key: _scaffoldKey,
             body: SingleChildScrollView(
               primary: false,
-              padding: const EdgeInsets.all(defaultPadding),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   // TO ASK WANT TO GO BACK OR NOT
@@ -229,15 +229,7 @@ class _AdminPageState extends State<AdminPage> {
                               const AdminStorageDetails(),
                             const SizedBox(height: defaultPadding),
                             if (AdminResponsive.isMobile(context))
-                               Column(
-                                children: [
 
-                                  SizedBox(
-                                      height: 60,
-                                      width: 60,
-                                      child: Image.asset('assets/images/pioneer_logo_app.png')),
-                                ],
-                              ),
                             const SizedBox(
                               height: 20,
                             ),

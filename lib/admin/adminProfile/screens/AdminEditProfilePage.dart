@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
+import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
@@ -10,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import '../../../constants/AnimatedTextPopUp.dart';
 import '../../../No_internet/no_internet.dart';
+import '../../../responsive/responsive_layout.dart';
 import '../models/AdminEditProfileModel.dart';
 import '../models/AdminEditProfileRepository.dart';
 
@@ -17,10 +19,12 @@ class AdminEditProfilePage extends StatefulWidget {
   final VoidCallback onSave;
   final VoidCallback? onSaveSuccess; // Define the onSaveSuccess callback
 
-  AdminEditProfilePage({Key? key, required this.onSave, this.onSaveSuccess}) : super(key: key);
+  AdminEditProfilePage({Key? key, required this.onSave, this.onSaveSuccess})
+      : super(key: key);
 
   @override
-  State<AdminEditProfilePage> createState() => _AdminEditProfilePageState(onSave);
+  State<AdminEditProfilePage> createState() =>
+      _AdminEditProfilePageState(onSave);
 }
 
 class _AdminEditProfilePageState extends State<AdminEditProfilePage>
@@ -72,7 +76,8 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
         mobile: _phoneNumberController.text,
       );
 
-      final success = await _editProfileRepository.updateAdminProfile(adminEditProfile);
+      final success =
+          await _editProfileRepository.updateAdminProfile(adminEditProfile);
 
       if (success) {
         GlobalObjects.adminphonenumber = adminEditProfile.mobile;
@@ -112,20 +117,16 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
       context: context,
       builder: (BuildContext context) {
         return addToCartPopUpSuccess(
-          addToCartPopUpAnimationController,
-          message
-        );
+            addToCartPopUpAnimationController, message);
       },
     );
   }
+
   void showPopupWithFailedMessage(String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return addToCartPopUpFailed(
-          addToCartPopUpAnimationController,
-          message
-        );
+        return addToCartPopUpFailed(addToCartPopUpAnimationController, message);
       },
     );
   }
@@ -149,12 +150,9 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
               ),
             );
           });
-        } else if (state is InternetGainedState) {
-          // Check if internet was previously lost
-          if (isInternetLost) {
-            // Navigate back to the original page when internet is regained
-            Navigator.pop(context);
-          }
+        } else if (state is InternetGainedState && isInternetLost) {
+          // Navigate back to the original page when internet is regained
+          Navigator.pop(context);
           isInternetLost = false; // Reset the flag
         }
       },
@@ -171,95 +169,127 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
                   const IconThemeData(color: AppBarStyles.appBarIconColor),
               centerTitle: true,
             ),
-            body: SingleChildScrollView(
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 40,horizontal: 15),
-                child: Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.topCenter,
-                            child: Image.asset(
-                              'assets/icons/userrr.png', // Replace with your actual asset path
-                              height: 150,
-                              width: 150,
-                            ),
-                          ),
-                          SizedBox(height: 30,),
-                          TextFormField(
-                            controller: _usernameController,
-                            decoration:
-                                const InputDecoration(labelText: 'Username'),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Username is required';
-                              }
-                              return null;
-                            },
-                          ),
-                          TextFormField(
-                            controller: _passwordController,
-                            obscureText: !_isPasswordVisible,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: ResponsiveLayout.contentPadding(context),
+                    child: Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              alignment: Alignment.topCenter,
+                              child: Image.asset(
+                                'assets/icons/userrr.png',
+                                height: ResponsiveLayout.isSmallScreen(context)
+                                    ? 100
+                                    : 200,
+                                width: ResponsiveLayout.isSmallScreen(context)
+                                    ? 100
+                                    : 200,
                               ),
                             ),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Password is required';
-                              }
-                              return null;
-                            },
-                          ),
-                          TextFormField(
-                            controller: _emailController,
-                            decoration:
-                                const InputDecoration(labelText: 'Email'),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Email is required';
-                              }
-                              return null;
-                            },
-                          ),
-                          TextFormField(
-                            controller: _phoneNumberController,
-                            decoration: const InputDecoration(
-                                labelText: 'Phone Number'),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Phone Number is required';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: _submitForm,
-                            child: const Text('Submit'),
-                          ),
-                        ],
+                            SizedBox(
+                                height: ResponsiveLayout.isSmallScreen(context)
+                                    ? 20
+                                    : 30),
+                            TextFormField(
+                              controller: _usernameController,
+                              decoration:
+                                  const InputDecoration(labelText: 'Username'),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Username is required';
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: !_isPasswordVisible,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPasswordVisible = !_isPasswordVisible;
+                                    });
+                                  },
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Password is required';
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _emailController,
+                              decoration:
+                                  const InputDecoration(labelText: 'Email'),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Email is required';
+                                }
+                                return null;
+                              },
+                            ),
+                            TextFormField(
+                              controller: _phoneNumberController,
+                              decoration: const InputDecoration(
+                                  labelText: 'Phone Number'),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Phone Number is required';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(
+                                height: ResponsiveLayout.isSmallScreen(context)
+                                    ? 10
+                                    : 20),
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 50),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: AppColors.primaryColor,
+
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _submitForm,
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppColors.primaryColor, // Set the button background color
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50), // Set the border radius
+                                    ),
+                                  ),
+                                  child: Text('Submit',style: TextStyle(color: Colors.white,fontSize: 18),),
+                                ),
+                              ),
+                            )
+
+
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           );
         } else {
