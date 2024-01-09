@@ -222,6 +222,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                       showSnackbar(context, "Coordinates Are Saved");
                       popPage();
                     },
+
                     zoomOutIcon: Icons.zoom_out, // Change this as needed
                     zoomInIcon: Icons.zoom_in,   // Change this as needed
                     currentLocationIcon: Icons.my_location,
@@ -235,7 +236,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                     locationPinTextStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.secondaryColor,
+                      color: Colors.black,
                     ),
                     hintText: 'Search Location',
                     buttonTextStyle: TextStyle(
@@ -248,7 +249,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                 if (!isKeyboardVisible)
                 Positioned(
                   top: MediaQuery.of(context).size.height > 700 ? (MediaQuery.of(context).size.height /
-                      3.3): (MediaQuery.of(context).size.height /
+                      3.5): (MediaQuery.of(context).size.height /
                       8), // Adjust position as needed
                   left: (MediaQuery.of(context).size.width / 1.22),
                   child: Container(
@@ -273,26 +274,39 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                   ),
                 ),
                 Positioned(
-                bottom: 20,
-                    left: 0,
-                    right: 0,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                  Text(
-                  "Pick location and set geofence",
-                  style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                  ),
-                  ),
-                  ]
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 220,
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.orangeAccent, // Use your desired warning color
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info,
+                            color: Colors.black,
+                          ),
+                          SizedBox(width: 8), // Adjust the spacing between icon and text
+                          Text(
+                            "Pick location and set geofence",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 )
-                ),
+
               ],
             ),
           );
