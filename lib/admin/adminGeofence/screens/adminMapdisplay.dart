@@ -244,6 +244,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+
                   ),
                 ),
                 if (!isKeyboardVisible)
