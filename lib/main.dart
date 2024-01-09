@@ -62,6 +62,7 @@ Future main() async {
   runApp(DevicePreview(builder: (BuildContext context) {
     return MyApp();
   }));
+  // runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

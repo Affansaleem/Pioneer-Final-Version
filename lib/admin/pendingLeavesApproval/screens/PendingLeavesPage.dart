@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
@@ -151,12 +152,27 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+
                   Icon(Icons.credit_card, size: 36), // Icon for Card No
                   Text(
                     '${leave.cardNo}',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
+                  // Icon(Icons.person, size: 36), // Icon for Card No
+                  Text(
+                    '${leave.empName}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+
+                  // Icon(FontAwesomeIcons.building, size: 36), // Icon for Card No
+                  Text(
+                    '${leave.deptName}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+
                   Icon(Icons.access_time, size: 36), // Icon for Punch Date Time
                   Text(
                     '$formattedDateTime',
@@ -165,7 +181,7 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
                   SizedBox(height: 10),
                   Icon(Icons.location_on, size: 36), // Icon for Location
                   Container(
-                    width: 250,
+                    width: 200,
                     child: Center(
                       child: Text(
                         '${leave.location}',
