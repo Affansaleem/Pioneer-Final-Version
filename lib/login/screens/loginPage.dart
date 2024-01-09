@@ -492,7 +492,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                   Positioned(
                     top: 90,
-                    right: 50,
+                    left: MediaQuery.of(context).size.width * 0.5 - 150, // Adjust 120 according to your text width
                     child: Text(
                       'Pioneer Time System',
                       style: TextStyle(
@@ -538,6 +538,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         key: _formKey,
                         child: SingleChildScrollView(
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               BlocBuilder<SignInBloc, SignInState>(
@@ -815,7 +816,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   );
                                 },
                               ),
-                              SizedBox(height: MediaQuery.of(context).size.height >700? 30: 0,),
+                              SizedBox(height: MediaQuery.of(context).size.height >700? 100: 20,),
                               Text("All Rights Reserved | Powered by PTS",style: TextStyle(color: Colors.grey),),
                             ],
                           ),

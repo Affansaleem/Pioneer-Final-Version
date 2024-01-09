@@ -301,9 +301,12 @@ class _DailyReportsScreenState extends State<DailyReportsScreen> {
                                 TableCell(
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      "Worked: ${report.hoursWorked}",
-                                      style: TextStyle(color: Colors.grey),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top:8.0),
+                                      child: Text(
+                                        "Worked: ${report.hoursWorked/60}",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -314,6 +317,7 @@ class _DailyReportsScreenState extends State<DailyReportsScreen> {
                                         width: 60,
                                       ),
                                       Container(
+                                        margin: EdgeInsets.only(top:12),
                                         decoration: BoxDecoration(
                                           color: Colors.green, // Status color
                                           borderRadius:

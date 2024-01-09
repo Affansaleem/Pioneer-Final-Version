@@ -473,7 +473,7 @@ class HomePageState extends State<EmpDashHome> {
                           ),
                         ),
                       ],
-                      toolbarHeight: MediaQuery.of(context).size.height / 10,
+                      toolbarHeight: MediaQuery.of(context).size.height < 700? MediaQuery.of(context).size.height / 8 : MediaQuery.of(context).size.height / 10,
                     ),
                     body: SingleChildScrollView(
                       child: Column(
