@@ -69,10 +69,20 @@ class _AdminDailyReportEmployeeListPageState
     loadData();
     Future.delayed(Duration(seconds: 2), () {
       setState(() {
+        selectedEmployees.clear();
+        _uncheckAllCheckboxes(); // Add this line to uncheck all checkboxes
+        print(selectedEmployees);
         showLoading = false;
       });
     });
   }
+
+  void _uncheckAllCheckboxes() {
+    for (var employee in employees) {
+      employee.isSelected = false;
+    }
+  }
+
 
   Future<void> loadData() async {
     try {

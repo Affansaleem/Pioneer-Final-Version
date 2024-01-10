@@ -206,7 +206,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
             body: Stack(
               children: [
                 Container(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height > 700 ?30:50),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height > 700 ?60:50),
                   child: OpenStreetMapSearchAndPick(
                     onPicked: (pickedData) {
                       getAddress(

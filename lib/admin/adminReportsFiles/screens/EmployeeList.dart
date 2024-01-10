@@ -60,21 +60,29 @@ class _EmployeeListState extends State<EmployeeList>
 
   @override
   void initState() {
+    super.initState();
+    _initializePage();
+  }
+
+  Future<void> _initializePage() async {
     addToCartPopUpAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    super.initState();
-    _fetchCorporateIdFromPrefs();
-    _fetchDepartmentNames();
-    _fetchBranchNames(); // Fetch department names when the widget initializes
-    _fetchCompanyNames(); // Fetch company names when the widget initializes
+    await _fetchCorporateIdFromPrefs();
+    await _fetchDepartmentNames();
+    await _fetchBranchNames();
+    await _fetchCompanyNames();
     companyDropdownValue = null;
-    loadData();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        showLoading = false;
+    await loadData();
+
+    // Uncheck all checkboxes
+    setState(() {
+      selectedEmployees.clear();
+      employees.forEach((employee) {
+        employee.isSelected = false;
       });
+      showLoading = false;
     });
   }
 
