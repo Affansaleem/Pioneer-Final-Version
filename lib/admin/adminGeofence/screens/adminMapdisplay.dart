@@ -205,30 +205,53 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
             ),
             body: Stack(
               children: [
-                OpenStreetMapSearchAndPick(
-                  // center: LatLong(currentLat!, currentLong!),
-                  buttonColor: AppColors.primaryColor,
-                  buttonText: 'Set Geofence',
-                  onPicked: (pickedData) {
-                    getAddress(pickedData.latLong.latitude,
-                        pickedData.latLong.longitude);
-                    setState(() {
-                      sendLat = pickedData.latLong.latitude;
-                      sendLong = pickedData.latLong.longitude;
-                      _submitGeofenceDataForSelectedEmployees();
-                      saveLocationToSharedPreferences(sendLat!, sendLong!);
-                    });
-                    showSnackbar(context, "Coordinates Are Saved");
-                    popPage();
-                  },
-                  locationPinIconColor: AppColors.secondaryColor,
-                  locationPinText: "${address}",
+                Container(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height > 700 ?30:50),
+                  child: OpenStreetMapSearchAndPick(
+                    onPicked: (pickedData) {
+                      getAddress(
+                        pickedData.latLong.latitude,
+                        pickedData.latLong.longitude,
+                      );
+                      setState(() {
+                        sendLat = pickedData.latLong.latitude;
+                        sendLong = pickedData.latLong.longitude;
+                        _submitGeofenceDataForSelectedEmployees();
+                        saveLocationToSharedPreferences(sendLat!, sendLong!);
+                      });
+                      showSnackbar(context, "Coordinates Are Saved");
+                      popPage();
+                    },
+
+                    zoomOutIcon: Icons.zoom_out, // Change this as needed
+                    zoomInIcon: Icons.zoom_in,   // Change this as needed
+                    currentLocationIcon: Icons.my_location,
+                    locationPinIcon: Icons.location_on,
+                    buttonWidth: 50,
+                    buttonColor: AppColors.primaryColor,
+                    buttonTextColor: Colors.white, // Change this as needed
+                    buttonText: 'Set Geofence',
+                    locationPinIconColor: AppColors.secondaryColor,
+                    locationPinText: "${address}",
+                    locationPinTextStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    hintText: 'Search Location',
+                    buttonTextStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+
+                  ),
                 ),
                 if (!isKeyboardVisible)
                 Positioned(
                   top: MediaQuery.of(context).size.height > 700 ? (MediaQuery.of(context).size.height /
-                      3.3): (MediaQuery.of(context).size.height /
-                      5), // Adjust position as needed
+                      3.5): (MediaQuery.of(context).size.height /
+                      8), // Adjust position as needed
                   left: (MediaQuery.of(context).size.width / 1.22),
                   child: Container(
                     child: SfSlider.vertical(
@@ -251,6 +274,40 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                     ),
                   ),
                 ),
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 220,
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.orangeAccent, // Use your desired warning color
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info,
+                            color: Colors.black,
+                          ),
+                          SizedBox(width: 8), // Adjust the spacing between icon and text
+                          Text(
+                            "Pick location and set geofence",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+
               ],
             ),
           );
