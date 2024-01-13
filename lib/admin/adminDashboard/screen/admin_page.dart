@@ -36,8 +36,8 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   Future<void> _loadData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final corporateId = prefs.getString('corporate_id') ?? '';
+    // final prefs = await SharedPreferences.getInstance();
+    // final corporateId = prefs.getString('corporate_id') ?? '';
     try {
       final adminDashboardData = await adminDashboardRepository
           .fetchDashboardData(selectedDate);
