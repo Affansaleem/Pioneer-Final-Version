@@ -58,27 +58,33 @@ class _ManualMarkAttendanceState extends State<ManualMarkAttendance>
     GlobalObjects.globalBranch = "";
     super.dispose();
   }
-
   @override
   void initState() {
+    super.initState();
+    _initializePage();
+  }
+
+  Future<void> _initializePage() async {
     addToCartPopUpAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    super.initState();
-    _fetchCorporateIdFromPrefs();
-    _fetchDepartmentNames();
-    _fetchBranchNames();
-    _fetchCompanyNames();
+    await _fetchCorporateIdFromPrefs();
+    await _fetchDepartmentNames();
+    await _fetchBranchNames();
+    await _fetchCompanyNames();
     companyDropdownValue = null;
-    loadData();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {
-        showLoading = false;
+    await loadData();
+
+    // Uncheck all checkboxes
+    setState(() {
+      selectedEmployees.clear();
+      employees.forEach((employee) {
+        employee.isSelected = false;
       });
+      showLoading = false;
     });
   }
-
   Future<void> loadData() async {
     try {
       List<Branch> branches = await BranchRepository().getAllActiveBranches();
