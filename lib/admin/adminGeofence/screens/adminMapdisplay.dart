@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:lottie/lottie.dart';
 import 'package:open_street_map_search_and_pick/open_street_map_search_and_pick.dart';
 import 'package:page_transition/page_transition.dart';
@@ -160,6 +162,15 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
 
   bool isInternetLost = false;
 
+  void _updateLocation(double latitude, double longitude, String addressName) {
+    setState(() {
+      sendLat = latitude;
+      sendLong = longitude;
+      address = addressName;
+      _submitGeofenceDataForSelectedEmployees();
+      saveLocationToSharedPreferences(sendLat!, sendLong!);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final adminGeofenceBloc = BlocProvider.of<AdminGeoFenceBloc>(context);
@@ -206,22 +217,22 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
             body: Stack(
               children: [
                 Container(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height > 700 ?60:50),
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height >700? 60 : 70),
                   child: OpenStreetMapSearchAndPick(
                     onPicked: (pickedData) {
-                      getAddress(
-                        pickedData.latLong.latitude,
-                        pickedData.latLong.longitude,
-                      );
                       setState(() {
+                        // Update the state for locationPin and other relevant data
+                        address = pickedData.addressName;
                         sendLat = pickedData.latLong.latitude;
                         sendLong = pickedData.latLong.longitude;
                         _submitGeofenceDataForSelectedEmployees();
                         saveLocationToSharedPreferences(sendLat!, sendLong!);
                       });
+                      print("Picked data value $pickedData");
                       showSnackbar(context, "Coordinates Are Saved");
-                      popPage();
+                      // popPage();
                     },
+
 
                     zoomOutIcon: Icons.zoom_out, // Change this as needed
                     zoomInIcon: Icons.zoom_in,   // Change this as needed
@@ -232,7 +243,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                     buttonTextColor: Colors.white, // Change this as needed
                     buttonText: 'Set Geofence',
                     locationPinIconColor: AppColors.secondaryColor,
-                    locationPinText: "${address}",
+                    locationPinText: "", // Use the state directly
                     locationPinTextStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -244,7 +255,6 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-
                   ),
                 ),
                 if (!isKeyboardVisible)
@@ -376,3 +386,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
     });
   }
 }
+
+
+
+

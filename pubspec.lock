@@ -404,7 +404,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_map:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_map
       sha256: cda8d72135b697f519287258b5294a57ce2f2a5ebf234f0e406aad4dc14c9399
@@ -678,7 +678,7 @@ packages:
     source: hosted
     version: "4.8.1"
   latlong2:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: latlong2
       sha256: "18712164760cee655bc790122b0fd8f3d5b3c36da2cb7bf94b68a197fbb0811b"

@@ -118,7 +118,7 @@ class _AdminGeofencingState extends State<AdminGeofencing>
 
       // Extract department names from the departments list and filter out null values
       final departmentNames = departments
-          .map((department) => department?.deptName)
+          .map((department) => department.deptName)
           .where((name) => name != null) // Filter out null values
           .map((name) => name!) // Convert non-nullable String? to String
           .toList();
@@ -170,7 +170,7 @@ class _AdminGeofencingState extends State<AdminGeofencing>
       final companyNames = companies
           .map((company) => company.companyName)
           .where((name) => name != null) // Filter out null values
-          .map((name) => name!) // Convert non-nullable String? to String
+          .map((name) => name) // Convert non-nullable String? to String
           .toList();
 
       setState(() {
