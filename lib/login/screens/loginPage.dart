@@ -456,7 +456,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
 
 
-    print(MediaQuery.of(context).size.height);
+    // print(MediaQuery.of(context).size.height);
     return BlocConsumer<InternetBloc, InternetStates>(
       listener: (context, state) {
         // TODO: implement listener

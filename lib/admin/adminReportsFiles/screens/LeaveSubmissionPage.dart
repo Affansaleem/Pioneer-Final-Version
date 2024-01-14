@@ -507,6 +507,7 @@ class YourBottomSheet extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                SizedBox(height: 1,),
                 // Draggable handle at the top
                 Container(
                   height: 10,
