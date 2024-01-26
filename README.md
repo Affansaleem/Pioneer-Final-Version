@@ -1,42 +1,30 @@
-Pioneer Attendance Mobile Application
-[Pioneer-Final-Version]
+<h1 align="center">Hi 👋, I'm Affan Saleem</h1>
+<h3 align="center">A passionate frontend & backend developer from Pakistan</h3>
 
-Overview
-The Pioneer Attendance Mobile Application is a comprehensive solution designed for efficient attendance tracking, offering dual portals for administrators and employees. The application features geofencing capabilities, allowing administrators to define precise attendance zones. This README provides essential information to get started, configure the application, and contribute to its development.
+<p align="left"> <img src="https://komarev.com/ghpvc/?username=affansaleem&label=Profile%20views&color=0e75b6&style=flat" alt="affansaleem" /> </p>
 
-Features
-Admin Portal:
+<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=affansaleem" alt="affansaleem" /></a> </p>
 
-Configure geofences for accurate attendance tracking.
-Manage user accounts and access levels.
-Real-time analytics and reporting tools for attendance insights.
-Employee Portal:
+<p align="left"> <a href="https://twitter.com/" target="blank"><img src="https://img.shields.io/twitter/follow/?logo=twitter&style=for-the-badge" alt="" /></a> </p>
 
-Mark attendance within designated geofenced locations.
-Access personal attendance history and receive notifications for discrepancies.
-Customization:
+- 🔭 I’m currently working on **Attendance-Application**
 
-Tailor the application to Pioneer's organizational needs.
-Configure attendance parameters and reporting preferences.
-Security:
+- 🌱 I’m currently learning **.NET,LARAVEL,PYTHON, REACTJS,**
 
-Robust authentication protocols for data security.
-Encryption measures to safeguard attendance records.
-Getting Started
-Installation:
+- 💬 Ask me about **Flutter C# C++ C Java PYTHON NODEJS REACTJS**
 
-Follow the installation guide in the docs directory.
-Configuration:
+- 📫 How to reach me **m.affansalim@gmail.com**
 
-Set up geofencing parameters through the admin portal.
-Usage:
+<h3 align="left">Connect with me:</h3>
+<p align="left">
+<a href="https://dev.to/dev.to affansaleem" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/devto.svg" alt="dev.to affansaleem" height="30" width="40" /></a>
+</p>
 
-Access the application through the admin or employee portal.
-Mark attendance within specified geofenced locations.
-Documentation
-Detailed documentation, including configuration guides and usage instructions, can be found in the docs directory. Refer to these resources for in-depth information on various aspects of the Pioneer Attendance Mobile Application.
+<h3 align="left">Languages and Tools:</h3>
+<p align="left"> <a href="https://developer.android.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/android/android-original-wordmark.svg" alt="android" width="40" height="40"/> </a> <a href="https://getbootstrap.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/bootstrap/bootstrap-plain-wordmark.svg" alt="bootstrap" width="40" height="40"/> </a> <a href="https://www.cprogramming.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/c/c-original.svg" alt="c" width="40" height="40"/> </a> <a href="https://www.w3schools.com/cpp/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg" alt="cplusplus" width="40" height="40"/> </a> <a href="https://www.w3schools.com/cs/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/csharp/csharp-original.svg" alt="csharp" width="40" height="40"/> </a> <a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> </a> <a href="https://dart.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/dartlang/dartlang-icon.svg" alt="dart" width="40" height="40"/> </a> <a href="https://dotnet.microsoft.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/dot-net/dot-net-original-wordmark.svg" alt="dotnet" width="40" height="40"/> </a> <a href="https://expressjs.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/express/express-original-wordmark.svg" alt="express" width="40" height="40"/> </a> <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="40" height="40"/> </a> <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="40" height="40"/> </a> <a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> </a> <a href="https://hadoop.apache.org/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/apache_hadoop/apache_hadoop-icon.svg" alt="hadoop" width="40" height="40"/> </a> <a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> </a> <a href="https://www.java.com" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg" alt="java" width="40" height="40"/> </a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a> <a href="https://www.linux.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linux/linux-original.svg" alt="linux" width="40" height="40"/> </a> <a href="https://www.mysql.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" alt="mysql" width="40" height="40"/> </a> <a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/> </a> <a href="https://www.php.net" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/php/php-original.svg" alt="php" width="40" height="40"/> </a> <a href="https://postman.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="postman" width="40" height="40"/> </a> <a href="https://www.python.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> </a> <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> </p>
 
-Contributing
-We welcome contributions from the open-source community. Follow the Contribution Guidelines to report issues, suggest improvements, or contribute code to enhance the application.
+<p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=affansaleem&show_icons=true&locale=en&layout=compact" alt="affansaleem" /></p>
 
-Thank you for choosing the Pioneer Attendance Mobile Application! We appreciate your feedback and contributions.
+<p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=affansaleem&show_icons=true&locale=en" alt="affansaleem" /></p>
+
+<p><img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=affansaleem&" alt="affansaleem" /></p>
