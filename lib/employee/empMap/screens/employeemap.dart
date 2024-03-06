@@ -101,6 +101,8 @@ class _EmployeeMapState extends State<EmployeeMap>
     getLatLong? locationData;
     locationData = await getLatLongRepo.fetchData();
 
+
+
     if (locationData?.lat != null &&
         locationData?.lon != null &&
         locationData?.radius != null) {
@@ -108,6 +110,7 @@ class _EmployeeMapState extends State<EmployeeMap>
       getLong = double.parse(locationData!.lon!);
       geofenceRadius = double.parse(locationData!.radius!);
     }
+
 
   }
 
@@ -150,8 +153,6 @@ class _EmployeeMapState extends State<EmployeeMap>
         Future<AndroidDeviceInfo> getInfo() async {
           return await deviceInfo.androidInfo;
         }
-
-        print(getInfo());
         if (selectedImage == null) {
           _imageError();
         } else {
@@ -185,19 +186,28 @@ class _EmployeeMapState extends State<EmployeeMap>
                 "Internet not connected attendance will be marked when internet is available");
           }
         }
-      } else if (distance >= geofenceRadius!) {
+      }
+      else if (distance >= geofenceRadius!) {
         Timer(const Duration(seconds: 1), () {
           showCustomFailureAlert(
               context, "Geofence Not Allowed at this Location");
         });
       }
-    } else if (geofenceLatitude == null || geofenceLongitude == null) {
+    }
+    else if (geofenceLatitude == null || geofenceLongitude == null) {
       //print("hi4");
       // print(geofenceLatitude);
       // print(geofenceLongitude);
-      Navigator.pop(context);
-      showCustomWarningAlert(context, "Geofence not started by office");
-    } else {}
+      // Navigator.pop(context);
+      // showCustomWarningAlert(context, "Geofence not started by office");
+      Timer(const Duration(seconds: 1), () {
+        showCustomFailureAlert(
+            context, "Geofence not set at this Location");
+      });
+    }
+    else {
+
+    }
   }
 
   Future<void> _noWifiAttendence() async {
@@ -326,23 +336,36 @@ class _EmployeeMapState extends State<EmployeeMap>
       }
     }
   }
+  var isButtonEnabled = true;
 
-  void CheckOfficeOrLocation() {
-    CoolAlert.show(
+  Future<void> CheckOfficeOrLocation() async {
+    setState(() {
+      isButtonEnabled = false; // Disable the button before showing the alert
+    });
+    // isButtonEnabled=false;
+    await CoolAlert.show(
       context: context,
       type: CoolAlertType.confirm,
       title: 'Attendance',
       text: 'Mark Attendance From Office/Location',
       confirmBtnText: 'Office',
       cancelBtnText: 'Location',
-      onConfirmBtnTap: () {
-        _startGeoFencingUpdate();
+      onConfirmBtnTap: () async {
+        await _startGeoFencingUpdate();
+        setState(() {
+          isButtonEnabled = true; // Enable the button after the action completes
+        });
       },
-      onCancelBtnTap: () {
-        _markAttendance();
+      onCancelBtnTap: () async {
+        await _markAttendance();
+        setState(() {
+          isButtonEnabled = true; // Enable the button after the action completes
+        });
       },
     );
   }
+
+
 
   Future<void> getAddress(double lat, double long) async {
     try {
@@ -643,13 +666,12 @@ class _EmployeeMapState extends State<EmployeeMap>
                     child: Container(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () async {
+                        onPressed: isButtonEnabled
+                            ? () async {
                           if (selectedImage != null) {
-                            if (state is InternetGainedState &&
-                                runDbOneTime == 0) {
-                              CheckOfficeOrLocation();
-                            } else if (state is InternetLostState &&
-                                runDbOneTime < 1) {
+                            if (state is InternetGainedState && runDbOneTime == 0) {
+                              await CheckOfficeOrLocation();
+                            } else if (state is InternetLostState && runDbOneTime < 1) {
                               buildNoWifiOrSavedDataWidget();
                             } else {
                               showCustomFailureAlert(context, 'You Are Offline');
@@ -657,24 +679,25 @@ class _EmployeeMapState extends State<EmployeeMap>
                           } else {
                             _imageError();
                           }
-                        },
+                        }
+                            : null, // Set onPressed to null to disable the button when isButtonEnabled is false
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors
-                              .primaryColor, // Change to your desired background color
+                          backgroundColor: isButtonEnabled ? AppColors.primaryColor : Colors.grey, // Change color to grey when disabled
                           padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 24), // Adjust padding as needed
+                            vertical: 12,
+                            horizontal: 24,
+                          ),
                         ),
                         child: const Text(
                           "Mark Your Attendance",
                           style: TextStyle(
-                            fontSize: 16, // Adjust the font size as needed
-                            fontWeight: FontWeight
-                                .bold, // Adjust the font weight as needed
-                            color: Colors.white, // Change text color as needed
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ),
+
                     ),
                   ),
                 ],
@@ -832,13 +855,14 @@ class _EmployeeMapState extends State<EmployeeMap>
                       child: Container(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
+                          onPressed: isButtonEnabled
+                              ? () async {
                             if (selectedImage != null) {
-                              if (state is InternetGainedState &&
-                                  runDbOneTime == 0) {
-                                CheckOfficeOrLocation();
-                              } else if (state is InternetLostState &&
-                                  runDbOneTime < 1) {
+                              if (state is InternetGainedState && runDbOneTime == 0) {
+                                // isButtonEnabled=false;
+                                await CheckOfficeOrLocation();
+
+                              } else if (state is InternetLostState && runDbOneTime < 1) {
                                 buildNoWifiOrSavedDataWidget();
                               } else {
                                 showCustomFailureAlert(context, 'You Are Offline');
@@ -846,24 +870,25 @@ class _EmployeeMapState extends State<EmployeeMap>
                             } else {
                               _imageError();
                             }
-                          },
+                          }
+                              : null, // Set onPressed to null to disable the button when isButtonEnabled is false
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors
-                                .primaryColor, // Change to your desired background color
+                            backgroundColor: isButtonEnabled ? AppColors.primaryColor : Colors.grey, // Change color to grey when disabled
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 24), // Adjust padding as needed
+                              vertical: 12,
+                              horizontal: 24,
+                            ),
                           ),
                           child: const Text(
                             "Mark Your Attendance",
                             style: TextStyle(
-                              fontSize: 16, // Adjust the font size as needed
-                              fontWeight: FontWeight
-                                  .bold, // Adjust the font weight as needed
-                              color: Colors.white, // Change text color as needed
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
+
                       ),
                     ),
                   ],

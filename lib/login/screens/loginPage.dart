@@ -363,9 +363,11 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  void _onLoginButtonPressed() async {
+  var isButtonEnabled=true;
+  Future<void> _onLoginButtonPressed() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
+        isButtonEnabled=false;
         _isButtonPressed = true;
       });
 
@@ -425,6 +427,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       }
       setState(() {
         _isButtonPressed = false;
+        isButtonEnabled=true;
       });
     } else {
       showCustomWarningAlert(context, "Please fill out all required fields");
@@ -783,37 +786,37 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       ),
                                       shape: MaterialStateProperty.all(
                                         RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
+                                          borderRadius: BorderRadius.circular(50),
                                         ),
                                       ),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              AppColors.primaryColor),
+                                      backgroundColor: MaterialStateProperty.all(
+                                        isButtonEnabled ? AppColors.primaryColor : Colors.grey, // Change color to grey when disabled
+                                      ),
                                       elevation: MaterialStateProperty.all(3),
-                                      shadowColor: MaterialStateProperty.all(
-                                          Colors.grey),
+                                      shadowColor: MaterialStateProperty.all(Colors.grey),
                                     ),
-                                    onPressed: () {
-                                      _onLoginButtonPressed();
-                                    },
+                                    onPressed: isButtonEnabled
+                                        ? () async {
+                                      await _onLoginButtonPressed();
+                                    }
+                                        : null, // Set onPressed to null when isButtonEnabled is false to disable the button
                                     child: _isButtonPressed
                                         ? const SizedBox(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2.0,
-                                              color: Colors.white,
-                                            ),
-                                            width: 15.0,
-                                            height: 15.0,
-                                          )
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                        color: Colors.white,
+                                      ),
+                                      width: 15.0,
+                                      height: 15.0,
+                                    )
                                         : const Text(
-                                            'Login',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
+                                      'Login',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   );
                                 },
                               ),

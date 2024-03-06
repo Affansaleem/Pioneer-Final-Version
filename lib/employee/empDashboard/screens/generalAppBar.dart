@@ -31,15 +31,11 @@
           ),
           backgroundColor: AppColors.primaryColor,
           elevation: 0,
-          title: Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 55.0),
-              child: Text(
-                pageHeading,
-                style: AppBarStyles.appBarTextStyle,
-              ),
-            ),
+          title: Text(
+            pageHeading,
+            style: AppBarStyles.appBarTextStyle,
           ),
+          centerTitle: true,
         );
       } else {
         return Container(

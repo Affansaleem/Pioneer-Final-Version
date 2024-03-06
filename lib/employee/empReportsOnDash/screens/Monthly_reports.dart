@@ -128,7 +128,7 @@ class _MonthlyReportsPageState extends State<MonthlyReportsPage> {
           Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
               // Replace with your API call using the MonthlyReportsRepository
-              future: fetchMonthlyReportsData(selectedMonth: selectedMonth),
+              future: fetchMonthlyReportsData(selectedMonth: selectedMonth, selectedYear: selectedYear),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CustomLoadingIndicator();
@@ -167,6 +167,7 @@ class _MonthlyReportsPageState extends State<MonthlyReportsPage> {
   // Replace this function with your actual API call using the MonthlyReportsRepository
   Future<List<Map<String, dynamic>>> fetchMonthlyReportsData({
     required int selectedMonth,
+    required int selectedYear, // Add selectedYear as a required parameter
   }) async {
     final repository = MonthlyReportsRepository();
 
@@ -177,22 +178,21 @@ class _MonthlyReportsPageState extends State<MonthlyReportsPage> {
       final employeeId = prefs.getInt('employee_id') ?? 0;
 
       final reportsData = await repository.getMonthlyReports(
-
         month: selectedMonth,
-        year: selectedYear,
+        year: selectedYear, // Use the selectedYear parameter
       );
 
       // Map MonthlyReportsModel objects to the desired format
       final mappedReports = reportsData
           .map((report) => {
-                'shiftstarttime': report.shiftStartTime,
-                'shiftendtime': report.shiftEndTime,
-                'status': report.status,
-                'hoursworked': report.hoursWorked,
-                'in1': report.in1,
-                'out2': report.out2,
-                // Add other fields as needed
-              })
+        'shiftstarttime': report.shiftStartTime,
+        'shiftendtime': report.shiftEndTime,
+        'status': report.status,
+        'hoursworked': report.hoursWorked,
+        'in1': report.in1,
+        'out2': report.out2,
+        // Add other fields as needed
+      })
           .toList();
 
       return mappedReports;
@@ -200,6 +200,7 @@ class _MonthlyReportsPageState extends State<MonthlyReportsPage> {
       throw e; // You can handle errors as needed
     }
   }
+
 }
 
 // monthly_reports_list_view.dart

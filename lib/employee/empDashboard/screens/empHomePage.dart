@@ -421,6 +421,7 @@ class HomePageState extends State<EmpDashHome> {
         if (state is InternetGainedState) {
           return Scaffold(
                     appBar: AppBar(
+                      centerTitle: true,
                       leading: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                         child: IconButton(
@@ -434,15 +435,11 @@ class HomePageState extends State<EmpDashHome> {
                       backgroundColor: AppColors.primaryColor,
                       elevation: 0,
                       title: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            MediaQuery.of(context).size.width / 4.5, 30, 0, 0),
-                        child: const Row(
-                          children: [
-                            Text(
-                              "Home",
-                              style: AppBarStyles.appBarTextStyle,
-                            ),
-                          ],
+                        padding: EdgeInsets.only( top: 35
+                        ),
+                        child: Text(
+                          "Home",
+                          style: AppBarStyles.appBarTextStyle,
                         ),
                       ),
                       actions: [
@@ -530,43 +527,92 @@ class HomePageState extends State<EmpDashHome> {
                             ),
                           ),
                           Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
                             height: 75,
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15), // Same as the Card's shape
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5), // Adjust the shadow color and opacity
+                                  spreadRadius: 3, // Adjust the spread radius
+                                  blurRadius: 5, // Adjust the blur radius
+                                  offset: Offset(0, 3), // Adjust the offset
+                                ),
+                              ],
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.max,
                               children: <Widget>[
-                                const SizedBox(
-                                  width: 10,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "IN",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      formattedTimeIn1,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                ProfileInfoCard(
-                                  firstText: "IN",
-                                  secondText:formattedTimeIn1,
-
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Status",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      GlobalObjects.empStatus != null && GlobalObjects.empStatus!.isNotEmpty
+                                          ? GlobalObjects.empStatus!
+                                          : "---",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ProfileInfoCard(
-                                  firstText: "Status",
-                                  secondText: GlobalObjects.empStatus?.isNotEmpty == true ? GlobalObjects.empStatus : "---",
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ProfileInfoCard(
-                                  firstText: "OUT",
-                                  secondText: formattedTimeOut2,
-
-                                ),
-                                const SizedBox(
-                                  width: 10,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "OUT",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      formattedTimeOut2 ,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
+
+
                           const SizedBox(height: 14),
                           Text(
                             'ID ${GlobalObjects.empCode ?? '000'}',

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -27,32 +28,25 @@ class LeaveApprovalPage extends StatefulWidget {
   State<LeaveApprovalPage> createState() => _LeaveApprovalPageState();
 }
 
-class _LeaveApprovalPageState extends State<LeaveApprovalPage>
-    with TickerProviderStateMixin {
-  bool _isMounted = true; // Add this flag
-
+class _LeaveApprovalPageState extends State<LeaveApprovalPage> with TickerProviderStateMixin {
   bool isInternetLost = false;
   late TabController _tabController;
   List<LeaveRequest> leaveRequests = [];
   List<UnApprovedLeaveRequest> unapprovedLeaveRequests = [];
 
   bool isFirstTimeLoading = true;
-
+  bool _isMounted = true; // Add this flag
   bool isRefreshing = false;
+  DateTime? _selectedDate; // Change to DateTime?
 
   Future<void> fetchData() async {
-    // Set the refreshing flag to true
     setState(() {
       isRefreshing = true;
     });
 
-    // Fetch both unapproved and approved leave requests
-    context
-        .read<UnapprovedLeaveRequestBloc>()
-        .add(FetchUnapprovedLeaveRequests());
+    context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
     context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
 
-    // Set the refreshing flag to false
     setState(() {
       isRefreshing = false;
     });
@@ -62,27 +56,21 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _selectedDate = null; // Initialize as null
+
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         if (_tabController.index == 0) {
-          // Fetch unapproved leave requests
-          context
-              .read<UnapprovedLeaveRequestBloc>()
-              .add(FetchUnapprovedLeaveRequests());
+          context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
         } else if (_tabController.index == 1) {
-          // Fetch approved leave requests
           context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
         }
       }
     });
 
-    // Add a 2-second delay before fetching data
     Future.delayed(Duration(seconds: 2), fetchData);
 
-    // Fetch and save unapproved leave requests
-    context
-        .read<UnapprovedLeaveRequestBloc>()
-        .add(FetchUnapprovedLeaveRequests());
+    context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
     context.read<UnapprovedLeaveRequestBloc>().stream.listen((state) {
       if (state is UnapprovedLeaveRequestLoaded) {
         setState(() {
@@ -92,7 +80,6 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
       }
     });
 
-    // Fetch and save approved leave requests
     context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
     context.read<LeaveRequestBloc>().stream.listen((state) {
       if (state is LeaveRequestLoaded) {
@@ -144,7 +131,19 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
               centerTitle: true,
               backgroundColor: AppColors.primaryColor,
               iconTheme: IconThemeData(color: AppColors.brightWhite),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    _selectDate(context);
+                  },
+                  icon: const Icon(
+                    FontAwesomeIcons.calendar,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
+
             body: Column(
               children: [
                 TabBar(
@@ -159,74 +158,8 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      RefreshIndicator(
-                        onRefresh: () async {
-                          fetchData();
-                        },
-                        child: isFirstTimeLoading
-                            ? Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : unapprovedLeaveRequests.isEmpty
-                                ? Center(
-                                    child: Text('No Data Available'),
-                                  )
-                                : ListView.builder(
-                                    itemCount: unapprovedLeaveRequests.length,
-                                    itemBuilder: (context, index) {
-                                      final leaveRequest =
-                                          unapprovedLeaveRequests[index];
-                                      return LeaveRequestCard(
-                                        id: leaveRequest.rwId,
-                                        name: leaveRequest.empName,
-                                        departmentName: leaveRequest.department,
-                                        reason: leaveRequest.reason,
-                                        fromDate: leaveRequest.fromdate,
-                                        status: "Pending",
-                                        applicationDate:
-                                            leaveRequest.applicationDate,
-                                        empId: leaveRequest.empId.toString(),
-                                        toDate: leaveRequest.todate,
-                                        customLeaveRequestBloc: context
-                                            .read<CustomLeaveRequestBloc>(),
-                                      );
-                                    },
-                                  ),
-                      ),
-                      RefreshIndicator(
-                        onRefresh: () async {
-                          await fetchData();
-                        },
-                        child: isFirstTimeLoading
-                            ? Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : isRefreshing
-                                ? Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                : leaveRequests.isEmpty
-                                    ? Center(
-                                        child: Text('No Data Available'),
-                                      )
-                                    : ListView.builder(
-                                        itemCount: leaveRequests.length,
-                                        itemBuilder: (context, index) {
-                                          final leaveRequest =
-                                              leaveRequests[index];
-                                          return LeaveRequestApproveCard(
-                                            reason: leaveRequest.reason,
-                                            empName: leaveRequest.empName,
-                                            department: leaveRequest.department,
-                                            fromDate: leaveRequest.fromdate,
-                                            status: leaveRequest.approvedStatus,
-                                            applicationDate:
-                                                leaveRequest.applicationDate,
-                                            toDate: leaveRequest.todate,
-                                          );
-                                        },
-                                      ),
-                      ),
+                      _buildPendingTab(),
+                      _buildApprovedTab(),
                     ],
                   ),
                 ),
@@ -241,7 +174,103 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
       },
     );
   }
+
+  Widget _buildPendingTab() {
+    List<UnApprovedLeaveRequest> filteredRequests = unapprovedLeaveRequests;
+
+    if (_selectedDate != null) {
+      filteredRequests = unapprovedLeaveRequests.where((request) =>
+      request.applicationDate.day == _selectedDate!.day &&
+          request.applicationDate.month == _selectedDate!.month &&
+          request.applicationDate.year == _selectedDate!.year).toList();
+    }
+
+    return RefreshIndicator(
+      onRefresh: fetchData,
+      child: isFirstTimeLoading
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : filteredRequests.isEmpty
+          ? Center(
+        child: Text('No Data Available'),
+      )
+          : ListView.builder(
+        itemCount: filteredRequests.length,
+        itemBuilder: (context, index) {
+          final leaveRequest = filteredRequests[index];
+          return LeaveRequestCard(
+            id: leaveRequest.rwId,
+            name: leaveRequest.empName,
+            departmentName: leaveRequest.department,
+            reason: leaveRequest.reason,
+            fromDate: leaveRequest.fromdate,
+            status: "Pending",
+            applicationDate: leaveRequest.applicationDate,
+            empId: leaveRequest.empId.toString(),
+            toDate: leaveRequest.todate,
+            customLeaveRequestBloc: context.read<CustomLeaveRequestBloc>(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildApprovedTab() {
+    List<LeaveRequest> filteredRequests = leaveRequests;
+
+    if (_selectedDate != null) {
+      filteredRequests = leaveRequests.where((request) =>
+      request.applicationDate.day == _selectedDate!.day &&
+          request.applicationDate.month == _selectedDate!.month &&
+          request.applicationDate.year == _selectedDate!.year).toList();
+    }
+
+    return RefreshIndicator(
+      onRefresh: fetchData,
+      child: isFirstTimeLoading
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : filteredRequests.isEmpty
+          ? Center(
+        child: Text('No Data Available'),
+      )
+          : ListView.builder(
+        itemCount: filteredRequests.length,
+        itemBuilder: (context, index) {
+          final leaveRequest = filteredRequests[index];
+          return LeaveRequestApproveCard(
+            reason: leaveRequest.reason,
+            empName: leaveRequest.empName,
+            department: leaveRequest.department,
+            fromDate: leaveRequest.fromdate,
+            status: leaveRequest.approvedStatus,
+            applicationDate: leaveRequest.applicationDate,
+            toDate: leaveRequest.todate,
+          );
+        },
+      ),
+    );
+  }
+
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
 }
+
 
 class LeaveRequestCard extends StatefulWidget {
   final int id;

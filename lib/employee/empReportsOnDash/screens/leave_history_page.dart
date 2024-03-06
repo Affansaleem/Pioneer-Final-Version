@@ -19,8 +19,11 @@ class _LeavesHistoryPageState extends State<LeavesHistoryPage>
   final LeaveHistoryRepository _repository = LeaveHistoryRepository();
   final EmpLeaveRepository _leaveTypeRepository = EmpLeaveRepository();
   List<LeaveHistoryModel> leaveDetails = [];
+  List<LeaveHistoryModel> filteredLeaves = [];
   bool isLoading = true;
   late String _currentTime = DateFormat.yMd().add_jm().format(DateTime.now());
+
+  DateTime? _selectedDate; // Variable to hold the selected date
 
   @override
   void initState() {
@@ -35,8 +38,7 @@ class _LeavesHistoryPageState extends State<LeavesHistoryPage>
       final leaveHistory = await _repository.getLeaveHistory();
       setState(() {
         leaveDetails = leaveHistory;
-        leaveDetails.sort((a, b) => b.applicationDate.compareTo(
-            a.applicationDate)); // Sort by application date, most recent first
+        filteredLeaves = leaveDetails; // Initialize filteredLeaves with all leaveDetails
         isLoading = false;
       });
     } catch (e) {
@@ -49,17 +51,16 @@ class _LeavesHistoryPageState extends State<LeavesHistoryPage>
   }
 
   List<LeaveHistoryModel> getApprovedLeaves() {
-    return leaveDetails
+    return filteredLeaves
         .where((leave) => leave.approvedStatus == "Approved")
         .toList();
   }
 
   List<LeaveHistoryModel> getPendingLeaves() {
-    return leaveDetails
+    return filteredLeaves
         .where((leave) => leave.approvedStatus == "UnApproved")
         .toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,16 @@ class _LeavesHistoryPageState extends State<LeavesHistoryPage>
         centerTitle: true,
         backgroundColor: AppColors.primaryColor,
         iconTheme: IconThemeData(color: AppBarStyles.appBarIconColor),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.calendar_today),
+            onPressed: () {
+              _selectDate(context);
+            },
+          ),
+        ],
       ),
+
       body: Column(
         children: [
           TabBar(
@@ -97,6 +107,25 @@ class _LeavesHistoryPageState extends State<LeavesHistoryPage>
     );
   }
 
+  // Function to show the date picker and set the selected date
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        // Filter leaveDetails based on the selected date
+        filteredLeaves = leaveDetails.where((leave) =>
+        leave.applicationDate.year == picked.year &&
+            leave.applicationDate.month == picked.month &&
+            leave.applicationDate.day == picked.day).toList();
+      });
+    }
+  }
 
   Widget _buildLeaveList(List<LeaveHistoryModel> leaves) {
     if (isLoading) {
@@ -119,61 +148,15 @@ class _LeavesHistoryPageState extends State<LeavesHistoryPage>
             leaveId: leave.leaveId,
             approvedStatus: leave.approvedStatus,
             applicationDate: leave.applicationDate,
-            leaveTypeName: "Sample Leave Type", // You need to provide the actual leave type name
+            leaveTypeName: leave.reason,
           );
         },
       );
     }
   }
-
-  Widget _buildLeaveCards() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: leaveDetails.length,
-      itemBuilder: (BuildContext context, int index) {
-        final leave = leaveDetails[index];
-        final fromDate = leave.fromDate;
-        final toDate = leave.toDate;
-        final reason = leave.reason;
-        final leaveId = leave.leaveId;
-        print("Leave id is: $leaveId");
-
-        final approvedStatus = leave.approvedStatus;
-        final applicationDate = leave.applicationDate;
-
-        final isTopCard = index == 0;
-        return FutureBuilder<String>(
-          future: _leaveTypeRepository.getLeaveTypeName(leaveId),
-          builder: (BuildContext context,
-              AsyncSnapshot<String> leaveTypeNameSnapshot) {
-            if (leaveTypeNameSnapshot.connectionState ==
-                ConnectionState.waiting) {
-              return const SizedBox(); // Return an empty container while waiting
-            } else if (leaveTypeNameSnapshot.hasError) {
-              return Text("Error: ${leaveTypeNameSnapshot.error}");
-            } else {
-              final leaveTypeName =
-                  leaveTypeNameSnapshot.data ?? "Unknown Leave Type";
-              return isTopCard
-                  ? _buildDarkTopCard(leaveTypeName, fromDate, reason, toDate,
-                      approvedStatus, applicationDate)
-                  : LeaveCard(
-                      fromDate: fromDate,
-                      toDate: toDate,
-                      reason: reason,
-                      leaveId: leaveId,
-                      approvedStatus: approvedStatus,
-                      applicationDate: applicationDate,
-                      leaveTypeName: leaveTypeName,
-                    );
-            }
-          },
-        );
-      },
-    );
-  }
 }
+
+
 
 String formatDate(DateTime dateTime) {
   final formatter = DateFormat('d MMM, y'); // Format date as '3 Jul, 2023'

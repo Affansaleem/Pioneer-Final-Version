@@ -26,18 +26,20 @@ class PendingLeavesPage extends StatefulWidget {
       _PendingLeavesPageState(approveRepository);
 }
 
-class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProviderStateMixin{
+class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProviderStateMixin {
   String? errorMessage; // Declare the errorMessage variable
   final ApproveManualPunchRepository approveRepository;
+  late AnimationController addToCartPopUpAnimationController;
+  DateTime? _selectedDate; // Variable to hold the selected date
 
   // Constructor to inject the repository
   _PendingLeavesPageState(this.approveRepository);
-  late AnimationController addToCartPopUpAnimationController;
 
   void dispose() {
     addToCartPopUpAnimationController.dispose();
     super.dispose();
   }
+
   @override
   void initState() {
     addToCartPopUpAnimationController = AnimationController(
@@ -53,11 +55,11 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return addToCartPopUpSuccess(
-            addToCartPopUpAnimationController, message);
+        return addToCartPopUpSuccess(addToCartPopUpAnimationController, message);
       },
     );
   }
+
   void _refreshPendingLeaves() {
     BlocProvider.of<PendingLeavesBloc>(context).add(FetchPendingLeaves());
   }
@@ -94,11 +96,21 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
         if (state is InternetGainedState) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Attendance Approval',style: AppBarStyles.appBarTextStyle,),
+              title: const Text(
+                'Attendance Approval',
+                style: AppBarStyles.appBarTextStyle,
+              ),
               backgroundColor: AppBarStyles.appBarBackgroundColor,
               iconTheme: IconThemeData(color: AppBarStyles.appBarIconColor),
               centerTitle: true,
-
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    _selectDate(context); // Open date picker
+                  },
+                  icon: Icon(Icons.calendar_today), // Calendar icon
+                ),
+              ],
             ),
             body: BlocBuilder<PendingLeavesBloc, PendingLeavesState>(
               builder: (context, state) {
@@ -127,20 +139,29 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
   }
 
   Widget _buildList(List<PendingLeavesModel> leaves) {
-    if(leaves.isEmpty)
-      {
-        return Center(
-          child: Text(
-            'No Data Available',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        );
-      }
+    if (leaves.isEmpty) {
+      return Center(
+        child: Text(
+          'No Data Available',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+
+    List<PendingLeavesModel> filteredLeaves = leaves;
+
+    if (_selectedDate != null) {
+      // Filter leaves based on selected date if it's not null
+      filteredLeaves = leaves.where((leave) =>
+      leave.punchDatetime.year == _selectedDate!.year &&
+          leave.punchDatetime.month == _selectedDate!.month &&
+          leave.punchDatetime.day == _selectedDate!.day).toList();
+    }
 
     return ListView.builder(
-      itemCount: leaves.length,
+      itemCount: filteredLeaves.length,
       itemBuilder: (context, index) {
-        final leave = leaves[index];
+        final leave = filteredLeaves[index];
         final formattedDateTime = DateFormat('yyyy-MM-dd hh:mm a').format(leave.punchDatetime);
 
         return Card(
@@ -152,34 +173,29 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
-                  Icon(Icons.credit_card, size: 36), // Icon for Card No
+                  Icon(Icons.credit_card, size: 36),
                   Text(
                     '${leave.cardNo}',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-                  // Icon(Icons.person, size: 36), // Icon for Card No
                   Text(
                     '${leave.empName}',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-
-                  // Icon(FontAwesomeIcons.building, size: 36), // Icon for Card No
                   Text(
                     '${leave.deptName}',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-
-                  Icon(Icons.access_time, size: 36), // Icon for Punch Date Time
+                  Icon(Icons.access_time, size: 36),
                   Text(
                     '$formattedDateTime',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-                  Icon(Icons.location_on, size: 36), // Icon for Location
+                  Icon(Icons.location_on, size: 36),
                   Container(
                     width: 200,
                     child: Center(
@@ -192,7 +208,6 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
                   SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
-                      // Call the method to approve the leave and show feedback with FutureBuilder
                       _approveLeave(leave.cardNo, leave.punchDatetime, leave.id);
                     },
                     child: Text('Approve'),
@@ -206,6 +221,7 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
     );
   }
 
+
   void _approveLeave(String cardNo, DateTime punchDatetime, int id) {
     final dateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     final formattedPunchDatetime = dateFormat.format(punchDatetime);
@@ -217,7 +233,7 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
         // id should be added same
         "cardNo": cardNo, // Pass cardNo as leave.cardNo
         "punchDatetime":
-            formattedPunchDatetime, // Punch Date-Time = formatted punchDatetime
+        formattedPunchDatetime, // Punch Date-Time = formatted punchDatetime
         "pDay": formattedPunchDatetime, // Pass punchDatetime as pDay
         "ismanual": "string",
         "payCode": cardNo, // PayCode same as card number
@@ -246,5 +262,20 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
         SnackBar(content: Text('Error: $error')),
       );
     });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(), // Set initial date to current date if _selectedDate is null
+      firstDate: DateTime(2015),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
   }
 }
