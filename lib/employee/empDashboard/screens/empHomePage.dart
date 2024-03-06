@@ -393,8 +393,13 @@ class HomePageState extends State<EmpDashHome> {
   Widget build(BuildContext context) {
     String formattedDate =
         DateFormat('EEEE, d MMMM yyyy').format(DateTime.now());
-
     double screenWidth = MediaQuery.of(context).size.width;
+    String formattedTimeOut2 = GlobalObjects.empOut2 != null
+        ? DateFormat.Hm().format(GlobalObjects.empOut2!)
+        : '---';
+    String formattedTimeIn1 = GlobalObjects.empIn1 != null
+        ? DateFormat.Hm().format(GlobalObjects.empIn1!)
+        : '---';
     double screenHeight = MediaQuery.of(context).size.height;
     double lowerButtonsHorizontal;
     double lowerButtonsVertical;
@@ -535,7 +540,8 @@ class HomePageState extends State<EmpDashHome> {
                                 ),
                                 ProfileInfoCard(
                                   firstText: "IN",
-                                  secondText: GlobalObjects.empIn1 ?? "---",
+                                  secondText:formattedTimeIn1,
+
                                 ),
                                 const SizedBox(
                                   width: 10,
@@ -552,7 +558,8 @@ class HomePageState extends State<EmpDashHome> {
                                 ),
                                 ProfileInfoCard(
                                   firstText: "OUT",
-                                  secondText: GlobalObjects.empOut2 ?? "---",
+                                  secondText: formattedTimeOut2,
+
                                 ),
                                 const SizedBox(
                                   width: 10,

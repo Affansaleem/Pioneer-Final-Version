@@ -236,7 +236,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Future<void> saveEmployeeToDatabase(
       int employeeId, String username, String corporateId) async {
     try {
-      final dbHelper = EmployeeDatabaseHelper();
+
+      final dbHelper = await EmployeeDatabaseHelper();
       await dbHelper.insertEmployee(employeeId, corporateId);
 
       final List<Map<String, dynamic>> savedData =
