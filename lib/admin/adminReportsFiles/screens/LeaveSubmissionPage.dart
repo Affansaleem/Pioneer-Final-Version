@@ -424,7 +424,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                           "Submit",
                           style: TextStyle(
                             color: Colors.white,
-                              fontSize: 18
+                              fontSize: 15
                           ),
                         ),
                       ),

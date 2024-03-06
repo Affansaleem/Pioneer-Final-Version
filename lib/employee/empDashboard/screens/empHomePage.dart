@@ -80,8 +80,8 @@ class HomePageState extends State<EmpDashHome> {
       String? empCode = attendData['location'];
 
       String? g1 = attendData['location'];
-      print('Get them, $g1');
-      print("$empCode");
+      // print('Get them, $g1');
+      // print("$empCode");
 
       if (empCode != "0" && empCode != null) {
         String imageInString = attendData['attendeePic'];
@@ -542,10 +542,7 @@ class HomePageState extends State<EmpDashHome> {
                                 ),
                                 ProfileInfoCard(
                                   firstText: "Status",
-                                  secondText:
-                                      GlobalObjects.empStatus!.isNotEmpty
-                                          ? GlobalObjects.empStatus
-                                          : "---",
+                                  secondText: GlobalObjects.empStatus?.isNotEmpty == true ? GlobalObjects.empStatus : "---",
                                 ),
                                 const SizedBox(
                                   width: 10,
@@ -565,7 +562,7 @@ class HomePageState extends State<EmpDashHome> {
                           ),
                           const SizedBox(height: 14),
                           Text(
-                            'ID ${GlobalObjects.empCode}',
+                            'ID ${GlobalObjects.empCode ?? '000'}',
                             style: const TextStyle(
                                 fontSize: 21,
                                 fontWeight: FontWeight.w600,
@@ -573,7 +570,7 @@ class HomePageState extends State<EmpDashHome> {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            formattedDate,
+                            formattedDate ?? '12-12-12',
                             style: const TextStyle(
                               fontSize: 14,
                               color: AppColors.darkGrey,
@@ -586,7 +583,7 @@ class HomePageState extends State<EmpDashHome> {
                                 children: [
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empPresent.toString(),
+                                    GlobalObjects.empPresent?.toString() ?? '---',
                                     secondText: "Total Present",
                                     icon: Image.asset(
                                       "assets/icons/Attend.png",
@@ -595,7 +592,7 @@ class HomePageState extends State<EmpDashHome> {
                                   ),
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empAbsent.toString(),
+                                        GlobalObjects.empAbsent.toString() ?? '---',
                                     secondText: "Total Absent",
                                     icon: Image.asset(
                                       "assets/icons/absence.png",
@@ -612,7 +609,7 @@ class HomePageState extends State<EmpDashHome> {
                                 children: [
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empLeaves.toString(),
+                                        GlobalObjects.empLeaves.toString() ?? '---',
                                     secondText: "Total Leaves",
                                     icon: Image.asset(
                                       "assets/icons/leave.png",
@@ -692,7 +689,8 @@ class HomePageState extends State<EmpDashHome> {
                     )
           );
 
-        } else if (state is InternetLostState) {
+        }
+        else if (state is InternetLostState) {
           return Expanded(
             child: Scaffold(
               body: Center(
@@ -716,7 +714,8 @@ class HomePageState extends State<EmpDashHome> {
               ),
             ),
           );
-        } else {
+        }
+        else {
           return Expanded(
             child: Scaffold(
               body: Container(

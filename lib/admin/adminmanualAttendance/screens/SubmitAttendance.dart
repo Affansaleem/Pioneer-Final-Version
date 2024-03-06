@@ -521,7 +521,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 50),
+                            margin: const EdgeInsets.symmetric(horizontal: 70),
                             child: SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -531,12 +531,12 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
-                                   padding: EdgeInsets.all(MediaQuery.of(context).size.height>700?20:10),
+                                   padding: EdgeInsets.all(MediaQuery.of(context).size.height>700?15:10),
                                 ),
                                 onPressed: () {
                                   _submitAttendance(context);
                                 },
-                                child: const Text('Submit',style: TextStyle(color: Colors.white,fontSize: 18),),
+                                child: const Text('Submit',style: TextStyle(color: Colors.white,fontSize: 15),),
                               ),
                             ),
                           ),

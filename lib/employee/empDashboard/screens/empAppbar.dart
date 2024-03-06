@@ -88,7 +88,7 @@ class EmpAppBar extends StatelessWidget {
                         padding: const EdgeInsets.only(
                             right: 55.0), // Add right padding
                         child: Text(
-                          "Error: ${state.message}",
+                          "Error: ${state?.message ?? 'No message available'}",
                           style: const TextStyle(
                             color: Colors.white,
                           ),

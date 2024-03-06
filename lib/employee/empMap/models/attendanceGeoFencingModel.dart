@@ -8,7 +8,7 @@ class GeofenceModel {
   String? imeiNo;
   String? temp1;
   String? temp2;
-  String? attendanceType;
+  int? attendanceType;
   String? remark1;
   String? imagepath;
 

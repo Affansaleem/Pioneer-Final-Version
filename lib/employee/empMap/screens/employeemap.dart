@@ -109,7 +109,6 @@ class _EmployeeMapState extends State<EmployeeMap>
       geofenceRadius = double.parse(locationData!.radius!);
     }
 
-    print("This are ${getLat} ${getLong} ${geofenceRadius} ");
   }
 
   Future<void> checkLocationPermission() async {
@@ -137,11 +136,10 @@ class _EmployeeMapState extends State<EmployeeMap>
         currentLong!,
       );
 
-      print("This is the distanceeeeeeeee! ${distance} ");
 
       if (distance <= geofenceRadius!) {
-        print(
-            "${geofenceLatitude} ${geofenceLongitude} ${currentLat} ${currentLong} ${distance}");
+        // print(
+        //     "${geofenceLatitude} ${geofenceLongitude} ${currentLat} ${currentLong} ${distance}");
         //inRadius();
 
         final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -195,8 +193,8 @@ class _EmployeeMapState extends State<EmployeeMap>
       }
     } else if (geofenceLatitude == null || geofenceLongitude == null) {
       //print("hi4");
-      print(geofenceLatitude);
-      print(geofenceLongitude);
+      // print(geofenceLatitude);
+      // print(geofenceLongitude);
       Navigator.pop(context);
       showCustomWarningAlert(context, "Geofence not started by office");
     } else {}
@@ -258,22 +256,21 @@ class _EmployeeMapState extends State<EmployeeMap>
       _imageError();
     } else {
       final base64Image = base64Encode(resizedImage);
-
       final geoFenceModel = GeofenceModel(
         cardno: cardNo.toString(),
+        punchDatetime: DateTime.now(),
         location: fullAddress,
         lan: currentLat.toString(),
         long: currentLong.toString(),
         imageData: base64Image,
-        imeiNo: imei,
+        imeiNo: "",
         temp1: '',
         temp2: '',
-        attendanceType: null,
+        attendanceType: 0,
         remark1: remarks,
         imagepath: '',
-        punchDatetime: DateTime.now(),
       );
-      final geoFenceRepository = GeoFenceRepository("location");
+      final geoFenceRepository = GeoFenceRepository("Location");
 
       try {
         await geoFenceRepository.postData(geoFenceModel);
@@ -487,7 +484,7 @@ class _EmployeeMapState extends State<EmployeeMap>
             appBar: widget.viaDrawer
                 ? null
                 : AppBar(
-              title: const Text(
+                title: const Text(
                   'Geo Punch',
                   style: AppBarStyles.appBarTextStyle
               ),
@@ -683,189 +680,195 @@ class _EmployeeMapState extends State<EmployeeMap>
                 ],
               ),
             ):
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Square image frame with rounded corners (Placeholder)
-                    Container(
-                      width: MediaQuery.of(context).size.height / 8,
-                      height: MediaQuery.of(context).size.height / 8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.transparent,
-                      ),
-                    ),
+            SingleChildScrollView(
 
-                    buildPhoto()
-                  ],
-                ),
-                if (Street.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                    child: Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(25.0),
+              child: Container(
+                margin: EdgeInsets.only(top: 50),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Square image frame with rounded corners (Placeholder)
+                        Container(
+                          width: MediaQuery.of(context).size.height / 8,
+                          height: MediaQuery.of(context).size.height / 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.transparent,
+                          ),
                         ),
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: Text(
-                                "Street: $Street",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                                textAlign: TextAlign
-                                    .center, // Align text in the center
-                              ),
+
+                        buildPhoto()
+                      ],
+                    ),
+                    if (Street.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(25.0),
                             ),
-                            if (sublocaity.isNotEmpty)
-                              Center(
-                                child: Text(
-                                  "Sublocality: $sublocaity",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    "Street: $Street",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                    textAlign: TextAlign
+                                        .center, // Align text in the center
                                   ),
-                                  textAlign: TextAlign
-                                      .center, // Align text in the center
                                 ),
-                              ),
-                            Center(
-                              child: Text(
-                                "Country: $countryName",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                                if (sublocaity.isNotEmpty)
+                                  Center(
+                                    child: Text(
+                                      "Sublocality: $sublocaity",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign
+                                          .center, // Align text in the center
+                                    ),
+                                  ),
+                                Center(
+                                  child: Text(
+                                    "Country: $countryName",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign
+                                        .center, // Align text in the center
+                                  ),
                                 ),
-                                textAlign: TextAlign
-                                    .center, // Align text in the center
-                              ),
+                                const SizedBox(height: 7),
+                                Container(
+                                  padding: const EdgeInsets.all(2.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Text(
+                                    currentDateTime,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 7),
-                            Container(
-                              padding: const EdgeInsets.all(2.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Text(
-                                currentDateTime,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Remarks',
-                      hintText: 'Enter your remarks...',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        remarks = value;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: chooseImage,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors
-                            .primaryColor, // Change to your desired background color
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 24,
-                        ), // Adjust padding as needed
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          labelText: 'Remarks',
+                          hintText: 'Enter your remarks...',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            remarks = value;
+                          });
+                        },
                       ),
-                      child: Text(
-                        "Click Your Photo",
-                        style: GoogleFonts.lato(
-                          // Replace with your desired Google Fonts style
-                          textStyle: const TextStyle(
-                            fontSize: 16, // Adjust the font size as needed
-                            fontWeight: FontWeight
-                                .bold, // Adjust the font weight as needed
-                            color: Colors.white, // Change text color as needed
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: chooseImage,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors
+                                .primaryColor, // Change to your desired background color
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 24,
+                            ), // Adjust padding as needed
+                          ),
+                          child: Text(
+                            "Click Your Photo",
+                            style: GoogleFonts.lato(
+                              // Replace with your desired Google Fonts style
+                              textStyle: const TextStyle(
+                                fontSize: 16, // Adjust the font size as needed
+                                fontWeight: FontWeight
+                                    .bold, // Adjust the font weight as needed
+                                color: Colors.white, // Change text color as needed
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 7,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                  child: Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (selectedImage != null) {
-                          if (state is InternetGainedState &&
-                              runDbOneTime == 0) {
-                            CheckOfficeOrLocation();
-                          } else if (state is InternetLostState &&
-                              runDbOneTime < 1) {
-                            buildNoWifiOrSavedDataWidget();
-                          } else {
-                            showCustomFailureAlert(context, 'You Are Offline');
-                          }
-                        } else {
-                          _imageError();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors
-                            .primaryColor, // Change to your desired background color
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 24), // Adjust padding as needed
-                      ),
-                      child: const Text(
-                        "Mark Your Attendance",
-                        style: TextStyle(
-                          fontSize: 16, // Adjust the font size as needed
-                          fontWeight: FontWeight
-                              .bold, // Adjust the font weight as needed
-                          color: Colors.white, // Change text color as needed
+                    const SizedBox(
+                      height: 7,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                      child: Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (selectedImage != null) {
+                              if (state is InternetGainedState &&
+                                  runDbOneTime == 0) {
+                                CheckOfficeOrLocation();
+                              } else if (state is InternetLostState &&
+                                  runDbOneTime < 1) {
+                                buildNoWifiOrSavedDataWidget();
+                              } else {
+                                showCustomFailureAlert(context, 'You Are Offline');
+                              }
+                            } else {
+                              _imageError();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors
+                                .primaryColor, // Change to your desired background color
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 24), // Adjust padding as needed
+                          ),
+                          child: const Text(
+                            "Mark Your Attendance",
+                            style: TextStyle(
+                              fontSize: 16, // Adjust the font size as needed
+                              fontWeight: FontWeight
+                                  .bold, // Adjust the font weight as needed
+                              color: Colors.white, // Change text color as needed
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         } else {
