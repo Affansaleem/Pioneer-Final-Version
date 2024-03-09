@@ -158,11 +158,21 @@ class _PendingLeavesPageState extends State<PendingLeavesPage> with TickerProvid
           leave.punchDatetime.day == _selectedDate!.day).toList();
     }
 
+    if (filteredLeaves.isEmpty) {
+      return Center(
+        child: Text(
+          'No Data Available for selected date',
+
+        ),
+      );
+    }
+
     return ListView.builder(
       itemCount: filteredLeaves.length,
       itemBuilder: (context, index) {
         final leave = filteredLeaves[index];
-        final formattedDateTime = DateFormat('yyyy-MM-dd hh:mm a').format(leave.punchDatetime);
+        final formattedDateTime =
+        DateFormat('yyyy-MM-dd hh:mm a').format(leave.punchDatetime);
 
         return Card(
           elevation: 3,

@@ -24,7 +24,7 @@ import '../models/attendanceGeoFencingModel.dart';
 import '../models/attendanceGeoFencingRepository.dart';
 import '../models/geofenceGetLatLongRepository.dart';
 import '../models/geofenceGetlatLongmodel.dart';
-
+import 'package:http/http.dart' as http;
 class EmployeeMap extends StatefulWidget {
   late final bool viaDrawer;
 
@@ -45,6 +45,7 @@ class _EmployeeMapState extends State<EmployeeMap>
   bool locationError = false;
   String Street = "";
   String fullAddress = "";
+  String thoroughfare="";
   String countryName = "";
   File? selectedImage;
   String base64Image = "";
@@ -366,29 +367,29 @@ class _EmployeeMapState extends State<EmployeeMap>
   }
 
 
+  Future<void> getAddress(double lat, double lon) async {
+    // Office
+    // lat=31.567029862464018;
+    // lon=74.31672294294;
 
-  Future<void> getAddress(double lat, double long) async {
+
     try {
-      final placemarks = await placemarkFromCoordinates(lat, long);
-      if (mounted && placemarks.isNotEmpty) {
+      const String apiKey = 'pk.15db1192d3c4ef435a6d2d5e4217c3af';
+      final String apiUrl =
+          'https://us1.locationiq.com/v1/reverse?key=$apiKey&lat=$lat&lon=$lon&format=json';
+
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        final String display_name= data['display_name'] ?? '';
         setState(() {
-          if (placemarks[3].street != null) {
-            Street = placemarks[2].street!;
-          }
-          if (placemarks[3].subLocality != null) {
-            sublocaity = placemarks[3].subLocality!;
-          }
-          final List<String> countryNameParts = [];
-          if (placemarks[4].locality != null) {
-            countryNameParts.add(placemarks[4].locality!);
-          }
-          if (placemarks[0].country != null) {
-            countryNameParts.add(placemarks[0].country!);
-          }
-          countryName = countryNameParts.join(', ');
+          Street = display_name;
+          fullAddress="$Street";
         });
-        fullAddress = "${Street} ${sublocaity} ${countryName}";
-        print("${fullAddress}");
+      } else {
+        print('Failed to get address: ${response.statusCode}');
       }
     } catch (e) {
       print('Error getting address: $e');
@@ -570,7 +571,7 @@ class _EmployeeMapState extends State<EmployeeMap>
                               if (sublocaity.isNotEmpty)
                                 Center(
                                   child: Text(
-                                    "Sublocality: $sublocaity",
+                                    "Sub locality: $sublocaity",
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
@@ -727,7 +728,7 @@ class _EmployeeMapState extends State<EmployeeMap>
                         buildPhoto()
                       ],
                     ),
-                    if (Street.isNotEmpty)
+                      if(Street.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Card(
@@ -746,39 +747,23 @@ class _EmployeeMapState extends State<EmployeeMap>
                               children: [
                                 Center(
                                   child: Text(
-                                    "Street: $Street",
+                                    "Address ",
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
-                                    textAlign: TextAlign
-                                        .center, // Align text in the center
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
-                                if (sublocaity.isNotEmpty)
-                                  Center(
-                                    child: Text(
-                                      "Sublocality: $sublocaity",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign
-                                          .center, // Align text in the center
-                                    ),
-                                  ),
                                 Center(
                                   child: Text(
-                                    "Country: $countryName",
+                                    fullAddress,
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
-                                      fontWeight: FontWeight.bold,
                                     ),
-                                    textAlign: TextAlign
-                                        .center, // Align text in the center
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                                 const SizedBox(height: 7),
@@ -800,6 +785,8 @@ class _EmployeeMapState extends State<EmployeeMap>
                             ),
                           ),
                         ),
+
+
                       ),
                     Padding(
                       padding: const EdgeInsets.only(left: 25.0, right: 25.0),
