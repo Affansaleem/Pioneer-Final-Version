@@ -242,7 +242,12 @@ class MonthlyReportsListView extends StatelessWidget {
         final hoursWorked = report['hoursworked'];
         final inTime = report['in1'];
         final outTime = report['out2'];
-
+        double totalHours = hoursWorked/60;
+        int hours = totalHours.toInt();
+        double decimalPart = totalHours - hours;
+        int minutes = (decimalPart * 60).toInt();
+        int seconds = ((decimalPart * 60 - minutes) * 60).toInt();
+        String result = '$hours h $minutes m $seconds s';
         return Card(
           margin: EdgeInsets.all(16.0),
           shape: RoundedRectangleBorder(
@@ -393,12 +398,18 @@ class MonthlyReportsListView extends StatelessWidget {
                 children: [
                   TableCell(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10.0), // Add the desired top padding
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor, // Status color
+                          borderRadius:
+                          BorderRadius.circular(20.0),
+                        ),
+                        padding: EdgeInsets.all(8),
                         child: Text(
-                          "Worked: ${hoursWorked/60}",
-                          style: TextStyle(color: Colors.grey),
+                          "Worked: ${result}",
+                          style:
+                          TextStyle(color: Colors.white),
                         ),
                       ),
                     ),

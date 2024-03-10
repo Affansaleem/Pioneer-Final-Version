@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
+import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
 import '../../../No_internet/no_internet.dart';
@@ -136,6 +137,12 @@ class _DailyReportsScreenState extends State<DailyReportsScreen> {
                     itemCount: dailyReports.length,
                     itemBuilder: (context, index) {
                       final report = dailyReports[index];
+                      double totalHours = report.hoursWorked/60;
+                      int hours = totalHours.toInt();
+                      double decimalPart = totalHours - hours;
+                      int minutes = (decimalPart * 60).toInt();
+                      int seconds = ((decimalPart * 60 - minutes) * 60).toInt();
+                      String result = '$hours h $minutes m $seconds s';
                       return Card(
                         margin: EdgeInsets.all(16.0),
                         shape: RoundedRectangleBorder(
@@ -300,12 +307,19 @@ class _DailyReportsScreenState extends State<DailyReportsScreen> {
                               children: [
                                 TableCell(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top:8.0),
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 5),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryColor, // Status color
+                                        borderRadius:
+                                        BorderRadius.circular(20.0),
+                                      ),
+                                      padding: EdgeInsets.all(8),
                                       child: Text(
-                                        "Worked: ${report.hoursWorked/60}",
-                                        style: TextStyle(color: Colors.grey),
+                                        "Worked: ${result}",
+                                        style:
+                                        TextStyle(color: Colors.white),
                                       ),
                                     ),
                                   ),
