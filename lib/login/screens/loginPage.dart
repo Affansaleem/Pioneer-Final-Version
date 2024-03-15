@@ -22,7 +22,6 @@ import '../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../bloc/loginBloc/loginEvents.dart';
 import '../bloc/loginBloc/loginStates.dart';
 import '../bloc/loginBloc/loginbloc.dart';
-import 'halfCircleClipper.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -663,12 +662,13 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     backgroundColor: AppColors.lightGray,
                                     selectedColor: AppColors.secondaryColor,
                                     elevation: 5,
+                                    showCheckmark: false,
                                     label: Container(
                                       width: 100, // Adjust the width as needed
                                       child: Center(
                                         child: _selectedUserType ==
                                                 UserType.employee
-                                            ? Row(
+                                            ? const Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: [
@@ -677,14 +677,14 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                   SizedBox(
                                                     width: 5,
                                                   ),
-                                                  const Text(
+                                                  Text(
                                                     'Employee',
                                                     style: TextStyle(
                                                         color: Colors.white),
                                                   ),
                                                 ],
                                               )
-                                            : Row(
+                                            : const Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: [
@@ -693,7 +693,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                   SizedBox(
                                                     width: 5,
                                                   ),
-                                                  const Text(
+                                                  Text(
                                                     'Employee',
                                                     style: TextStyle(
                                                         color: Colors.white),
@@ -719,6 +719,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   const SizedBox(
                                       height: 10), // Add some spacing
                                   ChoiceChip(
+                                    showCheckmark: false,
                                     backgroundColor: AppColors.lightGray,
                                     selectedColor: AppColors.secondaryColor,
                                     elevation: 5,

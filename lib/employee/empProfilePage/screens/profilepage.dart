@@ -254,7 +254,17 @@ class EmpProfilePageState extends State<EmpProfilePage> {
   void call(String number) => launch("tel:$number");
   void sendSms(String number) => launch("sms:$number");
   void sendEmail(String email) => launch("mailto:$email");
-
+  void _launchURL(String url) async {
+    if (url.isNotEmpty) {
+      try {
+        await launch(url);
+      } catch (e) {
+        print('Error launching URL: $e');
+      }
+    } else {
+      print('URL is empty or null');
+    }
+  }
   @override
   Widget build(BuildContext context) {
           return Scaffold(
@@ -455,6 +465,21 @@ class EmpProfilePageState extends State<EmpProfilePage> {
                       icon: Icons.logout,
                       onTap: () => _logout(context),
                     ),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          _launchURL(
+                              'http://pioneersoftcloud.com/privacypolicy.html');
+                        },
+                        child: Text(
+                          'Privacy Policy',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 )
 
