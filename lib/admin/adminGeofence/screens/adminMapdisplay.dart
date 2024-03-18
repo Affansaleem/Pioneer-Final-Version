@@ -62,6 +62,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
     super.initState();
     // Initialize the MapController
     mapController = MapController();
+    // print(MediaQuery.of(context).size.height);
 
     // Set up the focus node listener for the search bar
     searchFocusNode.addListener(_focusListener);
@@ -73,6 +74,8 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
         currentLong = value.longitude;
         _center = LatLng(currentLat!, currentLong!);
         draggableMarkerPosition = _center;
+        reverseGeocode(draggableMarkerPosition.latitude,
+            draggableMarkerPosition.longitude);
         locationMessage =
         'Latitude ${value.latitude} Longitude ${value.longitude}';
       });
@@ -328,6 +331,11 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    print("Height");
+    print(MediaQuery.of(context).size.height);
+    print("Widhth");
+    print(MediaQuery.of(context).size.width);
+
     final adminGeofenceBloc = BlocProvider.of<AdminGeoFenceBloc>(context);
     return BlocConsumer<InternetBloc, InternetStates>(
         listener: (context, state) {
@@ -381,8 +389,6 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                         onTap: (TapPosition tapPosition, LatLng latlng) {
                           setState(() {
                             draggableMarkerPosition = latlng;
-                            print(
-                                "Draggable Marker Position: Latitude ${draggableMarkerPosition.latitude}, Longitude ${draggableMarkerPosition.longitude}");
                             reverseGeocode(draggableMarkerPosition.latitude,
                                 draggableMarkerPosition.longitude);
                           });
@@ -431,45 +437,49 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      TextField(
-                        controller: searchController,
-                        focusNode: searchFocusNode,
-                        onChanged: (value) {
-                          autocompleteSearch(value);
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Search for places...',
-                          labelText: 'Search',
-                          prefixIcon:
-                              Icon(Icons.search, color: Colors.grey[700]),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.clear, color: Colors.grey[700]),
-                            onPressed: () {
-                              searchController.clear();
-                              autocompleteSearch('');
-                            },
+                      Material(
+                        elevation: 5.0, // Adjust the elevation to control the depth of the shadow
+                        shadowColor: Colors.grey[300], // Customize the shadow color
+                        borderRadius: BorderRadius.circular(50.0), // Match the border radius of your TextField
+                        child: TextField(
+                          controller: searchController,
+                          focusNode: searchFocusNode,
+                          onChanged: (value) {
+                            autocompleteSearch(value);
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Search here',
+                            prefixIcon: Icon(Icons.search, color: Colors.grey[700]),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.clear, color: Colors.grey[700]),
+                              onPressed: () {
+                                searchController.clear();
+                                autocompleteSearch('');
+                              },
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.grey[100],
+                            filled: true,
+                            labelStyle: TextStyle(color: Colors.grey[700]),
+                            hintStyle: TextStyle(
+                                color: Colors.grey[700]?.withOpacity(0.7)),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          fillColor: Colors.grey[100],
-                          filled: true,
-                          labelStyle: TextStyle(color: Colors.grey[700]),
-                          hintStyle: TextStyle(
-                              color: Colors.grey[700]?.withOpacity(0.7)),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
                         ),
                       ),
+
                       const SizedBox(height: 8.0),
                       // Conditionally render the list container based on autocompleteResults and search text
                       if (autocompleteResults.isNotEmpty &&
@@ -517,16 +527,24 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                     ],
                   ),
                 ),
+
                 if (!isSearchBarFocused)
                   Positioned(
-                    left: 229,
-                    bottom: 200.0,
+                    bottom: 200,
+                    left: MediaQuery.of(context).size.height > 900 ? 242 :
+                    (MediaQuery.of(context).size.height > 880 && MediaQuery.of(context).size.width > 400) ? 250:
+                    MediaQuery.of(context).size.height > 850 ? 310:
+                    MediaQuery.of(context).size.height >= 800 ? 195:
+                    MediaQuery.of(context).size.height > 710 ? 245:
+                    MediaQuery.of(context).size.height > 700 ? 195 : 190,
+
                     child: Column(
                       children: [
                         Transform.rotate(
                           angle: -90 * pi / 180,
                           // Rotate 90 degrees counterclockwise
                           child: Slider(
+                            inactiveColor: Colors.grey,
                             value: radius,
                             // Adjust the slider value based on the unit
                             min: 0.0,
@@ -544,14 +562,13 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                                     newRadius; // Convert the slider value to the correct unit
                                 setRadius =
                                     unit == 'KM' ? radius * 100 : radius;
-                                print("set radius value ${setRadius}");
+                                // print("set radius value ${setRadius}");
                               });
                             },
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 60),
-                          padding: EdgeInsets.zero,
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {

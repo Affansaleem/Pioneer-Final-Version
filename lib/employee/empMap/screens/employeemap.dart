@@ -368,11 +368,6 @@ class _EmployeeMapState extends State<EmployeeMap>
 
 
   Future<void> getAddress(double lat, double lon) async {
-    // Office
-    // lat=31.567029862464018;
-    // lon=74.31672294294;
-
-
     try {
       const String apiKey = 'pk.15db1192d3c4ef435a6d2d5e4217c3af';
       final String apiUrl =
@@ -382,11 +377,24 @@ class _EmployeeMapState extends State<EmployeeMap>
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> address = data['address'];
 
-        final String display_name= data['display_name'] ?? '';
-        setState(() {
-          Street = display_name;
-          fullAddress="$Street";
+        // Extract address components
+        final String neighbourhood = address['neighbourhood'] ?? '';
+        final String suburb = address['suburb'] ?? '';
+        final String municipality = address['municipality'] ?? '';
+        final String district = address['district'] ?? '';
+        final String historicalDivision = address['historical_division'] ?? '';
+        final String state = address['state'] ?? '';
+        final String postcode = address['postcode'] ?? '';
+        final String country = address['country'] ?? '';
+        final String town = address['town'] ?? '';
+
+        // Use the extracted components as needed
+        // For example, you can display them separately in your UI
+        setState(()  {
+
+           fullAddress = "$neighbourhood $suburb $district $state $postcode $country $town";
         });
       } else {
         print('Failed to get address: ${response.statusCode}');
@@ -728,7 +736,6 @@ class _EmployeeMapState extends State<EmployeeMap>
                         buildPhoto()
                       ],
                     ),
-                      if(Street.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Card(

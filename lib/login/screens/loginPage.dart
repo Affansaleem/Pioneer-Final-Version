@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,8 +18,6 @@ import '../../employee/empDashboard/models/emp_attendance_status_repository.dart
 import '../../employee/empDashboard/models/user_repository.dart';
 import '../../employee/empProfilePage/models/empProfileModel.dart';
 import '../../employee/empProfilePage/models/empProfileRepository.dart';
-import '../../introduction/bloc/bloc_internet/internet_bloc.dart';
-import '../../introduction/bloc/bloc_internet/internet_state.dart';
 import '../bloc/loginBloc/loginEvents.dart';
 import '../bloc/loginBloc/loginStates.dart';
 import '../bloc/loginBloc/loginbloc.dart';
@@ -364,6 +363,12 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   var isButtonEnabled=true;
   Future<void> _onLoginButtonPressed() async {
+
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      showCustomWarningAlert(context,"No Internet Connection");
+      return;
+    }
     if (_formKey.currentState!.validate()) {
       setState(() {
         isButtonEnabled=false;
@@ -460,385 +465,364 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
 
     // print(MediaQuery.of(context).size.height);
-    return BlocConsumer<InternetBloc, InternetStates>(
-      listener: (context, state) {
-        // TODO: implement listener
-        if (state is InternetGainedState) {
-          // Check if internet was previously lost
-          if (isInternetLost) {
-            // Navigate back to the original page when internet is regained
-            Navigator.pop(context);
-          }
-          isInternetLost = false; // Reset the flag
-        }
-      },
-      builder: (context, state) {
-        if (state is InternetGainedState) {
-          return SafeArea(
-            child: Scaffold(
-              body: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 250,
-                    child: Image.asset(
-                      'assets/images/background.jpeg',
-                      fit: BoxFit.fill, // Cover the entire screen
-                      width: double
-                          .infinity, // Make sure the image covers the entire width
-                      height: double
-                          .infinity, // Make sure the image covers the entire height
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: 250,
+              child: Image.asset(
+                'assets/images/background.jpeg',
+                fit: BoxFit.fill, // Cover the entire screen
+                width: double
+                    .infinity, // Make sure the image covers the entire width
+                height: double
+                    .infinity, // Make sure the image covers the entire height
+              ),
+            ),
+            Container(
+              color: AppColors.primaryColor.withOpacity(0.7),
+            ),
+            Positioned(
+              top: 90,
+              left: MediaQuery.of(context).size.width * 0.5 - 150, // Adjust 120 according to your text width
+              child: Text(
+                'Pioneer Time System',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    BoxShadow(
+                      color: Colors.black
+                          .withOpacity(0.5), // Shadow color with opacity
+                      offset: Offset(2, 2), // Shadow offset
+                      blurRadius: 5, // Blur radius
                     ),
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: AnimatedContainer(
+                duration: const Duration(seconds: 2),
+                height: MediaQuery.of(context).orientation ==
+                    Orientation.portrait
+                    ? MediaQuery.of(context).size.height * getSize()
+                    : MediaQuery.of(context).size.width * 0.55,
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
-                  Container(
-                    color: AppColors.primaryColor.withOpacity(0.7),
-                  ),
-                  Positioned(
-                    top: 90,
-                    left: MediaQuery.of(context).size.width * 0.5 - 150, // Adjust 120 according to your text width
-                    child: Text(
-                      'Pioneer Time System',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.black
-                                .withOpacity(0.5), // Shadow color with opacity
-                            offset: Offset(2, 2), // Shadow offset
-                            blurRadius: 5, // Blur radius
-                          ),
-                        ],
-                      ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      offset: Offset(0, -2),
+                      blurRadius: 6,
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: AnimatedContainer(
-                      duration: const Duration(seconds: 2),
-                      height: MediaQuery.of(context).orientation ==
-                              Orientation.portrait
-                          ? MediaQuery.of(context).size.height * getSize()
-                          : MediaQuery.of(context).size.width * 0.55,
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+                  ],
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        BlocBuilder<SignInBloc, SignInState>(
+                          builder: (BuildContext context, state) {
+                            if (state is SignInNotValidState) {
+                              return Text(
+                                state.message,
+                                style: GoogleFonts.montserrat(
+                                  textStyle: const TextStyle(
+                                    letterSpacing: 0,
+                                    fontSize: 15,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0, -2),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Form(
-                        key: _formKey,
-                        child: SingleChildScrollView(
+                        Align(
+                          alignment: Alignment.topLeft,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              BlocBuilder<SignInBloc, SignInState>(
-                                builder: (BuildContext context, state) {
-                                  if (state is SignInNotValidState) {
-                                    return Text(
-                                      state.message,
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: const TextStyle(
-                                          letterSpacing: 0,
-                                          fontSize: 15,
-                                          color: AppColors.primaryColor,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                },
+                              Text(
+                                "Welcome",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w500),
                               ),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Welcome",
-                                      style: TextStyle(
-                                          color: AppColors.primaryColor,
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    Text(
-                                      "Please login with your information",
-                                      style:
-                                          const TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
+                              Text(
+                                "Please login with your information",
+                                style:
+                                const TextStyle(color: Colors.grey),
                               ),
-                              TextFormField(
-                                controller: _CoorporateIdController,
-                                decoration: InputDecoration(
-                                    labelText: 'Company Id',
-                                    labelStyle: TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                    suffixIcon:
-                                        Icon(FontAwesomeIcons.fileLines)),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter Company ID';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _UserController,
-                                decoration: InputDecoration(
-                                  labelText: 'Username',
-                                  labelStyle: TextStyle(
-                                      fontSize: 14, color: Colors.grey),
-                                  suffixIcon: Icon(FontAwesomeIcons.pen),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter UserName';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _passwordController,
-                                onChanged: (value) {
-                                  BlocProvider.of<SignInBloc>(context).add(
-                                    SignInTextChangedEvent(
-                                      password: _passwordController.text,
-                                    ),
-                                  );
-                                },
-                                obscureText: _obscureText,
-                                decoration: InputDecoration(
-                                  labelText: 'Password',
-                                  labelStyle: TextStyle(
-                                      fontSize: 14, color: Colors.grey),
-                                  suffixIcon: Icon(FontAwesomeIcons.lock),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter password';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const Text("Show Password"),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _obscureText = !_obscureText;
-                                      });
-                                    },
-                                    child: Checkbox(
-                                      value: !_obscureText,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _obscureText = !value!;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  ChoiceChip(
-                                    backgroundColor: AppColors.lightGray,
-                                    selectedColor: AppColors.secondaryColor,
-                                    elevation: 5,
-                                    showCheckmark: false,
-                                    label: Container(
-                                      width: 100, // Adjust the width as needed
-                                      child: Center(
-                                        child: _selectedUserType ==
-                                                UserType.employee
-                                            ? const Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.account_circle,
-                                                      color: Colors.white),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Text(
-                                                    'Employee',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ],
-                                              )
-                                            : const Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.account_circle,
-                                                      color: Colors.white),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Text(
-                                                    'Employee',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ],
-                                              ),
-                                      ),
-                                    ),
-                                    selected:
-                                        _selectedUserType == UserType.employee,
-                                    onSelected: (selected) {
-                                      setState(() {
-                                        _selectedUserType =
-                                            selected ? UserType.employee : null;
-                                      });
-                                    },
-                                    shape: StadiumBorder(), // Make it rounded
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    side: BorderSide.none, // Remove the border
-                                  ),
-
-                                  const SizedBox(
-                                      height: 10), // Add some spacing
-                                  ChoiceChip(
-                                    showCheckmark: false,
-                                    backgroundColor: AppColors.lightGray,
-                                    selectedColor: AppColors.secondaryColor,
-                                    elevation: 5,
-                                    label: Container(
-                                      width: 100, // Adjust the width as needed
-                                      child: Center(
-                                        child: _selectedUserType ==
-                                                UserType.admin
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.account_circle,
-                                                      color: Colors.white),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  const Text(
-                                                    'Admin',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ],
-                                              )
-                                            : Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Icon(Icons.account_circle,
-                                                      color: Colors.white),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  const Text(
-                                                    'Admin',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ],
-                                              ),
-                                      ),
-                                    ),
-                                    selected:
-                                        _selectedUserType == UserType.admin,
-                                    onSelected: (selected) {
-                                      setState(() {
-                                        _selectedUserType =
-                                            selected ? UserType.admin : null;
-                                      });
-                                    },
-                                    shape: StadiumBorder(), // Make it rounded
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    side: BorderSide.none, // Remove the border
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              BlocBuilder<SignInBloc, SignInState>(
-                                builder: (BuildContext context, state) {
-                                  return ElevatedButton(
-                                    style: ButtonStyle(
-                                      fixedSize: MaterialStateProperty.all(
-                                        const Size(250, 50),
-                                      ),
-                                      shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(50),
-                                        ),
-                                      ),
-                                      backgroundColor: MaterialStateProperty.all(
-                                        isButtonEnabled ? AppColors.primaryColor : Colors.grey, // Change color to grey when disabled
-                                      ),
-                                      elevation: MaterialStateProperty.all(3),
-                                      shadowColor: MaterialStateProperty.all(Colors.grey),
-                                    ),
-                                    onPressed: isButtonEnabled
-                                        ? () async {
-                                      await _onLoginButtonPressed();
-                                    }
-                                        : null, // Set onPressed to null when isButtonEnabled is false to disable the button
-                                    child: _isButtonPressed
-                                        ? const SizedBox(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.0,
-                                        color: Colors.white,
-                                      ),
-                                      width: 15.0,
-                                      height: 15.0,
-                                    )
-                                        : const Text(
-                                      'Login',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              SizedBox(height: MediaQuery.of(context).size.height >700? 100: 20,),
-                              Text("All Rights Reserved | Powered by PTS",style: TextStyle(color: Colors.grey),),
                             ],
                           ),
                         ),
-                      ),
+                        TextFormField(
+                          controller: _CoorporateIdController,
+                          decoration: InputDecoration(
+                              labelText: 'Company Id',
+                              labelStyle: TextStyle(
+                                  fontSize: 14, color: Colors.grey),
+                              suffixIcon:
+                              Icon(FontAwesomeIcons.fileLines)),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter Company ID';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          controller: _UserController,
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            labelStyle: TextStyle(
+                                fontSize: 14, color: Colors.grey),
+                            suffixIcon: Icon(FontAwesomeIcons.pen),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter UserName';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          controller: _passwordController,
+                          onChanged: (value) {
+                            BlocProvider.of<SignInBloc>(context).add(
+                              SignInTextChangedEvent(
+                                password: _passwordController.text,
+                              ),
+                            );
+                          },
+                          obscureText: _obscureText,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            labelStyle: TextStyle(
+                                fontSize: 14, color: Colors.grey),
+                            suffixIcon: Icon(FontAwesomeIcons.lock),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter password';
+                            }
+                            return null;
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Text("Show Password"),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _obscureText = !_obscureText;
+                                });
+                              },
+                              child: Checkbox(
+                                value: !_obscureText,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _obscureText = !value!;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            ChoiceChip(
+                              backgroundColor: AppColors.lightGray,
+                              selectedColor: AppColors.secondaryColor,
+                              elevation: 5,
+                              showCheckmark: false,
+                              label: Container(
+                                width: 100, // Adjust the width as needed
+                                child: Center(
+                                  child: _selectedUserType ==
+                                      UserType.employee
+                                      ? const Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.account_circle,
+                                          color: Colors.white),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        'Employee',
+                                        style: TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  )
+                                      : const Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.account_circle,
+                                          color: Colors.white),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        'Employee',
+                                        style: TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              selected:
+                              _selectedUserType == UserType.employee,
+                              onSelected: (selected) {
+                                setState(() {
+                                  _selectedUserType =
+                                  selected ? UserType.employee : null;
+                                });
+                              },
+                              shape: StadiumBorder(), // Make it rounded
+                              materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                              side: BorderSide.none, // Remove the border
+                            ),
+
+                            const SizedBox(
+                                height: 10), // Add some spacing
+                            ChoiceChip(
+                              showCheckmark: false,
+                              backgroundColor: AppColors.lightGray,
+                              selectedColor: AppColors.secondaryColor,
+                              elevation: 5,
+                              label: Container(
+                                width: 100, // Adjust the width as needed
+                                child: Center(
+                                  child: _selectedUserType ==
+                                      UserType.admin
+                                      ? Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.account_circle,
+                                          color: Colors.white),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      const Text(
+                                        'Admin',
+                                        style: TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  )
+                                      : Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.account_circle,
+                                          color: Colors.white),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      const Text(
+                                        'Admin',
+                                        style: TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              selected:
+                              _selectedUserType == UserType.admin,
+                              onSelected: (selected) {
+                                setState(() {
+                                  _selectedUserType =
+                                  selected ? UserType.admin : null;
+                                });
+                              },
+                              shape: StadiumBorder(), // Make it rounded
+                              materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                              side: BorderSide.none, // Remove the border
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        BlocBuilder<SignInBloc, SignInState>(
+                          builder: (BuildContext context, state) {
+                            return ElevatedButton(
+                              style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(
+                                  const Size(250, 50),
+                                ),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                                backgroundColor: MaterialStateProperty.all(
+                                  isButtonEnabled ? AppColors.primaryColor : Colors.grey, // Change color to grey when disabled
+                                ),
+                                elevation: MaterialStateProperty.all(3),
+                                shadowColor: MaterialStateProperty.all(Colors.grey),
+                              ),
+                              onPressed: isButtonEnabled
+                                  ? () async {
+                                await _onLoginButtonPressed();
+                              }
+                                  : null, // Set onPressed to null when isButtonEnabled is false to disable the button
+                              child: _isButtonPressed
+                                  ? const SizedBox(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  color: Colors.white,
+                                ),
+                                width: 15.0,
+                                height: 15.0,
+                              )
+                                  : const Text(
+                                'Login',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: MediaQuery.of(context).size.height >700? 100: 20,),
+                        Text("All Rights Reserved | Powered by PTS",style: TextStyle(color: Colors.grey),),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
-          );
-        } else {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-      },
+          ],
+        ),
+      ),
     );
   }
 }
