@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:project/admin/adminDashboard/screen/admin_messageSetup.dart';
 import 'package:project/admin/adminOptionsReport/screens/AdminMonthlyAndDailyReportsMainPage.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import '../../adminReportsFiles/screens/AdminReportsMainPage.dart';
@@ -79,6 +80,21 @@ class AdminStorageDetails extends StatelessWidget {
               title: 'Report',
               imageOrIcon: Icon(FontAwesomeIcons.solidClipboard),
             )
+
+          ),
+          const SizedBox(height: 5),
+          GestureDetector(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AdminMessageSetupPage(
+                      // viaDrawer: false,
+                    ),
+                  )),
+              child: AdminStorageInfoCard(
+                title: 'Message Setup',
+                imageOrIcon: Icon(FontAwesomeIcons.solidMessage),
+              )
 
           ),
           const SizedBox(height: 5),

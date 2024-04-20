@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/AdminDashBoard_model.dart';
+import 'adminAbsentEmployee.dart';
 import 'adminFile_info_card.dart';
+import 'adminLateEmployee.dart';
+import 'adminPresentEmployee.dart';
 import 'adminResponsive.dart';
+import 'adminTotalEmployee.dart';
 import 'adminconstants.dart';
 
 
@@ -90,39 +94,79 @@ class FileInfoCardGridView extends StatelessWidget {
         childAspectRatio: childAspectRatio,
       ),
       itemBuilder: (context, index) {
+        Widget card;
         switch (index) {
           case 0:
-            return AdminFileInfoCard(
+            card = AdminFileInfoCard(
               imageSrc: "assets/icons/employees.png",
               title: "Total",
               numOfEmployees: totalEmployees,
               color: Colors.blue,
             );
+            break;
           case 1:
-            return AdminFileInfoCard(
+            card = AdminFileInfoCard(
               imageSrc: "assets/icons/present.png",
               title: "Present",
               numOfEmployees: presentEmployees,
               color: const Color(0xFFFFA113),
             );
+            break;
           case 2:
-            return AdminFileInfoCard(
+            card = AdminFileInfoCard(
               imageSrc: "assets/icons/absent.png",
               title: "Absent",
               numOfEmployees: absentEmployees,
               color: const Color(0xFFA4CDFF),
             );
+            break;
           case 3:
-            return AdminFileInfoCard(
+            card = AdminFileInfoCard(
               imageSrc: "assets/icons/late.png",
               title: "Late",
               numOfEmployees: lateEmployees,
               color: Colors.red,
             );
+            break;
           default:
             return const SizedBox();
         }
+
+        return InkWell(
+          onTap: () {
+            switch (index) {
+              case 0:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminTotalEmployeePage()),
+                );
+                break;
+              case 1:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminPresentEmployeePage()),
+                );
+                break;
+              case 2:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminAbsentEmployeePage()),
+                );
+                break;
+              case 3:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminLateEmployeePage()),
+                );
+                break;
+              default:
+                break;
+            }
+          },
+          child: card,
+        );
       },
+
     );
   }
 }
