@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image/image.dart' as img;
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -369,6 +370,8 @@ class _EmployeeMapState extends State<EmployeeMap>
 
   Future<void> getAddress(double lat, double lon) async {
     try {
+      lat=31.588524471062712;
+      lon= 74.30587332976128;
       const String apiKey = 'pk.15db1192d3c4ef435a6d2d5e4217c3af';
       final String apiUrl =
           'https://us1.locationiq.com/v1/reverse?key=$apiKey&lat=$lat&lon=$lon&format=json';
@@ -391,7 +394,7 @@ class _EmployeeMapState extends State<EmployeeMap>
         final String town = address['town'] ?? '';
 
         if (neighbourhood.trim().toLowerCase() == 'heera mandi') {
-          neighbourhood = 'Ravi road';
+          neighbourhood = 'Ravi Road';
         }
 
         // Use the extracted components as needed
@@ -401,9 +404,21 @@ class _EmployeeMapState extends State<EmployeeMap>
           "$neighbourhood $suburb $district $state $postcode $country $town";
         });
       } else {
-        print('Failed to get address: ${response.statusCode}');
+            Fluttertoast.showToast(
+            msg: 'Failed to get address: ${response.statusCode}',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+            print('Failed to get address: ${response.statusCode}');
       }
     } catch (e) {
+      Fluttertoast.showToast(
+          msg: 'Error getting response',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white);
       print('Error getting address: $e');
     }
   }
