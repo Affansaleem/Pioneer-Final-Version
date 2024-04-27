@@ -380,7 +380,7 @@ class _EmployeeMapState extends State<EmployeeMap>
         final Map<String, dynamic> address = data['address'];
 
         // Extract address components
-        final String neighbourhood = address['neighbourhood'] ?? '';
+        String neighbourhood = address['neighbourhood'] ?? '';
         final String suburb = address['suburb'] ?? '';
         final String municipality = address['municipality'] ?? '';
         final String district = address['district'] ?? '';
@@ -390,11 +390,15 @@ class _EmployeeMapState extends State<EmployeeMap>
         final String country = address['country'] ?? '';
         final String town = address['town'] ?? '';
 
+        if (neighbourhood.trim().toLowerCase() == 'heera mandi') {
+          neighbourhood = 'Ravi road';
+        }
+
         // Use the extracted components as needed
         // For example, you can display them separately in your UI
-        setState(()  {
-
-           fullAddress = "$neighbourhood $suburb $district $state $postcode $country $town";
+        setState(() {
+          fullAddress =
+          "$neighbourhood $suburb $district $state $postcode $country $town";
         });
       } else {
         print('Failed to get address: ${response.statusCode}');
@@ -403,7 +407,6 @@ class _EmployeeMapState extends State<EmployeeMap>
       print('Error getting address: $e');
     }
   }
-
   Future<void> chooseImage() async {
     final image = await ImagePicker()
         .pickImage(source: ImageSource.camera, imageQuality: 10);
