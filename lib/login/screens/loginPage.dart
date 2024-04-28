@@ -80,7 +80,6 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       if (employeeData.isNotEmpty) {
         _saveAdminDataToSharedPreferences(enteredUsername, enteredCorporateID);
 
-        // Set GlobalObjects values
         GlobalObjects.adminusername = enteredUsername;
         GlobalObjects.adminCorpId = enteredCorporateID;
 
@@ -152,6 +151,8 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         present: empDashData[0].presentCount.toString(),
         absent: empDashData[0].absentCount.toString(),
         leaves: empDashData[0].leaveCount.toString(),
+        holiday: empDashData[0].holidayCount.toString(),
+        late: empDashData[0].lateCount.toString(),
       );
       if (loggedInEmployeeId > 0) {
         final profileRepository = EmpProfileRepository();
@@ -197,6 +198,10 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               empDashData[0].presentCount.toString() ?? '';
           GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
           GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
+          GlobalObjects.empHoliday =
+              empDashData[0].holidayCount.toString() ?? '';
+          GlobalObjects.empLate =
+              empDashData[0].lateCount.toString() ?? '';
           setState(() {
             savedEmpCode = empProfile.empCode;
             profileImageUrl = profileImage;
@@ -218,6 +223,11 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 empDashData[0].absentCount.toString() ?? '';
             GlobalObjects.empLeaves =
                 empDashData[0].leaveCount.toString() ?? '';
+            GlobalObjects.empHoliday =
+                empDashData[0].holidayCount.toString() ?? '';
+            GlobalObjects.empLate =
+                empDashData[0].lateCount.toString() ?? '';
+
           });
         }
 
@@ -276,7 +286,7 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         });
       }
     } catch (e) {
-      print("Error fetching profile data: $e");
+      print("Error fetching profile data login page: $e");
     }
   }
 

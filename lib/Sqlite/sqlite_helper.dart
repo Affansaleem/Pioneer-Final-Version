@@ -18,7 +18,7 @@ class EmployeeDatabaseHelper {
 
   Future<Database> initDatabase() async {
     String path = join(await getDatabasesPath(), 'pioneer.db');
-    return await openDatabase(path, version: 7, onCreate: _createDB);
+    return await openDatabase(path, version: 8, onCreate: _createDB);
   }
 
   void _createDB(Database db, int version) async {
@@ -68,7 +68,9 @@ class EmployeeDatabaseHelper {
         status TEXT,
         present TEXT,
         absent TEXT,
-        leaves TEXT
+        leaves TEXT,
+        holiday TEXT,
+        late TEXT
       )
     ''');
       print("Tables created successfully");
@@ -84,6 +86,8 @@ class EmployeeDatabaseHelper {
     required String present,
     required String absent,
     required String leaves,
+    required String holiday,
+    required String late
   }) async {
     final db = await database;
     await db.insert(
@@ -95,6 +99,8 @@ class EmployeeDatabaseHelper {
         'present': present,
         'absent': absent,
         'leaves': leaves,
+        'holiday': holiday,
+        'late': late
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -113,6 +119,9 @@ class EmployeeDatabaseHelper {
         'present': result.first['present'] as String,
         'absent': result.first['absent'] as String,
         'leaves': result.first['leaves'] as String,
+        'holiday': result.first['holiday'] as String,
+        'late': result.first['late'] as String,
+
       };
     } else {
       // or any other default values
@@ -123,6 +132,8 @@ class EmployeeDatabaseHelper {
         'present': '',
         'absent': '',
         'leaves': '',
+        'holiday': '',
+        'late': ''
       };
     }
   }

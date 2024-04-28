@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/Material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:line_icons/line_icon.dart';
 import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/globalObjects.dart';
 import 'package:project/employee/empDashboard/screens/empDetailedAttendance.dart';
@@ -135,14 +136,13 @@ class HomePageState extends State<EmpDashHome> {
 
   @override
   void initState() {
-    print("init in emp home called");
+    print("EmpHome Page");
     checkLocationPermission();
     checkLocationPermissionAndFetchLocation();
     if (GlobalObjects.empProfilePic == null ||
         GlobalObjects.empCode == null ||
         GlobalObjects.empAbsent == null ) {
       setState(() {
-        print("i am in");
         loadingData = true;
       });
       fetchProfileData();
@@ -163,7 +163,8 @@ class HomePageState extends State<EmpDashHome> {
       // Dash
       empDashData = await _repository.getData();
       empAttendanceData = await _attendanceRepository.getData();
-
+      print(empDashData);
+      print(empAttendanceData);
       // Insert data into employeeHomePageData table
       await dbHelper.insertEmployeeHomePageData(
         inTime: empAttendanceData.in1?.toString() ?? '',
@@ -172,11 +173,11 @@ class HomePageState extends State<EmpDashHome> {
         present: empDashData[0].presentCount.toString(),
         absent: empDashData[0].absentCount.toString(),
         leaves: empDashData[0].leaveCount.toString(),
+        holiday: empDashData[0].holidayCount.toString(),
+        late: empDashData[0].lateCount.toString()
       );
-
       if (loggedInEmployeeId > 0) {
         final profileData = await dbHelper.getEmployeeProfileData();
-
         if (mounted) {  // Add this check to avoid calling setState on a disposed widget
           setState(() {
             GlobalObjects.empCode = profileData['empCode'];
@@ -196,7 +197,7 @@ class HomePageState extends State<EmpDashHome> {
         }
       }
     } catch (e) {
-      print("Error fetching profile data: $e");
+      print("Error fetching profile data home: $e");
     } finally {
       if (mounted) {
         setState(() {
@@ -206,6 +207,8 @@ class HomePageState extends State<EmpDashHome> {
           GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
           GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
           GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
+          GlobalObjects.empHoliday = empDashData[0].holidayCount.toString() ?? '';
+          GlobalObjects.empLate = empDashData[0].lateCount.toString() ?? '';
         });
       }
     }
