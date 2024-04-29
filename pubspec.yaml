@@ -55,6 +55,7 @@ dependencies:
   flutter_map: ^6.1.0
   latlong2: ^0.9.0
   background_sms: ^0.0.4
+  el_tooltip: ^2.0.0
 
 flutter_native_splash:
   color: "#FFFFFF"    # Set the background color of your splash screen
