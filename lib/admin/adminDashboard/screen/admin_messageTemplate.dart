@@ -2,7 +2,6 @@ import 'package:flutter/Material.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:el_tooltip/el_tooltip.dart';
-
 import '../../../constants/AppBar_constant.dart';
 
 class AdminMessageTemplate extends StatefulWidget {
@@ -35,17 +34,15 @@ class _AdminMessageTemplate extends State<AdminMessageTemplate> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
+              const Row(
                 children: [
                   ElTooltip(
-                    child: Icon(Icons.info_outline,),
                     content: Text("Add placeholder to bind data for your customized message template"),
                     color: Colors.grey,
                     position: ElTooltipPosition.rightStart,
-                    // Wrap with Material with transparent background (if ElTooltip allows children)
                     showChildAboveOverlay: false,
+                    child: Icon(Icons.info_outline,),
                   ),
-
                 ],
               ),
               SizedBox(height: 50,),

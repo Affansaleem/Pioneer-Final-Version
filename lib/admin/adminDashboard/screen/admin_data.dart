@@ -123,7 +123,7 @@ class FileInfoCardGridView extends StatelessWidget {
           case 3:
             card = AdminFileInfoCard(
               imageSrc: "assets/icons/late.png",
-              title: "Late",
+              title: "Leave",
               numOfEmployees: lateEmployees,
               color: Colors.red,
             );

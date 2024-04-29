@@ -32,9 +32,9 @@ class EmpDashRepository {
           final Map<String, dynamic> responseData = json.decode(response.body);
           final int presentCount = responseData["present_Count"];
           final int absentCount = responseData["absent_Count"];
-          final int leaveCount = responseData["leave_Count"];
+          final int leaveCount = responseData["leaveCount"];
           final int holidayCount = responseData["holiday_Count"];
-          final int lateCount = responseData["late_Count"];
+          final int lateCount = responseData["leaveCount"];
           final empDashModel = EmpDashModel(
             presentCount: presentCount,
             absentCount: absentCount,

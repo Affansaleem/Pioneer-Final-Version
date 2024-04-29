@@ -19,7 +19,7 @@ class EmpDashModel {
       presentCount: json['presentCount'] ?? 0,
       absentCount: json['absentCount'] ?? 0,
       leaveCount: json['leaveCount'] ?? 0,
-      lateCount: json['late_Count'] ?? 0,
+      lateCount: json['leaveCount'] ?? 0,
       holidayCount: json['holiday_Count'] ?? 0
     );
   }

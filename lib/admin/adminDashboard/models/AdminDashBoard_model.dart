@@ -15,7 +15,7 @@ class AdminDashBoard {
     return AdminDashBoard(
       presentCount: json['presentCount'] ?? 0,
       absentCount: json['absentCount'] ?? 0,
-      lateCount: json['lateCount'] ?? 0,
+      lateCount: json['leaveCount'] ?? 0,
       totalEmployeeCount: json['totalEmployeeCount'] ?? 0,
     );
   }
