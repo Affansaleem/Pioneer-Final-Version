@@ -16,10 +16,10 @@ class EmpDashModel {
 
   factory EmpDashModel.fromJson(Map<String, dynamic> json) {
     return EmpDashModel(
-      presentCount: json['presentCount'] ?? 0,
-      absentCount: json['absentCount'] ?? 0,
-      leaveCount: json['leaveCount'] ?? 0,
-      lateCount: json['leaveCount'] ?? 0,
+      presentCount: json['present_Count'] ?? 0,
+      absentCount: json['absent_Count'] ?? 0,
+      leaveCount: json['leave_Count'] ?? 0,
+      lateCount: json['leave_Count'] ?? 0,
       holidayCount: json['holiday_Count'] ?? 0
     );
   }
