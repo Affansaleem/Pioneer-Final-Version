@@ -121,14 +121,14 @@ class HomePageState extends State<EmpDashHome> {
         showCustomSuccessAlertEditEmployee(context,
             "Pending Attendance Marked Successfully $formattedDateTime");
       } else if (empCode == "0" || empCode == null) {
-        print("hello");
+
         return;
       }
 
       final attendData1 = await dbHelper.getAttendanceData();
       String? h = attendData1['lat'];
       String? g = attendData1['location'];
-      print('Get them $h, $g');
+
     } catch (e) {
       print("Error Posting/Setting Attendance data: $e");
     }
@@ -136,7 +136,6 @@ class HomePageState extends State<EmpDashHome> {
 
   @override
   void initState() {
-    print("EmpHome Page");
     checkLocationPermission();
     checkLocationPermissionAndFetchLocation();
     if (GlobalObjects.empProfilePic == null ||
@@ -156,15 +155,13 @@ class HomePageState extends State<EmpDashHome> {
   String? profileImageUrl;
 
   Future<void> fetchProfileData() async {
+
     try {
       final dbHelper = EmployeeDatabaseHelper.instance;
       int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
-
       // Dash
       empDashData = await _repository.getData();
       empAttendanceData = await _attendanceRepository.getData();
-      print(empDashData);
-      print(empAttendanceData);
       // Insert data into employeeHomePageData table
       await dbHelper.insertEmployeeHomePageData(
         inTime: empAttendanceData.in1?.toString() ?? '',
@@ -246,6 +243,7 @@ class HomePageState extends State<EmpDashHome> {
           GlobalObjects.empMail = empProfile.emailAddress;
           setState(() {
             GlobalObjects.empCode = empProfile.empCode;
+
             GlobalObjects.empProfilePic = profileImage;
             GlobalObjects.empName = empProfile.empName;
             GlobalObjects.empMail = empProfile.emailAddress;
@@ -254,7 +252,6 @@ class HomePageState extends State<EmpDashHome> {
           });
         }
 
-        // Print the profile data for verification
         await dbHelper.printProfileData();
       }
     } catch (e) {

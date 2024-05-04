@@ -61,19 +61,23 @@ class EmployeeDatabaseHelper {
         fatherName TEXT
       )
     ''');
-      await db.execute('''
-      CREATE TABLE IF NOT EXISTS employeeHomePageData (
-        inTime TEXT,
-        outTime TEXT,
-        status TEXT,
-        present TEXT,
-        absent TEXT,
-        leaves TEXT,
-        holiday TEXT,
-        late TEXT
-      )
-    ''');
-      print("Tables created successfully");
+          await db.execute('DROP TABLE IF EXISTS employeeHomePageData');
+
+          // Create the employeeHomePageData table with the updated schema
+          await db.execute('''
+          CREATE TABLE IF NOT EXISTS employeeHomePageData (
+            inTime TEXT,
+            outTime TEXT,
+            status TEXT,
+            present TEXT,
+            absent TEXT,
+            leaves TEXT,
+            holiday TEXT,
+            late TEXT
+          )
+          ''');
+
+          print("Tables created successfully");
     } catch (e) {
       print('Error creating database tables: $e');
     }
