@@ -59,10 +59,10 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Future.delayed(Duration(seconds: 3));
   FlutterNativeSplash.remove();
-  // runApp(DevicePreview(builder: (BuildContext context) {
-  //   return MyApp();
-  // }));
-  runApp(MyApp());
+  runApp(DevicePreview(builder: (BuildContext context) {
+    return MyApp();
+  }));
+  // runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -230,9 +230,9 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
-          // useInheritedMediaQuery: true,
-          // locale: DevicePreview.locale(context),
-          // builder: DevicePreview.appBuilder,
+          useInheritedMediaQuery: true,
+          locale: DevicePreview.locale(context),
+          builder: DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(

@@ -60,7 +60,10 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   @override
   void initState() {
     super.initState();
-    // Initialize the MapController
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    print(screenHeight);
+    print(screenWidth);
     mapController = MapController();
     // print(MediaQuery.of(context).size.height);
 
@@ -531,62 +534,47 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                 if (!isSearchBarFocused)
                   Positioned(
                     bottom: 200,
-                    left: MediaQuery.of(context).size.height > 900 ? 242 :
-                    (MediaQuery.of(context).size.height > 880 && MediaQuery.of(context).size.width > 400) ? 250:
-                    MediaQuery.of(context).size.height > 850 ? 310:
-                    MediaQuery.of(context).size.height >= 800 ? 195:
-                    MediaQuery.of(context).size.height > 710 ? 245:
-                    MediaQuery.of(context).size.height > 700 ? 195 : 190,
-
-                    child: Column(
-                      children: [
-                        Transform.rotate(
-                          angle: -90 * pi / 180,
-                          // Rotate 90 degrees counterclockwise
-                          child: Slider(
-                            inactiveColor: Colors.grey,
-                            value: radius,
-                            // Adjust the slider value based on the unit
-                            min: 0.0,
-                            // Adjust the slider min value based on the unit
-                            max: unit == 'KM' ? 50.0 : 25.0,
-                            // Adjust the slider max value based on the unit
-                            divisions: 5,
-                            // Adjust the slider divisions based on the unit
-                            label: unit == 'KM'
-                                ? (radius / 10).toStringAsFixed(1)
-                                : radius.toInt().toString(),
-                            onChanged: (double newRadius) {
-                              setState(() {
-                                radius =
-                                    newRadius; // Convert the slider value to the correct unit
-                                setRadius =
-                                    unit == 'KM' ? radius * 100 : radius;
-                                // print("set radius value ${setRadius}");
-                              });
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 60),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                unit = unit == 'KM'
-                                    ? 'M'
-                                    : 'KM'; // Toggle the unit
-                                radius = 0;
-                                setRadius = 0;
-                              });
-                            },
-                            child: Text(unit == 'KM'
-                                ? '${(radius / 10).toStringAsFixed(0)} KM'
-                                : '${radius.toInt()} M'),
-                          ),
-                        ),
-                      ],
+                    right: 30,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          unit = unit == 'KM' ? 'M' : 'KM';
+                          radius = 0;
+                          setRadius = 0;
+                        });
+                      },
+                      child: Text(
+                        unit == 'KM' ? '${(radius / 10).toStringAsFixed(0)} KM' : '${radius.toInt()} M',
+                      ),
                     ),
                   ),
+                if (!isSearchBarFocused)
+                  Positioned(
+                    bottom: 320,
+                    left: MediaQuery.of(context).size.width > 400? 250: 210,
+                    child: Transform.rotate(
+                      angle: -90 * pi / 180,
+                      child: Slider(
+                        inactiveColor: Colors.grey,
+                        value: radius,
+                        min: 0.0,
+                        max: unit == 'KM' ? 50.0 : 25.0,
+                        divisions: 5,
+                        label: unit == 'KM'
+                            ? (radius / 10).toStringAsFixed(1)
+                            : radius.toInt().toString(),
+                        onChanged: (double newRadius) {
+                          setState(() {
+                            radius = newRadius;
+                            setRadius = unit == 'KM' ? radius * 100 : radius;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+
+
+
                 if (!isSearchBarFocused)
                   Positioned(
                     bottom: 150,
