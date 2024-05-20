@@ -5,6 +5,7 @@ import 'adminFile_info_card.dart';
 import 'adminLateEmployee.dart';
 import 'adminPresentEmployee.dart';
 import 'adminResponsive.dart';
+import 'adminString_info_card.dart';
 import 'adminTotalEmployee.dart';
 import 'adminconstants.dart';
 
@@ -105,13 +106,17 @@ class FileInfoCardGridView extends StatelessWidget {
             );
             break;
           case 1:
-            card = AdminFileInfoCard(
+          // Set the title to reflect both present and late employees
+            String title = "Present/Late";
+            card = AdminStringInfoCard(
               imageSrc: "assets/icons/present.png",
-              title: "Present",
-              numOfEmployees: presentEmployees,
+              title: title,
+              // Pass the combined count of present and late employees as a string
+              numOfEmployees: '$presentEmployees / $lateEmployees',
               color: const Color(0xFFFFA113),
             );
             break;
+
           case 2:
             card = AdminFileInfoCard(
               imageSrc: "assets/icons/absent.png",
@@ -170,3 +175,4 @@ class FileInfoCardGridView extends StatelessWidget {
     );
   }
 }
+

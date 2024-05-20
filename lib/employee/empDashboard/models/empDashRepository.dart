@@ -39,10 +39,11 @@ class EmpDashRepository {
             presentCount: presentCount,
             absentCount: absentCount,
             leaveCount: leaveCount,
-            lateCount: lateCount,
-            holidayCount: holidayCount
+            holidayCount: holidayCount,
+            lateCount: lateCount
           );
 
+          // print(empDashModel.holidayCount);
           // Return a list with a single EmpDashModel, as your code suggests accessing userList[0]
           return [empDashModel];
         } else {

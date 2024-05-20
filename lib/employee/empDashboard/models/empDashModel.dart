@@ -6,10 +6,10 @@ class EmpDashModel {
   final int lateCount;
 
   EmpDashModel({
-    required this.holidayCount,
     required this.lateCount,
     required this.presentCount,
     required this.absentCount,
+    required this.holidayCount,
     required this.leaveCount,
 
   });
@@ -19,8 +19,8 @@ class EmpDashModel {
       presentCount: json['present_Count'] ?? 0,
       absentCount: json['absent_Count'] ?? 0,
       leaveCount: json['leave_Count'] ?? 0,
+      holidayCount: json['holiday_Count'] ?? 0,
       lateCount: json['leave_Count'] ?? 0,
-      holidayCount: json['holiday_Count'] ?? 0
     );
   }
 }

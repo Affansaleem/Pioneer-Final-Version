@@ -53,6 +53,7 @@ class HomePageState extends State<EmpDashHome> {
   var initProfile = EmpProfilePageState();
   EmpDrawerItem item = EmpDrawerItems.home;
   final EmpDashRepository _repository = EmpDashRepository();
+
   late List<EmpDashModel> empDashData;
   final EmpAttendanceRepository _attendanceRepository =
       EmpAttendanceRepository();
@@ -157,10 +158,12 @@ class HomePageState extends State<EmpDashHome> {
   Future<void> fetchProfileData() async {
 
     try {
+
       final dbHelper = EmployeeDatabaseHelper.instance;
       int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
       // Dash
       empDashData = await _repository.getData();
+      print(empDashData[0].holidayCount);
       empAttendanceData = await _attendanceRepository.getData();
       // Insert data into employeeHomePageData table
       await dbHelper.insertEmployeeHomePageData(
@@ -173,9 +176,10 @@ class HomePageState extends State<EmpDashHome> {
         holiday: empDashData[0].holidayCount.toString(),
         late: empDashData[0].lateCount.toString()
       );
+
       if (loggedInEmployeeId > 0) {
         final profileData = await dbHelper.getEmployeeProfileData();
-        if (mounted) {  // Add this check to avoid calling setState on a disposed widget
+        if (mounted) {
           setState(() {
             GlobalObjects.empCode = profileData['empCode'];
             GlobalObjects.empProfilePic = profileData['profilePic'];
@@ -196,8 +200,11 @@ class HomePageState extends State<EmpDashHome> {
     } catch (e) {
       print("Error fetching profile data home: $e");
     } finally {
+
+
       if (mounted) {
         setState(() {
+
           GlobalObjects.empIn1 = empAttendanceData.in1;
           GlobalObjects.empOut2 = empAttendanceData.out2;
           GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
@@ -238,12 +245,14 @@ class HomePageState extends State<EmpDashHome> {
           });
 
           GlobalObjects.empCode = empProfile.empCode;
+          print(GlobalObjects.empCode);
+
           GlobalObjects.empProfilePic = profileImage;
           GlobalObjects.empName = empProfile.empName;
           GlobalObjects.empMail = empProfile.emailAddress;
           setState(() {
             GlobalObjects.empCode = empProfile.empCode;
-
+            print(GlobalObjects.empCode);
             GlobalObjects.empProfilePic = profileImage;
             GlobalObjects.empName = empProfile.empName;
             GlobalObjects.empMail = empProfile.emailAddress;
@@ -653,7 +662,7 @@ class HomePageState extends State<EmpDashHome> {
                                   ),
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empAbsent.toString() ?? '---',
+                                        GlobalObjects.empAbsent?.toString() ?? '---',
                                     secondText: "Total Absent",
                                     icon: Image.asset(
                                       "assets/icons/absence.png",
@@ -670,7 +679,7 @@ class HomePageState extends State<EmpDashHome> {
                                 children: [
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empLeaves.toString() ?? '---',
+                                        GlobalObjects.empLeaves?.toString() ?? '---',
                                     secondText: "Total Leaves",
                                     icon: Image.asset(
                                       "assets/icons/leave.png",

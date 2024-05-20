@@ -18,8 +18,9 @@ class EmployeeDatabaseHelper {
 
   Future<Database> initDatabase() async {
     String path = join(await getDatabasesPath(), 'pioneer.db');
-    return await openDatabase(path, version: 8, onCreate: _createDB);
+    return await openDatabase(path, version: 9, onCreate: _createDB);
   }
+
 
   void _createDB(Database db, int version) async {
         try {
@@ -65,17 +66,18 @@ class EmployeeDatabaseHelper {
 
           // Create the employeeHomePageData table with the updated schema
           await db.execute('''
-          CREATE TABLE IF NOT EXISTS employeeHomePageData (
-            inTime TEXT,
-            outTime TEXT,
-            status TEXT,
-            present TEXT,
-            absent TEXT,
-            leaves TEXT,
-            holiday TEXT,
-            late TEXT
-          )
-          ''');
+  CREATE TABLE IF NOT EXISTS employeeHomePageData (
+    inTime TEXT,
+    outTime TEXT,
+    status TEXT,
+    present TEXT,
+    absent TEXT,
+    leaves TEXT,
+    holiday TEXT, // Add the 'holiday' column
+    late TEXT
+  )
+''');
+
 
           print("Tables created successfully");
     } catch (e) {
@@ -91,25 +93,26 @@ class EmployeeDatabaseHelper {
     required String absent,
     required String leaves,
     required String holiday,
-    required String late
+    required String late,
   }) async {
     final db = await database;
-    await db.insert(
-      'employeeHomePageData',
-      {
-        'inTime': inTime,
-        'outTime': outTime,
-        'status': status,
-        'present': present,
-        'absent': absent,
-        'leaves': leaves,
-        'holiday': holiday,
-        'late': late
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    print("Data inserted in employeeHomePageData table");
+
+    try {
+      await db.rawInsert('''
+      INSERT OR REPLACE INTO employeeHomePageData (
+        inTime, outTime, status, present, absent, leaves, holiday, late
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', [
+        inTime, outTime, status, present, absent, leaves, holiday, late
+      ]);
+      print("Data inserted in employeeHomePageData table");
+    } catch (e) {
+      print("Error inserting data in employeeHomePageData table: $e");
+    }
   }
+
+
+
 
   Future<Map<String, dynamic>> getEmployeeHomePageData() async {
     final db = await database;
@@ -123,12 +126,10 @@ class EmployeeDatabaseHelper {
         'present': result.first['present'] as String,
         'absent': result.first['absent'] as String,
         'leaves': result.first['leaves'] as String,
-        'holiday': result.first['holiday'] as String,
+        'holiday': result.first['holiday'] as String, // Retrieve the 'holiday' column
         'late': result.first['late'] as String,
-
       };
     } else {
-      // or any other default values
       return {
         'inTime': '',
         'outTime': '',
@@ -136,8 +137,8 @@ class EmployeeDatabaseHelper {
         'present': '',
         'absent': '',
         'leaves': '',
-        'holiday': '',
-        'late': ''
+        'holiday': '', // Include the 'holiday' key
+        'late': '',
       };
     }
   }

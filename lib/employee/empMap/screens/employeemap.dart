@@ -370,6 +370,8 @@ class _EmployeeMapState extends State<EmployeeMap>
 
   Future<void> getAddress(double lat, double lon) async {
     try {
+      // lat=31.588524471062712;
+      // lon=74.30587332976128;
       const String apiKey = 'pk.15db1192d3c4ef435a6d2d5e4217c3af';
       final String apiUrl =
           'https://us1.locationiq.com/v1/reverse?key=$apiKey&lat=$lat&lon=$lon&format=json';
@@ -395,12 +397,22 @@ class _EmployeeMapState extends State<EmployeeMap>
           neighbourhood = 'Ravi Road';
         }
 
-        // Use the extracted components as needed
-        // For example, you can display them separately in your UI
         setState(() {
-          fullAddress =
-          "$neighbourhood $suburb $district $state $postcode $country $town";
+          List<String> addressComponents = data["display_name"].split(',');
+
+          // Iterate through each component and trim whitespaces
+          for (int i = 0; i < addressComponents.length; i++) {
+            addressComponents[i] = addressComponents[i].trim();
+
+            if (addressComponents[i].toLowerCase() == 'heera mandi') {
+              addressComponents[i] = 'Ravi Road';
+            }
+          }
+
+          // Join the modified components back into a single string
+          fullAddress = addressComponents.join(', ');
         });
+
       } else {
             Fluttertoast.showToast(
             msg: 'Failed to get address: ${response.statusCode}',
