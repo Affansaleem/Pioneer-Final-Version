@@ -161,7 +161,7 @@ class FileInfoCardGridView extends StatelessWidget {
               case 3:
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AdminLateEmployeePage()),
+                  MaterialPageRoute(builder: (context) => AdminLeaveEmployeePage()),
                 );
                 break;
               default:
