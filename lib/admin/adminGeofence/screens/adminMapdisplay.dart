@@ -8,6 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:project/admin/adminDashboard/screen/adminHome.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,10 +61,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   @override
   void initState() {
     super.initState();
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    print(screenHeight);
-    print(screenWidth);
+
     mapController = MapController();
     // print(MediaQuery.of(context).size.height);
 
@@ -651,6 +649,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                             _updateLocation(draggableMarkerPosition.latitude,
                                 draggableMarkerPosition.longitude, address);
                             showSnackbar(context, "Coordinates are saved!");
+
+                            Future.delayed(Duration(seconds: 3), () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+
+                            });
                           },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
