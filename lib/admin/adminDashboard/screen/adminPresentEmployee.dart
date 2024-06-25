@@ -93,9 +93,9 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Failed to load present employees'));
+                    return Center(child: Text('No Data Found'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No present employees found'));
+                    return Center(child: Text('No Data Found'));
                   } else {
                     List<AdminPresentEmployee> employees = snapshot.data!;
                     Map<String, List<AdminPresentEmployee>> groupedEmployees = {};
@@ -110,7 +110,7 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
                     return ListView(
                       children: groupedEmployees.entries.map((entry) {
                         return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),

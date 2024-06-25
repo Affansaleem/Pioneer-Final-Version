@@ -28,7 +28,7 @@ class AbsentEmployeeRepository {
             List<dynamic> jsonResponse = jsonDecode(response.body);
             return jsonResponse.map((data) => AdminAbsentEmployee.fromJson(data)).toList();
           } else {
-            throw Exception('Failed to load present employees');
+            throw Exception('No Data Found');
           }
         } catch (e) {
           throw Exception('Error: $e');

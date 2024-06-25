@@ -92,9 +92,9 @@ class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Failed to load present employees'));
+                    return Center(child: Text('No Data Found'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No present employees found'));
+                    return Center(child: Text('No Data Found'));
                   } else {
                     List<AdminLeaveEmployee> employees = snapshot.data!;
                     Map<String, List<AdminLeaveEmployee>> groupedEmployees = {};

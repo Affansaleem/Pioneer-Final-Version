@@ -47,14 +47,14 @@ class _AdminTotalEmployeePageState extends State<AdminTotalEmployeePage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Failed to load employees'));
+              return Center(child: Text('No Data Found'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No employees found'));
+              return Center(child: Text('No Data Found'));
             } else {
               List<AdminTotalEmployees> employees = snapshot.data!;
               return Column(
                 children: [
-                  // Display total count at the top
+
                   Text(
                     'Total: ${employees.length}',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
