@@ -28,7 +28,6 @@ dependencies:
   line_icons: ^2.0.3
   percent_indicator: ^4.2.3
   font_awesome_flutter: ^10.5.0
-  open_street_map_search_and_pick: ^0.1.1
   geolocator: ^10.0.1
   geocoding: ^2.1.0
   table_calendar: ^3.0.9
@@ -52,8 +51,11 @@ dependencies:
   sqflite: ^2.3.0
   device_preview: ^1.1.0
   flutter_keyboard_visibility: ^6.0.0
-  flutter_map: ^6.1.0
   latlong2: ^0.9.0
+  google_maps_flutter: ^2.2.8
+  flutter_google_places: ^0.3.0
+  google_maps_webservice: ^0.0.20-nullsafety.5
+  http: ^0.13.3
 
 flutter_native_splash:
   color: "#FFFFFF"    # Set the background color of your splash screen

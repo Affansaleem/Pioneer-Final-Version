@@ -272,7 +272,7 @@ class _AdminEditProfilePageState extends State<AdminEditProfilePage>
                                 child: ElevatedButton(
                                   onPressed: _submitForm,
                                   style: ElevatedButton.styleFrom(
-                                    primary: AppColors.primaryColor, // Set the button background color
+                                    backgroundColor: AppColors.primaryColor, // Set the button background color
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(50), // Set the border radius
                                     ),

@@ -371,6 +371,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
         phoneNo: null,
         profilePic: null,
         pwd: null,
+        // Add other required fields based on your model
       );
 
       geofenceDataList.add(geofenceModel);
