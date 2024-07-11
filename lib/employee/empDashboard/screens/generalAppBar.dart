@@ -1,0 +1,47 @@
+  import 'package:flutter/material.dart';
+  import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+  import 'package:project/employee/empDashboard/screens/empHomePage.dart';
+  import '../../../constants/AppBar_constant.dart';
+  import '../../../constants/AppColor_constants.dart';
+
+  class GenAppBar extends StatelessWidget {
+    final Key? key;
+    final String pageHeading;
+
+     GenAppBar({
+      this.key,
+      required this.pageHeading,
+    }) : super(key: key);
+
+    void onRefresh() {
+      print("On refresh called");
+      HomePageState();
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      if (pageHeading != 'Home') {
+        return AppBar(
+          leading: IconButton(
+            icon: const FaIcon(FontAwesomeIcons.bars),
+            color: Colors.white,
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+          backgroundColor: AppColors.primaryColor,
+          elevation: 0,
+          title: Text(
+            pageHeading,
+            style: AppBarStyles.appBarTextStyle,
+          ),
+          centerTitle: true,
+        );
+      } else {
+        return Container(
+            color: AppColors.primaryColor,
+            height: 0,
+          );
+      }
+    }
+  }
