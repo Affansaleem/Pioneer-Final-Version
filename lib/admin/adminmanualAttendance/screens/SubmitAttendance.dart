@@ -21,6 +21,7 @@ import '../models/punchRepository.dart';
 class SubmitAttendance extends StatefulWidget {
   final List<GetActiveEmpModel> selectedEmployees;
 
+
   SubmitAttendance({required this.selectedEmployees});
 
   @override
@@ -49,6 +50,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
   void dispose() {
     addToCartPopUpAnimationController.dispose();
     super.dispose();
+    widget.selectedEmployees.clear();
   }
 
   @override
@@ -427,7 +429,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                                       },
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      primary: Colors.green,
+                                      backgroundColor: Colors.green,
                                       elevation: 4.0,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -463,7 +465,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                                       },
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      primary: Colors.red,
+                                      backgroundColor: Colors.red,
                                       elevation: 4.0,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -492,11 +494,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                                   .infinity, // Make the button take the full width
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  elevation: 5,
-                                  primary:
-                                      Colors.white, // White background color
-                                  onPrimary:
-                                      AppColors.primaryColor, // Text color
+                                  foregroundColor: AppColors.primaryColor, backgroundColor: Colors.white, elevation: 5, // Text color
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
                                         10), // Rounded corners
@@ -519,7 +517,7 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 50),
+                            margin: const EdgeInsets.symmetric(horizontal: 70),
                             child: SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -529,12 +527,12 @@ class _SubmitAttendanceState extends State<SubmitAttendance>
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
-                                   padding: EdgeInsets.all(MediaQuery.of(context).size.height>700?20:10),
+                                   padding: EdgeInsets.all(MediaQuery.of(context).size.height>700?15:10),
                                 ),
                                 onPressed: () {
                                   _submitAttendance(context);
                                 },
-                                child: const Text('Submit',style: TextStyle(color: Colors.white,fontSize: 18),),
+                                child: const Text('Submit',style: TextStyle(color: Colors.white,fontSize: 15),),
                               ),
                             ),
                           ),
@@ -677,108 +675,120 @@ class YourBottomSheet extends StatelessWidget {
 
   YourBottomSheet(this.selectedEmployees);
 
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
-      child: DraggableScrollableSheet(
-        initialChildSize: 1, // Take up the entire screen initially
-        minChildSize: 0.1, // Minimum height when fully collapsed
-        maxChildSize: 1, // Maximum height when fully expanded
-        expand: true,
-        builder: (BuildContext context, ScrollController scrollController) {
-          return SingleChildScrollView(
-            reverse: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Draggable handle at the top
-                Container(
-                  height: 10,
-                  width: 50,
-                  margin: EdgeInsets.zero,
-                  padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              SizedBox(height: 5,),
+              Container(
+                height: 10,
+                width: 50,
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                SizedBox(height: 20,),
-                // Content
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  margin: EdgeInsets.zero,
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) => Divider(),
-                    itemCount: selectedEmployees.length,
-                    itemBuilder: (context, index) {
-                      var employee = selectedEmployees[index];
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.98, // Take up the entire screen initially
+            minChildSize: 0.1, // Minimum height when fully collapsed
+            maxChildSize: 0.98, // Maximum height when fully expanded
+            expand: true,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return SingleChildScrollView(
+                reverse: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 20,),
+                    // Content
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      margin: EdgeInsets.zero,
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) => Divider(),
+                        itemCount: selectedEmployees.length,
+                        itemBuilder: (context, index) {
+                          var employee = selectedEmployees[index];
 
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                Row(
+                                  children: [
+                                    // SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            '${employee.empName ?? ""}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                '${employee.empName ?? ""}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                employee.remarks.isEmpty
+                                                    ? "No Remarks!"
+                                                    : employee.remarks,
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              Text(
+                                                'ID: ${employee.empCode}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            employee.remarks.isEmpty
-                                                ? "---"
-                                                : employee.remarks,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          Text(
-                                            'ID: ${employee.empCode}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

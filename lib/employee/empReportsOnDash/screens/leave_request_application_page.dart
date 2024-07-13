@@ -250,29 +250,30 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
-                            DropdownButtonFormField<String>(
-                              value: _selectedReason,
-                              items: [
-                                "",
-                                employeeLeave1.ltypeName,
-                                employeeLeave2.ltypeName,
-                                employeeLeave3.ltypeName,
-                              ].map((String reason) {
-                                return DropdownMenuItem<String>(
-                                  value: reason,
-                                  child: Text(reason),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedReason = value!;
-                                  _reasonController.text =
-                                      _selectedReason;
-                                  selectedTypeId =
-                                      _reasonToLTypeId[value] ?? 0;
-                                });
-                              },
-                            ),
+                          DropdownButtonFormField<String>(
+                            value: _selectedReason,
+                            items: [
+                              if (userList.isNotEmpty) ...[
+                                DropdownMenuItem<String>(
+                                  value: "", // Include an empty value if userList is not empty
+                                  child: Text(""), // Display an empty string
+                                ),
+                                for (var user in userList)
+                                  DropdownMenuItem<String>(
+                                    value: user.ltypeName,
+                                    child: Text(user.ltypeName),
+                                  ),
+                              ],
+                            ],
+                            onChanged: (String? value) {
+                              setState(() {
+                                _selectedReason = value ?? "";
+                                _reasonController.text = _selectedReason;
+                                selectedTypeId = _reasonToLTypeId[value ?? ""] ?? 0;
+                              });
+                            },
+                          ),
+
                             const SizedBox(height: 16),
                             const Text(
                               'Reason for Leave',

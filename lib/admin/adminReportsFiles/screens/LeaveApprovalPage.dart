@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
@@ -10,6 +11,7 @@ import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../No_internet/no_internet.dart';
+import '../../../Sqlite/admin_sqliteHelper.dart';
 import '../../../constants/AnimatedTextPopUp.dart';
 import '../bloc/CustomLeaveRequestApiFiles/custom_leave_request_bloc.dart';
 import '../bloc/leaveRequestApiFiles/leave_request_bloc.dart';
@@ -27,32 +29,25 @@ class LeaveApprovalPage extends StatefulWidget {
   State<LeaveApprovalPage> createState() => _LeaveApprovalPageState();
 }
 
-class _LeaveApprovalPageState extends State<LeaveApprovalPage>
-    with TickerProviderStateMixin {
-  bool _isMounted = true; // Add this flag
-
+class _LeaveApprovalPageState extends State<LeaveApprovalPage> with TickerProviderStateMixin {
   bool isInternetLost = false;
   late TabController _tabController;
   List<LeaveRequest> leaveRequests = [];
   List<UnApprovedLeaveRequest> unapprovedLeaveRequests = [];
 
   bool isFirstTimeLoading = true;
-
+  bool _isMounted = true; // Add this flag
   bool isRefreshing = false;
+  DateTime? _selectedDate; // Change to DateTime?
 
   Future<void> fetchData() async {
-    // Set the refreshing flag to true
     setState(() {
       isRefreshing = true;
     });
 
-    // Fetch both unapproved and approved leave requests
-    context
-        .read<UnapprovedLeaveRequestBloc>()
-        .add(FetchUnapprovedLeaveRequests());
+    context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
     context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
 
-    // Set the refreshing flag to false
     setState(() {
       isRefreshing = false;
     });
@@ -62,27 +57,21 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _selectedDate = null; // Initialize as null
+
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         if (_tabController.index == 0) {
-          // Fetch unapproved leave requests
-          context
-              .read<UnapprovedLeaveRequestBloc>()
-              .add(FetchUnapprovedLeaveRequests());
+          context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
         } else if (_tabController.index == 1) {
-          // Fetch approved leave requests
           context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
         }
       }
     });
 
-    // Add a 2-second delay before fetching data
     Future.delayed(Duration(seconds: 2), fetchData);
 
-    // Fetch and save unapproved leave requests
-    context
-        .read<UnapprovedLeaveRequestBloc>()
-        .add(FetchUnapprovedLeaveRequests());
+    context.read<UnapprovedLeaveRequestBloc>().add(FetchUnapprovedLeaveRequests());
     context.read<UnapprovedLeaveRequestBloc>().stream.listen((state) {
       if (state is UnapprovedLeaveRequestLoaded) {
         setState(() {
@@ -92,7 +81,6 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
       }
     });
 
-    // Fetch and save approved leave requests
     context.read<LeaveRequestBloc>().add(FetchLeaveRequests());
     context.read<LeaveRequestBloc>().stream.listen((state) {
       if (state is LeaveRequestLoaded) {
@@ -144,7 +132,19 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
               centerTitle: true,
               backgroundColor: AppColors.primaryColor,
               iconTheme: IconThemeData(color: AppColors.brightWhite),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    _selectDate(context);
+                  },
+                  icon: const Icon(
+                    FontAwesomeIcons.calendar,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
+
             body: Column(
               children: [
                 TabBar(
@@ -159,74 +159,8 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      RefreshIndicator(
-                        onRefresh: () async {
-                          fetchData();
-                        },
-                        child: isFirstTimeLoading
-                            ? Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : unapprovedLeaveRequests.isEmpty
-                                ? Center(
-                                    child: Text('No Data Available'),
-                                  )
-                                : ListView.builder(
-                                    itemCount: unapprovedLeaveRequests.length,
-                                    itemBuilder: (context, index) {
-                                      final leaveRequest =
-                                          unapprovedLeaveRequests[index];
-                                      return LeaveRequestCard(
-                                        id: leaveRequest.rwId,
-                                        name: leaveRequest.empName,
-                                        departmentName: leaveRequest.department,
-                                        reason: leaveRequest.reason,
-                                        fromDate: leaveRequest.fromdate,
-                                        status: "Pending",
-                                        applicationDate:
-                                            leaveRequest.applicationDate,
-                                        empId: leaveRequest.empId.toString(),
-                                        toDate: leaveRequest.todate,
-                                        customLeaveRequestBloc: context
-                                            .read<CustomLeaveRequestBloc>(),
-                                      );
-                                    },
-                                  ),
-                      ),
-                      RefreshIndicator(
-                        onRefresh: () async {
-                          await fetchData();
-                        },
-                        child: isFirstTimeLoading
-                            ? Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : isRefreshing
-                                ? Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                : leaveRequests.isEmpty
-                                    ? Center(
-                                        child: Text('No Data Available'),
-                                      )
-                                    : ListView.builder(
-                                        itemCount: leaveRequests.length,
-                                        itemBuilder: (context, index) {
-                                          final leaveRequest =
-                                              leaveRequests[index];
-                                          return LeaveRequestApproveCard(
-                                            reason: leaveRequest.reason,
-                                            empName: leaveRequest.empName,
-                                            department: leaveRequest.department,
-                                            fromDate: leaveRequest.fromdate,
-                                            status: leaveRequest.approvedStatus,
-                                            applicationDate:
-                                                leaveRequest.applicationDate,
-                                            toDate: leaveRequest.todate,
-                                          );
-                                        },
-                                      ),
-                      ),
+                      _buildPendingTab(),
+                      _buildApprovedTab(),
                     ],
                   ),
                 ),
@@ -241,7 +175,103 @@ class _LeaveApprovalPageState extends State<LeaveApprovalPage>
       },
     );
   }
+
+  Widget _buildPendingTab() {
+    List<UnApprovedLeaveRequest> filteredRequests = unapprovedLeaveRequests;
+
+    if (_selectedDate != null) {
+      filteredRequests = unapprovedLeaveRequests.where((request) =>
+      request.applicationDate.day == _selectedDate!.day &&
+          request.applicationDate.month == _selectedDate!.month &&
+          request.applicationDate.year == _selectedDate!.year).toList();
+    }
+
+    return RefreshIndicator(
+      onRefresh: fetchData,
+      child: isFirstTimeLoading
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : filteredRequests.isEmpty
+          ? Center(
+        child: Text('No Data Available'),
+      )
+          : ListView.builder(
+        itemCount: filteredRequests.length,
+        itemBuilder: (context, index) {
+          final leaveRequest = filteredRequests[index];
+          return LeaveRequestCard(
+            id: leaveRequest.rwId,
+            name: leaveRequest.empName,
+            departmentName: leaveRequest.department,
+            reason: leaveRequest.reason,
+            fromDate: leaveRequest.fromdate,
+            status: "Pending",
+            applicationDate: leaveRequest.applicationDate,
+            empId: leaveRequest.empId.toString(),
+            toDate: leaveRequest.todate,
+            customLeaveRequestBloc: context.read<CustomLeaveRequestBloc>(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildApprovedTab() {
+    List<LeaveRequest> filteredRequests = leaveRequests;
+
+    if (_selectedDate != null) {
+      filteredRequests = leaveRequests.where((request) =>
+      request.applicationDate.day == _selectedDate!.day &&
+          request.applicationDate.month == _selectedDate!.month &&
+          request.applicationDate.year == _selectedDate!.year).toList();
+    }
+
+    return RefreshIndicator(
+      onRefresh: fetchData,
+      child: isFirstTimeLoading
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : filteredRequests.isEmpty
+          ? Center(
+        child: Text('No Data Available'),
+      )
+          : ListView.builder(
+        itemCount: filteredRequests.length,
+        itemBuilder: (context, index) {
+          final leaveRequest = filteredRequests[index];
+          return LeaveRequestApproveCard(
+            reason: leaveRequest.reason,
+            empName: leaveRequest.empName,
+            department: leaveRequest.department,
+            fromDate: leaveRequest.fromdate,
+            status: leaveRequest.approvedStatus,
+            applicationDate: leaveRequest.applicationDate,
+            toDate: leaveRequest.todate,
+          );
+        },
+      ),
+    );
+  }
+
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
 }
+
 
 class LeaveRequestCard extends StatefulWidget {
   final int id;
@@ -276,6 +306,7 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
     with TickerProviderStateMixin {
   late AnimationController addToCartPopUpAnimationController;
   bool _isDisposed = false; // Flag to check if the widget is disposed
+  String remarks = ''; // Variable to hold the remarks entered by the user
 
   @override
   void initState() {
@@ -299,14 +330,19 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
 
   Future<void> _approveLeave(BuildContext context) async {
     try {
-      final String formattedFromDate =
-          DateFormat('yyyy-MM-dd').format(widget.fromDate);
-      final String formattedToDate =
-          DateFormat('yyyy-MM-dd').format(widget.toDate);
-      final String formattedApplicationDate =
-          DateFormat('yyyy-MM-dd').format(widget.applicationDate);
+      final adminDatabaseHelper = AdminDatabaseHelper();
+      final admins = await adminDatabaseHelper.getAdmins();
+      final adminUsername = admins.isNotEmpty ? admins.first['username'] : '';
 
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String formattedFromDate =
+      DateFormat('yyyy-MM-dd').format(widget.fromDate);
+      final String formattedToDate =
+      DateFormat('yyyy-MM-dd').format(widget.toDate);
+      final String formattedApplicationDate =
+      DateFormat('yyyy-MM-dd').format(widget.applicationDate);
+
+      final SharedPreferences prefs =
+      await SharedPreferences.getInstance();
       final String corporateId = prefs.getString('corporate_id') ?? "";
       final leaveRequest = CustomLeaveRequestModel(
         employeeId: widget.empId,
@@ -315,10 +351,10 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
         reason: widget.reason,
         leaveId: 0,
         leaveDuration: null,
-        approvedBy: corporateId,
+        approvedBy: adminUsername,
         status: "Approved",
         applicationDate: formattedApplicationDate,
-        remark: null,
+        remark: remarks,
         id: widget.id,
       );
 
@@ -358,6 +394,40 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
     );
   }
 
+  void _showRemarksDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Remarks'),
+          content: TextField(
+            onChanged: (value) {
+              remarks = value; // Update the remarks variable
+            },
+            decoration: InputDecoration(
+              hintText: 'Enter remarks here...',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                // You can perform any additional actions here upon saving remarks
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -367,7 +437,7 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(top:3.0,left: 16,right: 16,bottom: 3),
+        padding: const EdgeInsets.only(top: 3.0, left: 16, right: 16, bottom: 3),
         child: Column(
           children: [
             Row(
@@ -384,14 +454,20 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.name,style: GoogleFonts.lato(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),),
-                Text(widget.departmentName,style: GoogleFonts.lato(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),),
+                Text(
+                  widget.name,
+                  style: GoogleFonts.lato(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  widget.departmentName,
+                  style: GoogleFonts.lato(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
             Row(
@@ -424,27 +500,62 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
                     color: Colors.grey,
                   ),
                 ),
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    if (widget.customLeaveRequestBloc != null) {
-                      addToCartPopUpAnimationController.forward();
-                      Timer(const Duration(seconds: 2), () {
-                        _approveLeave(context);
-                        addToCartPopUpAnimationController.reverse();
-                        Navigator.pop(context);
-                      });
-                      showPopupWithMessage("Leave approved!");
-                    } else {
-                      print("The values passed are null");
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.check_circle,
-                    size: 30.0,
-                    color: Colors.blue,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust as needed
+                  children: [
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        _showRemarksDialog(context); // Show remarks dialog
+                      },
+                      icon: const Icon(
+                        Icons.comment,
+                        size: 30.0,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    SizedBox(width: 10), // Add some space between the icons
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        if (remarks.isNotEmpty) {
+                          // Only approve leave if remarks are not empty
+                          addToCartPopUpAnimationController.forward();
+                          Timer(const Duration(seconds: 2), () {
+                            _approveLeave(context);
+                            addToCartPopUpAnimationController.reverse();
+                            Navigator.pop(context);
+                          });
+                          showPopupWithMessage("Leave approved!");
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Error'),
+                                content: Text('Please add remarks to approve the leave.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.check_circle,
+                        size: 30.0,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
                 ),
+
               ],
             ),
           ],
@@ -453,6 +564,7 @@ class _LeaveRequestCardState extends State<LeaveRequestCard>
     );
   }
 }
+
 
 class LeaveRequestApproveCard extends StatelessWidget {
   final String reason;
@@ -566,7 +678,7 @@ class LeaveRequestApproveCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(
-                        width: 5), // Add some spacing between the icon and text
+                        width: 5),
                     Icon(
                       Icons.check_circle,
                       size: 20.0,

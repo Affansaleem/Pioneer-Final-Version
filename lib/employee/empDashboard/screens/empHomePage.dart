@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/Material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:line_icons/line_icon.dart';
 import 'package:project/constants/AnimatedTextPopUp.dart';
 import 'package:project/constants/globalObjects.dart';
+import 'package:project/employee/empDashboard/screens/empDetailedAttendance.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,6 +53,7 @@ class HomePageState extends State<EmpDashHome> {
   var initProfile = EmpProfilePageState();
   EmpDrawerItem item = EmpDrawerItems.home;
   final EmpDashRepository _repository = EmpDashRepository();
+
   late List<EmpDashModel> empDashData;
   final EmpAttendanceRepository _attendanceRepository =
       EmpAttendanceRepository();
@@ -80,8 +84,8 @@ class HomePageState extends State<EmpDashHome> {
       String? empCode = attendData['location'];
 
       String? g1 = attendData['location'];
-      print('Get them, $g1');
-      print("$empCode");
+      // print('Get them, $g1');
+      // print("$empCode");
 
       if (empCode != "0" && empCode != null) {
         String imageInString = attendData['attendeePic'];
@@ -118,14 +122,14 @@ class HomePageState extends State<EmpDashHome> {
         showCustomSuccessAlertEditEmployee(context,
             "Pending Attendance Marked Successfully $formattedDateTime");
       } else if (empCode == "0" || empCode == null) {
-        print("hello");
+
         return;
       }
 
       final attendData1 = await dbHelper.getAttendanceData();
       String? h = attendData1['lat'];
       String? g = attendData1['location'];
-      print('Get them $h, $g');
+
     } catch (e) {
       print("Error Posting/Setting Attendance data: $e");
     }
@@ -133,14 +137,12 @@ class HomePageState extends State<EmpDashHome> {
 
   @override
   void initState() {
-    print("init in emp home called");
     checkLocationPermission();
     checkLocationPermissionAndFetchLocation();
     if (GlobalObjects.empProfilePic == null ||
         GlobalObjects.empCode == null ||
         GlobalObjects.empAbsent == null ) {
       setState(() {
-        print("i am in");
         loadingData = true;
       });
       fetchProfileData();
@@ -154,14 +156,15 @@ class HomePageState extends State<EmpDashHome> {
   String? profileImageUrl;
 
   Future<void> fetchProfileData() async {
+
     try {
+
       final dbHelper = EmployeeDatabaseHelper.instance;
       int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
-
       // Dash
       empDashData = await _repository.getData();
+      print(empDashData[0].holidayCount);
       empAttendanceData = await _attendanceRepository.getData();
-
       // Insert data into employeeHomePageData table
       await dbHelper.insertEmployeeHomePageData(
         inTime: empAttendanceData.in1?.toString() ?? '',
@@ -170,12 +173,13 @@ class HomePageState extends State<EmpDashHome> {
         present: empDashData[0].presentCount.toString(),
         absent: empDashData[0].absentCount.toString(),
         leaves: empDashData[0].leaveCount.toString(),
+        holiday: empDashData[0].holidayCount.toString(),
+        late: empDashData[0].lateCount.toString()
       );
 
       if (loggedInEmployeeId > 0) {
         final profileData = await dbHelper.getEmployeeProfileData();
-
-        if (mounted) {  // Add this check to avoid calling setState on a disposed widget
+        if (mounted) {
           setState(() {
             GlobalObjects.empCode = profileData['empCode'];
             GlobalObjects.empProfilePic = profileData['profilePic'];
@@ -194,16 +198,21 @@ class HomePageState extends State<EmpDashHome> {
         }
       }
     } catch (e) {
-      print("Error fetching profile data: $e");
+      print("Error fetching profile data home: $e");
     } finally {
+
+
       if (mounted) {
         setState(() {
+
           GlobalObjects.empIn1 = empAttendanceData.in1;
           GlobalObjects.empOut2 = empAttendanceData.out2;
           GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
           GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
           GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
           GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
+          GlobalObjects.empHoliday = empDashData[0].holidayCount.toString() ?? '';
+          GlobalObjects.empLate = empDashData[0].lateCount.toString() ?? '';
         });
       }
     }
@@ -236,11 +245,14 @@ class HomePageState extends State<EmpDashHome> {
           });
 
           GlobalObjects.empCode = empProfile.empCode;
+          print(GlobalObjects.empCode);
+
           GlobalObjects.empProfilePic = profileImage;
           GlobalObjects.empName = empProfile.empName;
           GlobalObjects.empMail = empProfile.emailAddress;
           setState(() {
             GlobalObjects.empCode = empProfile.empCode;
+            print(GlobalObjects.empCode);
             GlobalObjects.empProfilePic = profileImage;
             GlobalObjects.empName = empProfile.empName;
             GlobalObjects.empMail = empProfile.emailAddress;
@@ -249,7 +261,6 @@ class HomePageState extends State<EmpDashHome> {
           });
         }
 
-        // Print the profile data for verification
         await dbHelper.printProfileData();
       }
     } catch (e) {
@@ -393,8 +404,13 @@ class HomePageState extends State<EmpDashHome> {
   Widget build(BuildContext context) {
     String formattedDate =
         DateFormat('EEEE, d MMMM yyyy').format(DateTime.now());
-
     double screenWidth = MediaQuery.of(context).size.width;
+    String formattedTimeOut2 = GlobalObjects.empOut2 != null
+        ? DateFormat.Hm().format(GlobalObjects.empOut2!)
+        : '---';
+    String formattedTimeIn1 = GlobalObjects.empIn1 != null
+        ? DateFormat.Hm().format(GlobalObjects.empIn1!)
+        : '---';
     double screenHeight = MediaQuery.of(context).size.height;
     double lowerButtonsHorizontal;
     double lowerButtonsVertical;
@@ -416,6 +432,7 @@ class HomePageState extends State<EmpDashHome> {
         if (state is InternetGainedState) {
           return Scaffold(
                     appBar: AppBar(
+                      centerTitle: true,
                       leading: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
                         child: IconButton(
@@ -429,15 +446,11 @@ class HomePageState extends State<EmpDashHome> {
                       backgroundColor: AppColors.primaryColor,
                       elevation: 0,
                       title: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            MediaQuery.of(context).size.width / 4.5, 30, 0, 0),
-                        child: const Row(
-                          children: [
-                            Text(
-                              "Home",
-                              style: AppBarStyles.appBarTextStyle,
-                            ),
-                          ],
+                        padding: EdgeInsets.only( top: 35
+                        ),
+                        child: Text(
+                          "Home",
+                          style: AppBarStyles.appBarTextStyle,
                         ),
                       ),
                       actions: [
@@ -524,48 +537,102 @@ class HomePageState extends State<EmpDashHome> {
                               ],
                             ),
                           ),
-                          Container(
-                            height: 75,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ProfileInfoCard(
-                                  firstText: "IN",
-                                  secondText: GlobalObjects.empIn1 ?? "---",
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ProfileInfoCard(
-                                  firstText: "Status",
-                                  secondText:
-                                      GlobalObjects.empStatus!.isNotEmpty
-                                          ? GlobalObjects.empStatus
-                                          : "---",
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                ProfileInfoCard(
-                                  firstText: "OUT",
-                                  secondText: GlobalObjects.empOut2 ?? "---",
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                              ],
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => EmpDetailedAttendance(),));
+                            },
+                            child: Container(
+
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              height: 75,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15), // Same as the Card's shape
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5), // Adjust the shadow color and opacity
+                                    spreadRadius: 3, // Adjust the spread radius
+                                    blurRadius: 5, // Adjust the blur radius
+                                    offset: Offset(0, 3), // Adjust the offset
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "IN",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        formattedTimeIn1,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Status",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        GlobalObjects.empStatus != null && GlobalObjects.empStatus!.isNotEmpty
+                                            ? GlobalObjects.empStatus!
+                                            : "---",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "OUT",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        formattedTimeOut2 ,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+
+
                           const SizedBox(height: 14),
                           Text(
-                            'ID ${GlobalObjects.empCode}',
+                            'ID ${GlobalObjects.empCode ?? '000'}',
                             style: const TextStyle(
                                 fontSize: 21,
                                 fontWeight: FontWeight.w600,
@@ -573,7 +640,7 @@ class HomePageState extends State<EmpDashHome> {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            formattedDate,
+                            formattedDate ?? '12-12-12',
                             style: const TextStyle(
                               fontSize: 14,
                               color: AppColors.darkGrey,
@@ -586,7 +653,7 @@ class HomePageState extends State<EmpDashHome> {
                                 children: [
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empPresent.toString(),
+                                    GlobalObjects.empPresent?.toString() ?? '---',
                                     secondText: "Total Present",
                                     icon: Image.asset(
                                       "assets/icons/Attend.png",
@@ -595,7 +662,7 @@ class HomePageState extends State<EmpDashHome> {
                                   ),
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empAbsent.toString(),
+                                        GlobalObjects.empAbsent?.toString() ?? '---',
                                     secondText: "Total Absent",
                                     icon: Image.asset(
                                       "assets/icons/absence.png",
@@ -612,7 +679,7 @@ class HomePageState extends State<EmpDashHome> {
                                 children: [
                                   ProfileInfoBigCard(
                                     firstText:
-                                        GlobalObjects.empLeaves.toString(),
+                                        GlobalObjects.empLeaves?.toString() ?? '---',
                                     secondText: "Total Leaves",
                                     icon: Image.asset(
                                       "assets/icons/leave.png",
@@ -692,7 +759,8 @@ class HomePageState extends State<EmpDashHome> {
                     )
           );
 
-        } else if (state is InternetLostState) {
+        }
+        else if (state is InternetLostState) {
           return Expanded(
             child: Scaffold(
               body: Center(
@@ -716,7 +784,8 @@ class HomePageState extends State<EmpDashHome> {
               ),
             ),
           );
-        } else {
+        }
+        else {
           return Expanded(
             child: Scaffold(
               body: Container(

@@ -205,7 +205,7 @@ class _EmpGpsTrackerReportState extends State<EmpGpsTrackerReport> {
               SizedBox(height: 16),
               Text("Fetching Location..."),
               SizedBox(height: 16),
-              Text("Turn On Location..."),
+              // Text("Turn On Location..."),
             ],
           ),
         ),

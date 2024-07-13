@@ -9,6 +9,7 @@ class GeoFenceRepository {
   GeoFenceRepository(this.area);
 
   Future<void> postData(GeofenceModel geoFenceModel) async {
+    print("In geofence repo");
     try {
       final dbHelper = EmployeeDatabaseHelper.instance;
       final firstEmployee = await dbHelper.getFirstEmployee();
@@ -34,8 +35,9 @@ class GeoFenceRepository {
 
         if (response.statusCode == 200) {
           // Request was successful
-          print("Response submitted successfully!");
+          // print("Response submitted successfully!");
           print(response.body);
+          // print(response.statusCode);
         } else {
           // Request failed, log status code and response content
           print(

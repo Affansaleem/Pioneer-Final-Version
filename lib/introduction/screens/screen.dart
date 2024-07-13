@@ -55,7 +55,7 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
+    // print(MediaQuery.of(context).size.height);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(

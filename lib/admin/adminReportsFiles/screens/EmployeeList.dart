@@ -56,11 +56,13 @@ class _EmployeeListState extends State<EmployeeList>
     GlobalObjects.globalCompany = "";
     GlobalObjects.globalBranch = "";
     super.dispose();
+    print("Dispose");
   }
 
   @override
   void initState() {
     super.initState();
+    print("Init State");
     _initializePage();
   }
 
@@ -78,6 +80,7 @@ class _EmployeeListState extends State<EmployeeList>
 
     // Uncheck all checkboxes
     setState(() {
+
       selectedEmployees.clear();
       employees.forEach((employee) {
         employee.isSelected = false;
@@ -141,13 +144,13 @@ class _EmployeeListState extends State<EmployeeList>
   }
 
   void _navigateToNextScreen() {
-    if (selectedEmployees != null && selectedEmployees.isNotEmpty) {
-      Navigator.of(context).push(
+    if (selectedEmployees.isNotEmpty) {
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) =>
-              LeaveSubmissionPage(selectedEmployees: selectedEmployees),
+          builder: (context) => LeaveSubmissionPage(selectedEmployees: selectedEmployees),
         ),
       );
+
     } else {
       addToCartPopUpAnimationController.forward();
 
@@ -213,17 +216,19 @@ class _EmployeeListState extends State<EmployeeList>
   }
 
   void _toggleEmployeeSelection(GetActiveEmpModel employee) {
-    setState(() {
-      employee.isSelected = !employee.isSelected;
-      if (employee.isSelected) {
-        selectedEmployees.add(employee);
-      } else {
-        selectedEmployees.remove(employee);
-      }
-      print('Employee ${employee.empName} isSelected: ${employee.isSelected}');
-      print('Selected Employees: $selectedEmployees');
-    });
+    if (mounted) {
+      setState(() {
+        employee.isSelected = !employee.isSelected;
+        if (employee.isSelected) {
+          selectedEmployees.add(employee);
+        } else {
+          selectedEmployees.remove(employee);
+        }
+      });
+    }
   }
+
+
 
   void _updateSelectAll() {
     bool allSelected = employees.every((employee) => employee.isSelected);
@@ -285,37 +290,6 @@ class _EmployeeListState extends State<EmployeeList>
     );
   }
 
-  bool _employeeMatchesFilter(GetActiveEmpModel employee) {
-    bool departmentMatch = true;
-    bool branchMatch = true;
-    bool companyMatch = true;
-
-    // Check if a department is selected and match it with the employee's department
-    if (departmentDropdownValue != null &&
-        departmentDropdownValue!.isNotEmpty) {
-      departmentMatch = employee.deptNames == departmentDropdownValue;
-    }
-
-    // Check if a branch is selected and match it with the employee's branch
-    if (branchDropdownValue != null && branchDropdownValue!.isNotEmpty) {
-      branchMatch = employee.branchNames == branchDropdownValue;
-    }
-
-    // Check if a company is selected and match it with the employee's company
-    if (companyDropdownValue != null && companyDropdownValue!.isNotEmpty) {
-      companyMatch = employee.companyNames == companyDropdownValue;
-    }
-
-    // Check if the search query matches employee's name or code
-    bool searchMatch = searchQuery.isEmpty ||
-        (employee.empName?.toLowerCase().contains(searchQuery.toLowerCase()) ??
-            false) ||
-        (employee.empCode?.toLowerCase().contains(searchQuery.toLowerCase()) ??
-            false);
-
-    // Return true if all conditions are met, otherwise, return false
-    return departmentMatch && branchMatch && companyMatch && searchMatch;
-  }
 
   List<GetActiveEmpModel> filterEmployees(
       List<GetActiveEmpModel> employees, String query) {
@@ -416,7 +390,7 @@ class _EmployeeListState extends State<EmployeeList>
                   onPressed: () {
                     _navigateToNextScreen();
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.check,
                     color: Colors.white, // Change color to green
                     size: 24,
@@ -468,7 +442,7 @@ class _EmployeeListState extends State<EmployeeList>
                             ),
                             Container(
                               width: 30,
-                              margin: EdgeInsets.only(left: 10, right: 10),
+                              margin: const EdgeInsets.only(left: 10, right: 10),
                               child: IconButton(
                                 onPressed: () async {
                                   final selectedValues =
@@ -502,12 +476,12 @@ class _EmployeeListState extends State<EmployeeList>
                                     });
                                   }
                                 },
-                                icon: Icon(FontAwesomeIcons.slidersH),
+                                icon: const Icon(FontAwesomeIcons.slidersH),
                               ),
                             ),
                             Container(
                               width: 30,
-                              margin: EdgeInsets.only(right: 5),
+                              margin: const EdgeInsets.only(right: 5),
                               child: IconButton(
                                 onPressed: _toggleSelectAll,
                                 icon: Icon(
@@ -530,7 +504,7 @@ class _EmployeeListState extends State<EmployeeList>
                       ? Padding(
                           padding: EdgeInsets.only(
                               top: MediaQuery.of(context).size.height * 0.3),
-                          child: Center(
+                          child: const Center(
                             child: CircularProgressIndicator(),
                           ),
                         )
@@ -546,7 +520,7 @@ class _EmployeeListState extends State<EmployeeList>
                               height: containerHeight,
                               margin: const EdgeInsets.all(10),
                               child: ListView.separated(
-                                separatorBuilder: (context, index) => Divider(),
+                                separatorBuilder: (context, index) => const Divider(),
                                 itemCount:
                                     filterEmployees(employees, searchQuery)
                                         .length,
@@ -569,15 +543,17 @@ class _EmployeeListState extends State<EmployeeList>
                                                   1), // Adjust the scale factor as needed
                                               child: Checkbox(
                                                 value: employee.isSelected,
-                                                onChanged: (_) {
-                                                  _toggleEmployeeSelection(
-                                                      employee);
+                                                onChanged: (bool? value) {
+                                                  if (value != null) {
+                                                    _toggleEmployeeSelection(employee);
+                                                  }
                                                 },
-                                                shape: CircleBorder(),
+                                                shape: const CircleBorder(),
                                                 activeColor: Colors.blue,
-                                              ),
+                                              )
+
                                             ),
-                                            SizedBox(width: 8),
+                                            const SizedBox(width: 8),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
@@ -602,7 +578,7 @@ class _EmployeeListState extends State<EmployeeList>
                                                         height:
                                                             33, // Adjust the height to change the size of the circle
                                                         decoration:
-                                                            BoxDecoration(
+                                                            const BoxDecoration(
                                                           shape:
                                                               BoxShape.circle,
                                                           color: Colors
@@ -615,7 +591,7 @@ class _EmployeeListState extends State<EmployeeList>
                                                             _showRemarksDialog(
                                                                 employee);
                                                           },
-                                                          icon: Icon(
+                                                          icon: const Icon(
                                                               Icons.comment,
                                                               size: 18,
                                                               color: Colors
@@ -755,7 +731,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(right: 30),
+                    margin: const EdgeInsets.only(right: 30),
                     child: GestureDetector(
                       onTap: () {
                         // Return the selected values when "Apply" is clicked
@@ -765,7 +741,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                           'company': companyDropdownValue,
                         });
                       },
-                      child: Text(
+                      child: const Text(
                         "Apply",
                         style: TextStyle(
                           color: AppColors
@@ -833,11 +809,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                   DropdownMenuItem<String>(
                                     value: '',
                                     child: Container(
-                                      margin: EdgeInsets.only(left: 5),
+                                      margin: const EdgeInsets.only(left: 5),
                                       child: Text(
                                         'All',
                                         style: GoogleFonts.nunito(
-                                          textStyle: TextStyle(
+                                          textStyle: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -850,7 +826,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Container(
-                                        margin: EdgeInsets.only(left: 5),
+                                        margin: const EdgeInsets.only(left: 5),
                                         child: Text(
                                           value,
                                           style: GoogleFonts.nunito(
@@ -908,7 +884,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 DropdownMenuItem<String>(
                                   value: '',
                                   child: Container(
-                                    margin: EdgeInsets.only(left: 5),
+                                    margin: const EdgeInsets.only(left: 5),
                                     child: Text(
                                       'All',
                                       style: GoogleFonts.nunito(
@@ -924,7 +900,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Container(
-                                      margin: EdgeInsets.only(left: 5),
+                                      margin: const EdgeInsets.only(left: 5),
                                       child: Text(
                                         value,
                                         style: GoogleFonts.nunito(
@@ -981,7 +957,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 DropdownMenuItem<String>(
                                   value: '',
                                   child: Container(
-                                    margin: EdgeInsets.only(left: 5),
+                                    margin: const EdgeInsets.only(left: 5),
                                     child: Text(
                                       'All',
                                       style: GoogleFonts.nunito(
@@ -997,7 +973,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Container(
-                                      margin: EdgeInsets.only(left: 5),
+                                      margin: const EdgeInsets.only(left: 5),
                                       child: Text(
                                         value,
                                         style: GoogleFonts.nunito(
