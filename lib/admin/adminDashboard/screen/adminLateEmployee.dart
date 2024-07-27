@@ -94,9 +94,53 @@ class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('No Data Found'));
+                    return const Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Data Found',
+
+                          ),
+                        ),
+                        // Bottom "Please make sure you have processed the attendance" Text
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 20.0), // Adjust bottom padding as needed
+                            child: Text(
+                              "Please make sure you have processed the attendance",
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No Data Found'));
+                    return const Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Data Found',
+
+                          ),
+                        ),
+                        // Bottom "Please make sure you have processed the attendance" Text
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 20.0), // Adjust bottom padding as needed
+                            child: Text(
+                              "Please make sure you have processed the attendance",
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   } else {
                     List<AdminLeaveEmployee> employees = snapshot.data!;
                     Map<String, List<AdminLeaveEmployee>> groupedEmployees = {};
@@ -117,49 +161,57 @@ class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 entry.key, // Department name
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
-                            SingleChildScrollView(
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(label: Text('Card No.')),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text('Name', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text('In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text('Out', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text('Status', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            ...entry.value.map((employee) {
+                              return Card(
+                                margin: EdgeInsets.zero,
+                                // margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                child: ListTile(
 
-                                  DataColumn(label: Text('Name')),
-
-                                  DataColumn(label: Text('Status')),
-                                ],
-                                rows: entry.value.map((employee) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(
-                                        Text(
-                                          employee.cardNo.toString(),
-                                          overflow: TextOverflow.clip,
-                                        ),
-
+                                  title: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        employee.empName,
+                                        style: const TextStyle(fontSize: 14),
                                       ),
-                                      DataCell(
-                                        Text(
-                                          employee.empName,
-                                          overflow: TextOverflow.clip,
-                                        ),
-
+                                      Text(
+                                        '${DateFormat('hh:mm').format(employee.in1)} ',
+                                        style: const TextStyle(fontSize: 14),
                                       ),
-
-
-
-                                      DataCell(
-                                        Text(
-                                          employee.status,
-                                          overflow: TextOverflow.ellipsis,
+                                      Text(
+                                        '${DateFormat('hh:mm').format(employee.out2)}',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: _getStatusColor(employee.status),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            employee.status,
+                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                       ),
                                     ],
-                                  );
-                                }).toList(),
-                              ),
-                            ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ],
                         );
                       }).toList(),
@@ -171,6 +223,20 @@ class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
           ],
         ),
       ),
+
     );
+
+  }
+  Color _getStatusColor(String status) {
+    // Define colors for different statuses
+    switch (status) {
+      case 'P':
+        return Colors.green;
+      case 'A':
+        return Colors.red;
+    // Add other cases as needed
+      default:
+        return Colors.grey;
+    }
   }
 }

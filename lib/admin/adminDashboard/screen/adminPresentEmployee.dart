@@ -7,8 +7,7 @@ import '../models/adminPresentEmployee_model.dart';
 import '../models/adminPresent_repository.dart';
 
 class AdminPresentEmployeePage extends StatefulWidget {
-   AdminPresentEmployeePage({super.key,
-  required this.date});
+  AdminPresentEmployeePage({super.key, required this.date});
   DateTime date;
 
   @override
@@ -23,7 +22,7 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
   @override
   void initState() {
     super.initState();
-    selectedDate= widget.date;
+    selectedDate = widget.date;
     futurePresentEmployees = repository.getPresentEmployees(selectedDate);
   }
 
@@ -45,14 +44,14 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F7F7),
+      backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
-        title: Center(
+        title: const Center(
           child: Padding(
-            padding: const EdgeInsets.only(right: 55.0),
+            padding: EdgeInsets.only(right: 55.0),
             child: Text(
               "Present Employees",
               style: AppBarStyles.appBarTextStyle,
@@ -61,7 +60,7 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Center(
@@ -71,17 +70,17 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color(0xFFffffff),
+                    color: const Color(0xFFffffff),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         '${DateFormat('EEEE, dd-MM-yyyy').format(selectedDate)}',
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                       IconButton(
-                        icon: Icon(Icons.calendar_today),
+                        icon: const Icon(Icons.calendar_today),
                         onPressed: () => _selectDate(context),
                       ),
                     ],
@@ -89,27 +88,61 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
                 ),
               ),
             ),
+            const SizedBox(height: 16), // Add spacing between the date picker and the headings
+
+            const SizedBox(height: 8), // Add spacing between the headings and the cards
             Expanded(
               child: FutureBuilder<List<AdminPresentEmployee>>(
                 future: futurePresentEmployees,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    return const Stack(
                       children: [
-
-                        Text('No Data Found'),
-                      Text("Please make sure you have process the attendance",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w800),)
-                    ],);
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Data Found',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 20.0),
+                            child: Text(
+                              "Please make sure you have processed the attendance",
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    return const Stack(
                       children: [
-                      Text('No Data Found'),
-                      Text("Please make sure you have process the attendance",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w800),)
-                    ],);
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Data Found',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 20.0),
+                            child: Text(
+                              "Please make sure you have processed the attendance",
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   } else {
                     List<AdminPresentEmployee> employees = snapshot.data!;
                     Map<String, List<AdminPresentEmployee>> groupedEmployees = {};
@@ -130,55 +163,57 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 entry.key, // Department name
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
-                            SingleChildScrollView(
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(label: Text('Name')),
-                                  DataColumn(label: Text('In/Out')),
-                                  DataColumn(label: Text('Status')),
-                                ],
-                                rows: entry.value.map((employee) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(
-                                        Text(
-                                          employee.empName,
-                                          overflow: TextOverflow.clip,
-                                        ),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text('Name', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text('In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text('Out', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text('Status', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            ...entry.value.map((employee) {
+                              return Card(
+                                margin: EdgeInsets.zero,
+                                // margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                child: ListTile(
 
+                                  title: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        employee.empName,
+                                        style: const TextStyle(fontSize: 14),
                                       ),
-
-                                      DataCell(
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              DateFormat('hh:mm a').format(employee.in1),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            Text(
-                                              DateFormat('hh:mm a').format(employee.out2),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        '${DateFormat('hh:mm').format(employee.in1)} ',
+                                        style: const TextStyle(fontSize: 14),
                                       ),
-
-                                      DataCell(
-                                        Text(
-                                          employee.status,
-                                          overflow: TextOverflow.ellipsis,
+                                      Text(
+                                        '${DateFormat('hh:mm').format(employee.out2)}',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: _getStatusColor(employee.status),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            employee.status,
+                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                       ),
                                     ],
-                                  );
-                                }).toList(),
-                              ),
-                            ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ],
                         );
                       }).toList(),
@@ -191,5 +226,18 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String status) {
+    // Define colors for different statuses
+    switch (status) {
+      case 'P':
+        return Colors.green;
+      case 'A':
+        return Colors.red;
+    // Add other cases as needed
+      default:
+        return Colors.grey;
+    }
   }
 }

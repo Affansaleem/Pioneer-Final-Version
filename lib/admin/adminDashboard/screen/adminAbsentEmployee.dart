@@ -95,9 +95,53 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('No Data Found'));
+                    return const Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Data Found',
+
+                          ),
+                        ),
+                        // Bottom "Please make sure you have processed the attendance" Text
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 20.0), // Adjust bottom padding as needed
+                            child: Text(
+                              "Please make sure you have processed the attendance",
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No Data Found'));
+                    return const Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Data Found',
+
+                          ),
+                        ),
+                        // Bottom "Please make sure you have processed the attendance" Text
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 20.0), // Adjust bottom padding as needed
+                            child: Text(
+                              "Please make sure you have processed the attendance",
+                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   } else {
                     List<AdminAbsentEmployee> employees = snapshot.data!;
                     Map<String, List<AdminAbsentEmployee>> groupedEmployees = {};
@@ -118,47 +162,56 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 entry.key, // Department name
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
-                            SingleChildScrollView(
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(label: Text('Card No')),
-                                  DataColumn(label: Text('Name')),
-                                  DataColumn(label: Text('Status')),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: const Row(
+
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Card No.', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  Text('Name', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  Text('Status', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                 ],
-                                rows: entry.value.map((employee) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(
-                                        Text(
-                                          employee.cardNo.toString(),
-                                          overflow: TextOverflow.clip,
-                                        ),
-
+                              ),
+                            ),
+                            ...entry.value.map((employee) {
+                              return Card(
+                                margin: EdgeInsets.zero,
+                                // margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                child: ListTile(
+                                  title: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        employee.cardNo ?? "" ,
+                                        style: const TextStyle(fontSize: 14),
                                       ),
-                                      DataCell(
-                                        Text(
-                                          employee.empName,
-                                          overflow: TextOverflow.clip,
-                                        ),
-
+                                      Text(
+                                        employee.empName,
+                                        style: const TextStyle(fontSize: 14),
                                       ),
 
-
-
-                                      DataCell(
-                                        Text(
-                                          employee.status,
-                                          overflow: TextOverflow.ellipsis,
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: _getStatusColor(employee.status),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            employee.status,
+                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                       ),
                                     ],
-                                  );
-                                }).toList(),
-                              ),
-                            ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ],
                         );
                       }).toList(),
@@ -171,5 +224,17 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
         ),
       ),
     );
+  }
+  Color _getStatusColor(String status) {
+    // Define colors for different statuses
+    switch (status) {
+      case 'P':
+        return Colors.green;
+      case 'A':
+        return Colors.red;
+
+      default:
+        return Colors.grey;
+    }
   }
 }
