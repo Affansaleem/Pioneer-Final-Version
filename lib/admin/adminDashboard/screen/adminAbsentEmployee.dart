@@ -8,8 +8,8 @@ import '../models/adminAbsent_repository.dart';
 
 
 class AdminAbsentEmployeePage extends StatefulWidget {
-  const AdminAbsentEmployeePage({super.key});
-
+   AdminAbsentEmployeePage({super.key,required this.date});
+  DateTime date;
   @override
   _AdminAbsentEmployeePageState createState() => _AdminAbsentEmployeePageState();
 }
@@ -17,11 +17,12 @@ class AdminAbsentEmployeePage extends StatefulWidget {
 class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
   late Future<List<AdminAbsentEmployee>> futurePresentEmployees;
   final AbsentEmployeeRepository repository = AbsentEmployeeRepository('http://62.171.184.216:9595/api/Admin/Dashboard');
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
+    selectedDate= widget.date;
     futurePresentEmployees = repository.getPresentEmployees(selectedDate);
   }
 

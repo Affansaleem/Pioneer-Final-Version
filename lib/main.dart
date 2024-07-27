@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:project/admin/adminDashboard/screen/admin_page.dart';
 import 'package:project/admin/adminOptionsReport/adminOptions_bloc/admin_monthly_reports_bloc.dart';
 import 'package:project/admin/adminOptionsReport/models/AdminDailyReportsRepository.dart';
 import 'package:project/admin/adminOptionsReport/models/AdminMonthlyReportsRepository.dart';
@@ -13,7 +12,6 @@ import 'package:project/admin/pendingLeavesApproval/model/ApproveManualPunchRepo
 import 'package:project/admin/pendingLeavesApproval/model/PendingLeavesRepository.dart';
 import 'package:project/startup/screens/appStartUp.dart';
 import 'admin/adminDashboard/models/adminRepository.dart';
-import 'admin/adminDashboard/screen/adminHome.dart';
 import 'admin/adminGeofence/bloc/admin_geofence_bloc.dart';
 import 'admin/adminGeofence/models/adminGeofencePostRepository.dart';
 import 'admin/adminOptionsReport/adminOptions_bloc/admin_daily_reports_bloc.dart';

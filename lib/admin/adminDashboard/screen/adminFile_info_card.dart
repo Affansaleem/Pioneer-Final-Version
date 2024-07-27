@@ -7,13 +7,15 @@ class AdminFileInfoCard extends StatelessWidget {
   final String title;
   final int numOfEmployees;
   final Color color;
+  DateTime selectedDate = DateTime.now();
 
-  const AdminFileInfoCard({
+   AdminFileInfoCard({
     Key? key,
     required this.imageSrc,
     required this.title,
     required this.numOfEmployees,
     required this.color,
+    required this.selectedDate,
   }) : super(key: key);
 
   @override

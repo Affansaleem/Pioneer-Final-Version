@@ -7,13 +7,15 @@ class AdminStringInfoCard extends StatelessWidget {
   final String title;
   final String numOfEmployees; // Changed this to a String
   final Color color;
+  DateTime selectedDate = DateTime.now();
 
-  const AdminStringInfoCard({
+   AdminStringInfoCard({
     Key? key,
     required this.imageSrc,
     required this.title,
     required this.numOfEmployees,
     required this.color,
+    required this.selectedDate,
   }) : super(key: key);
 
   @override

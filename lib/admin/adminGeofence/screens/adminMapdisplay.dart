@@ -35,13 +35,13 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   final Set<Marker> _markers = {};
   final Set<Circle> _circles = {};
   final String _locationIqApiKey = 'pk.f9a5e193687ba71e403440e7974d3038';
-  double _radius = 10.0;
+  double _radius = 0.0;
   bool _isKilometers = false;
 
   TextEditingController searchController = TextEditingController();
   List<dynamic> autocompleteResults = [];
   FocusNode searchFocusNode = FocusNode();
-  bool isTyping = false; // To keep track of typing status
+  bool isTyping = false;
 
   double? currentLat;
   double? currentLong;
@@ -287,7 +287,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                               onChanged: (value) {
                                 setState(() {
                                   _isKilometers = !value;
-                                  _radius = _isKilometers ? 1.0 : 10.0;
+                                  _radius = _isKilometers ? 1.0 : 0.0;
                                 });
                               },
                               activeColor: Colors.black,
@@ -302,9 +302,9 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                     SizedBox(height: 10),
                     Slider(
                       value: _radius,
-                      min: _isKilometers ? 1 : 10,
+                      min: _isKilometers ? 1 : 0,
                       max: _isKilometers ? 5 : 50,
-                      divisions: _isKilometers ? 4 : 8,
+                      divisions: _isKilometers ? 4 : 10,
                       label: _isKilometers ? '${_radius.round()} km' : '${_radius.round()} meters',
                       activeColor: Colors.black,
                       inactiveColor: Colors.blue.withOpacity(0.3),
@@ -323,6 +323,10 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                           _currentAddress,
                         );
                         Fluttertoast.showToast(msg: "Coordinates are saved!");
+
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,

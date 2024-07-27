@@ -708,13 +708,13 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               onSelected: (selected) {
                                 setState(() {
                                   _selectedUserType =
-                                  selected ? UserType.employee : null;
+                                  selected ? UserType.employee : UserType.employee;
                                 });
                               },
                               shape: StadiumBorder(), // Make it rounded
                               materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
-                              side: BorderSide.none, // Remove the border
+                              side: BorderSide.none,
                             ),
 
                             const SizedBox(
@@ -768,13 +768,13 @@ class LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               onSelected: (selected) {
                                 setState(() {
                                   _selectedUserType =
-                                  selected ? UserType.admin : null;
+                                  selected ? UserType.admin : UserType.admin;
                                 });
                               },
                               shape: StadiumBorder(), // Make it rounded
                               materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
-                              side: BorderSide.none, // Remove the border
+                              side: BorderSide.none,
                             )
                           ],
                         ),

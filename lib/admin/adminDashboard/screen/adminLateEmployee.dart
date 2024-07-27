@@ -6,7 +6,8 @@ import '../models/adminLeaveEmployee_model.dart';
 import '../models/adminLeave_repository.dart';
 
 class AdminLeaveEmployeePage extends StatefulWidget {
-  const AdminLeaveEmployeePage({super.key});
+  AdminLeaveEmployeePage({super.key,required this.date});
+  DateTime date;
 
   @override
   _AdminLeaveEmployeePageState createState() => _AdminLeaveEmployeePageState();
@@ -15,11 +16,12 @@ class AdminLeaveEmployeePage extends StatefulWidget {
 class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
   late Future<List<AdminLeaveEmployee>> futurePresentEmployees;
   final LeaveEmployeeRepository repository = LeaveEmployeeRepository('http://62.171.184.216:9595/api/Admin/Dashboard');
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
+    selectedDate= widget.date;
     futurePresentEmployees = repository.getPresentEmployees(selectedDate);
   }
 

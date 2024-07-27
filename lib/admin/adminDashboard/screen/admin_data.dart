@@ -15,13 +15,15 @@ class AdminData extends StatefulWidget {
   final int presentEmployees;
   final int absentEmployees;
   final int lateEmployees;
+  DateTime selectedDate = DateTime.now();
 
-  const AdminData({
+   AdminData({
     Key? key,
     required this.totalEmployees,
     required this.presentEmployees,
     required this.absentEmployees,
     required this.lateEmployees,
+    required this.selectedDate,
     required demoMyFiles, required AdminDashBoard adminData,
   }) : super(key: key);
 
@@ -46,18 +48,22 @@ class _AdminDataState extends State<AdminData> {
             presentEmployees: widget.presentEmployees,
             absentEmployees: widget.absentEmployees,
             lateEmployees: widget.lateEmployees,
+            selectedDate: widget.selectedDate,
           ),
-          tablet: const FileInfoCardGridView(
+          tablet:  FileInfoCardGridView(
             totalEmployees: 20,
             presentEmployees: 30,
             absentEmployees: 40,
             lateEmployees: 50,
+            selectedDate: widget.selectedDate,
           ),
-          desktop: const FileInfoCardGridView(
+          desktop:  FileInfoCardGridView(
               totalEmployees: 10,
               presentEmployees: 10,
               absentEmployees: 10,
-              lateEmployees: 10),
+              lateEmployees: 10,
+            selectedDate: widget.selectedDate,
+          ),
         ),
       ],
     );
@@ -65,7 +71,7 @@ class _AdminDataState extends State<AdminData> {
 }
 
 class FileInfoCardGridView extends StatelessWidget {
-  const FileInfoCardGridView({
+   FileInfoCardGridView({
     Key? key,
     this.crossAxisCount = 4,
     this.childAspectRatio = 1,
@@ -73,6 +79,8 @@ class FileInfoCardGridView extends StatelessWidget {
     required this.presentEmployees,
     required this.absentEmployees,
     required this.lateEmployees,
+    required this.selectedDate,
+
   }) : super(key: key);
 
   final int crossAxisCount;
@@ -81,6 +89,7 @@ class FileInfoCardGridView extends StatelessWidget {
   final int presentEmployees;
   final int absentEmployees;
   final int lateEmployees;
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -102,18 +111,18 @@ class FileInfoCardGridView extends StatelessWidget {
               imageSrc: "assets/icons/employees.png",
               title: "Total",
               numOfEmployees: totalEmployees,
-              color: Colors.blue,
+              color: Colors.blue, selectedDate: selectedDate,
+
             );
             break;
           case 1:
-          // Set the title to reflect both present and late employees
             String title = "Present/Late";
             card = AdminStringInfoCard(
               imageSrc: "assets/icons/present.png",
               title: title,
-              // Pass the combined count of present and late employees as a string
               numOfEmployees: '$presentEmployees / $lateEmployees',
               color: const Color(0xFFFFA113),
+              selectedDate: selectedDate,
             );
             break;
 
@@ -123,6 +132,7 @@ class FileInfoCardGridView extends StatelessWidget {
               title: "Absent",
               numOfEmployees: absentEmployees,
               color: const Color(0xFFA4CDFF),
+              selectedDate: selectedDate,
             );
             break;
           case 3:
@@ -131,6 +141,7 @@ class FileInfoCardGridView extends StatelessWidget {
               title: "Leave",
               numOfEmployees: lateEmployees,
               color: Colors.red,
+              selectedDate: selectedDate,
             );
             break;
           default:
@@ -149,19 +160,19 @@ class FileInfoCardGridView extends StatelessWidget {
               case 1:
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AdminPresentEmployeePage()),
+                  MaterialPageRoute(builder: (context) => AdminPresentEmployeePage(date: selectedDate,)),
                 );
                 break;
               case 2:
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AdminAbsentEmployeePage()),
+                  MaterialPageRoute(builder: (context) => AdminAbsentEmployeePage(date: selectedDate,)),
                 );
                 break;
               case 3:
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AdminLeaveEmployeePage()),
+                  MaterialPageRoute(builder: (context) => AdminLeaveEmployeePage(date: selectedDate,)),
                 );
                 break;
               default:

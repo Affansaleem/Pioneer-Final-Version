@@ -7,7 +7,9 @@ import '../models/adminPresentEmployee_model.dart';
 import '../models/adminPresent_repository.dart';
 
 class AdminPresentEmployeePage extends StatefulWidget {
-  const AdminPresentEmployeePage({super.key});
+   AdminPresentEmployeePage({super.key,
+  required this.date});
+  DateTime date;
 
   @override
   _AdminPresentEmployeePageState createState() => _AdminPresentEmployeePageState();
@@ -16,11 +18,12 @@ class AdminPresentEmployeePage extends StatefulWidget {
 class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
   late Future<List<AdminPresentEmployee>> futurePresentEmployees;
   final PresentEmployeeRepository repository = PresentEmployeeRepository('http://62.171.184.216:9595/api/Admin/Dashboard');
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
+    selectedDate= widget.date;
     futurePresentEmployees = repository.getPresentEmployees(selectedDate);
   }
 
@@ -93,9 +96,20 @@ class _AdminPresentEmployeePageState extends State<AdminPresentEmployeePage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('No Data Found'));
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+                        Text('No Data Found'),
+                      Text("Please make sure you have process the attendance",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w800),)
+                    ],);
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No Data Found'));
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                      Text('No Data Found'),
+                      Text("Please make sure you have process the attendance",style: TextStyle(color: Colors.red,fontWeight: FontWeight.w800),)
+                    ],);
                   } else {
                     List<AdminPresentEmployee> employees = snapshot.data!;
                     Map<String, List<AdminPresentEmployee>> groupedEmployees = {};
