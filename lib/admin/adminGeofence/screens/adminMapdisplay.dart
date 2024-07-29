@@ -6,6 +6,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:project/admin/adminDashboard/screen/adminMain.dart';
+import 'package:project/admin/adminDashboard/screen/admin_page.dart';
 import 'package:project/constants/AppBar_constant.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -324,9 +326,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                         );
                         Fluttertoast.showToast(msg: "Coordinates are saved!");
 
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdminMainPage()), // Replace Homepage() with your homepage widget
+                              (Route<dynamic> route) => false, // This removes all previous routes
+                        );
+
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -375,13 +380,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
         phoneNo: null,
         profilePic: null,
         pwd: null,
-        // Add other required fields based on your model
+
       );
 
       geofenceDataList.add(geofenceModel);
     }
 
-    // Post the geofence data for selected employees
     await adminGeoFenceRepository.postGeoFenceData(geofenceDataList);
   }
 
@@ -437,7 +441,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
         SnackBar(
           content: Text(message),
           duration: Duration(seconds: 2),
-          backgroundColor: Colors.green, // Set the background color to green
+          backgroundColor: Colors.green,
         ),
       );
     }

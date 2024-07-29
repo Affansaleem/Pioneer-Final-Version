@@ -164,48 +164,94 @@ class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text('Name', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                Text('In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                Text('Out', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                Text('Status', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                              ],
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 13.0),
+                              child: Row(
+                                children: [
+
+                                  Container(
+                                      width:150,
+                                      child: Text('Name', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+
+
+                                  Expanded(child: Text('In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                                  Expanded(child: Text('Out', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text('Status', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                             ...entry.value.map((employee) {
-                              return Card(
-                                margin: EdgeInsets.zero,
-                                // margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                              return Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                                ),
+                                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                                 child: ListTile(
-
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust padding as needed
                                   title: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
                                     children: [
-                                      Text(
-                                        employee.empName,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                      Text(
-                                        '${DateFormat('hh:mm').format(employee.in1)} ',
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                      Text(
-                                        '${DateFormat('hh:mm').format(employee.out2)}',
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
                                       Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: _getStatusColor(employee.status),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(
+                                        width:120,
+                                        child: Tooltip(
+
+                                          message: employee.empName, // Show full name on hover
                                           child: Text(
-                                            employee.status,
-                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                            employee.empName,
+                                            style: const TextStyle(fontSize: 14),
+                                            overflow: TextOverflow.ellipsis, // Handle overflow
                                           ),
                                         ),
+                                      ),
+
+                                      Expanded(
+
+                                        child: Text(
+                                          '${DateFormat('hh:mm').format(employee.in1)}',
+                                          style: const TextStyle(fontSize: 14),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+
+                                      Expanded(
+
+                                        child: Text(
+                                          '${DateFormat('hh:mm').format(employee.out2)}',
+                                          style: const TextStyle(fontSize: 14),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children:[ Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          padding: const EdgeInsets.all(6.0),
+                                          decoration: BoxDecoration(
+                                            color: _getStatusColor(employee.status),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              employee.status,
+                                              style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -228,13 +274,17 @@ class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
 
   }
   Color _getStatusColor(String status) {
-    // Define colors for different statuses
     switch (status) {
       case 'P':
-        return Colors.green;
+        return Colors.blue;
       case 'A':
         return Colors.red;
-    // Add other cases as needed
+      case 'AL':
+        return Colors.green;
+      case 'A-LT':
+        return Colors.orangeAccent;
+      case 'L':
+        return Colors.green;
       default:
         return Colors.grey;
     }

@@ -44,14 +44,14 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F7F7),
+      backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
-        title: Center(
+        title: const Center(
           child: Padding(
-            padding: const EdgeInsets.only(right: 55.0),
+            padding: EdgeInsets.only(right: 55.0),
             child: Text(
               "Absent Employees",
               style: AppBarStyles.appBarTextStyle,
@@ -60,7 +60,7 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Center(
@@ -70,17 +70,17 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color(0xFFffffff),
+                    color: const Color(0xFFffffff),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         '${DateFormat('EEEE, dd-MM-yyyy').format(selectedDate)}',
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                       IconButton(
-                        icon: Icon(Icons.calendar_today),
+                        icon: const Icon(Icons.calendar_today),
                         onPressed: () => _selectDate(context),
                       ),
                     ],
@@ -93,7 +93,7 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
                 future: futurePresentEmployees,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return const Stack(
                       children: [
@@ -165,37 +165,57 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: const Row(
-
+                             Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Card No.', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                  Text('Name', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  Container(
+                                      width: 120,
+                                      child: Text('Card No.', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                                  Expanded(
+
+                                      child: Text('Name', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
                                   Text('Status', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),
                             ...entry.value.map((employee) {
-                              return Card(
-                                margin: EdgeInsets.zero,
-                                // margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                padding: EdgeInsets.only(left:8,
+                                    right: 12),
+
+                                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                                 child: ListTile(
+                                  contentPadding: EdgeInsets.zero, // Remove default padding if needed
                                   title: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        employee.cardNo ?? "" ,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                      Text(
-                                        employee.empName,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-
                                       Container(
-                                        padding: const EdgeInsets.all(8.0),
+                                        width: 110,
+                                        child: Text(
+                                          employee.cardNo ?? "",
+                                          style: const TextStyle(fontSize: 14),
+                                          overflow: TextOverflow.ellipsis, // Handles overflow
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          employee.empName,
+                                          style: const TextStyle(fontSize: 14),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        padding: const EdgeInsets.all(6.0),
                                         decoration: BoxDecoration(
                                           color: _getStatusColor(employee.status),
                                           shape: BoxShape.circle,
@@ -203,7 +223,12 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
                                         child: Center(
                                           child: Text(
                                             employee.status,
-                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                            style: const TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
@@ -211,6 +236,7 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
                                   ),
                                 ),
                               );
+
                             }).toList(),
                           ],
                         );
@@ -226,13 +252,17 @@ class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
     );
   }
   Color _getStatusColor(String status) {
-    // Define colors for different statuses
     switch (status) {
       case 'P':
-        return Colors.green;
+        return Colors.blue;
       case 'A':
         return Colors.red;
-
+      case 'AL':
+        return Colors.green;
+      case 'A-LT':
+        return Colors.orangeAccent;
+      case 'L':
+        return Colors.green;
       default:
         return Colors.grey;
     }
