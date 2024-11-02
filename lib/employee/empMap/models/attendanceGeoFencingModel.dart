@@ -2,29 +2,29 @@ class GeofenceModel {
   String? cardno;
   DateTime? punchDatetime; // Keep it as DateTime
   String? location;
-  String? lan;
-  String? long;
-  String? imageData;
+  String lan;
+  String long;
+  String imageData;
   String? imeiNo;
   String? temp1;
   String? temp2;
   int? attendanceType;
   String? remark1;
-  String? imagepath;
+  String imagepath;
 
   GeofenceModel(
       {this.cardno,
         this.punchDatetime,
         this.location,
-        this.lan,
-        this.long,
-        this.imageData,
+        required this.lan,
+        required this.long,
+        required this.imageData,
         this.imeiNo,
         this.temp1,
         this.temp2,
         this.attendanceType,
         this.remark1,
-        this.imagepath});
+        required this.imagepath});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

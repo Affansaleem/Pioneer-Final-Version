@@ -271,20 +271,22 @@ class _EmployeeMapState extends State<EmployeeMap>
         imagepath: '',
       );
       final geoFenceRepository = GeoFenceRepository("Location");
-
-      try {
-        await geoFenceRepository.postData(geoFenceModel);
-        addToCartPopUpAnimationController.forward();
-        // Delay for a few seconds and then reverse the animation
-        Timer(const Duration(seconds: 2), () {
-          addToCartPopUpAnimationController.reverse();
-          Navigator.pop(context);
-        });
-        showPopupWithSuccessMessage("Attendance successfully marked!");
-      } catch (e) {
-        showCustomWarningAlert(context,
-            "Internet not connected attendance will be marked when internet is available");
-      }
+      if(geoFenceModel.imageData.isNotEmpty)
+        {
+          try {
+            await geoFenceRepository.postData(geoFenceModel);
+            addToCartPopUpAnimationController.forward();
+            // Delay for a few seconds and then reverse the animation
+            Timer(const Duration(seconds: 2), () {
+              addToCartPopUpAnimationController.reverse();
+              Navigator.pop(context);
+            });
+            showPopupWithSuccessMessage("Attendance successfully marked!");
+          } catch (e) {
+            showCustomWarningAlert(context,
+                "Internet not connected attendance will be marked when internet is available");
+          }
+        }
     }
   }
 

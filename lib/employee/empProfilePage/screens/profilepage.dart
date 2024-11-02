@@ -61,7 +61,7 @@ class EmpProfilePageState extends State<EmpProfilePage> {
         final profileImage = empProfile.profilePic;
         if (profileImage != null && profileImage.isNotEmpty) {
           profileImageUrl = profileImage;
-          await Future.delayed(Duration(
+          await Future.delayed(const Duration(
               seconds: 2));
           return MemoryImage(
             Uint8List.fromList(base64Decode(profileImage)),
@@ -71,7 +71,7 @@ class EmpProfilePageState extends State<EmpProfilePage> {
     } catch (e) {
       print("Error fetching profile image: $e");
     }
-    return AssetImage('assets/icons/userrr.png');
+    return const AssetImage('assets/icons/userrr.png');
   }
 
   late EmpProfileApiBloc _profileApiBloc;
@@ -254,6 +254,7 @@ class EmpProfilePageState extends State<EmpProfilePage> {
   void call(String number) => launch("tel:$number");
   void sendSms(String number) => launch("sms:$number");
   void sendEmail(String email) => launch("mailto:$email");
+
   void _launchURL(String url) async {
     if (url.isNotEmpty) {
       try {
@@ -269,31 +270,30 @@ class EmpProfilePageState extends State<EmpProfilePage> {
   Widget build(BuildContext context) {
           return Scaffold(
             backgroundColor: Colors.white,
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WillPopScope(
-                  onWillPop: () async {
-                    return _onBackPressed(context)
-                        .then((value) => value ?? false);
-                  },
-                  child: const SizedBox(),
+            body: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.88,
                 ),
-
-                Card(
-                  elevation: 4.0,
-                  margin: const EdgeInsets.all(32.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(
-                            top: 20.0), // Add margin from the top
-                        child: Column(
-                          children: [
-                            CircleAvatar(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          WillPopScope(
+                            onWillPop: () async {
+                              return _onBackPressed(context)
+                                  .then((value) => value ?? false);
+                            },
+                            child: const SizedBox(),
+                          ),
+                          Center(
+                            child: CircleAvatar(
                               key: _profileImageKey,
                               radius: 70.0,
                               backgroundImage: (GlobalObjects
@@ -305,185 +305,220 @@ class EmpProfilePageState extends State<EmpProfilePage> {
                                       base64Decode(
                                           GlobalObjects.empProfilePic!),
                                     ) as ImageProvider<Object>
-                                  : AssetImage('assets/icons/userrr.png'),
+                                  : const AssetImage('assets/icons/userrr.png'),
                             ),
-                            const SizedBox(width: 20),
-                            Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  GlobalObjects.empName ?? "---",
-                                  style: GoogleFonts.montserrat(
-                                    textStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      // Increase font size
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  softWrap: true,
-                                ),
-                                Text(
-                                  GlobalObjects.empMail ?? "---",
-                                  style: GoogleFonts.montserrat(
-                                    textStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 16,
-                                      // Increase font size
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  "Join Date: ${DateFormat('dd MMM yy').format(GlobalObjects.empJoinDate ?? DateTime.now())}",
-                                  style: GoogleFonts.montserrat(
-                                    textStyle: const TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Capsule structure for icons
-                      Container(
-                        margin: const EdgeInsets.only(
-                            top: 20.0, bottom: 20.0),
-                        // Add margin from the top and bottom
-                        child: Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors
-                                    .blue, // Change the color as needed
-                              ),
-                              child: Center(
-                                child: IconButton(
-                                  icon: const Icon(FontAwesomeIcons.phone,
-                                      color: Colors.white),
-                                  onPressed: () {
-                                    call(GlobalObjects.empPhone ?? "---");
-                                  },
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors
-                                    .grey, // Change the color as needed
-                              ),
-                              child: Center(
-                                child: IconButton(
-                                  icon: const Icon(
-                                      FontAwesomeIcons.envelope,
-                                      color: Colors.white),
-                                  onPressed: () {
-                                    sendEmail(
-                                        GlobalObjects.empMail ?? "---");
-                                  },
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors
-                                    .green, // Change the color as needed
-                              ),
-                              child: Center(
-                                child: IconButton(
-                                  icon: const Icon(
-                                      FontAwesomeIcons.message,
-                                      color: Colors.white),
-                                  onPressed: () {
-                                    sendSms(GlobalObjects.empPhone ?? "---");
-                                    // Add your call functionality here
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    _buildTileWidget(
-                      title: 'Edit Profile',
-                      icon: FontAwesomeIcons.pencil,
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          PageTransition(
-                            child: EmpEditProfilePage(
-                              onSave: () {
-                                // Callback function triggered when data is saved in EditProfilePage
-                                updateProfileData();
-                              },
-                              onSaveSuccess: () {
-                                // Set the boolean value to true when the user comes back
-                                setState(() {
-                                  _didEditProfile = true;
-                                });
-                              },
-                            ),
-                            type: PageTransitionType.rightToLeft,
                           ),
-                        );
-                        if (_didEditProfile) {
-                          widget.onProfileEdit(); // Call the callback function here
-                          updateProfileData();
-                          setState(() {
-                            _didEditProfile = false; // Reset the boolean value
-                          });
-                        }
-                      },
-                    ),
-                    SizedBox(height: 20,),
-                    _buildTileWidget(
-                      title: 'Logout',
-                      icon: Icons.logout,
-                      onTap: () => _logout(context),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          _launchURL(
-                              'http://pioneersoftcloud.com/privacypolicy.html');
-                        },
-                        child: Text(
-                          'Privacy Policy',
-                          style: TextStyle(
-                            color: Colors.blue,
+                          const SizedBox(width: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            child: Text(
+                              "Personal details",
+                              style: GoogleFonts.poppins(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.black,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                  ],
-                )
 
-              ],
+                          Text(
+                            'Name',
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14,
+                                // Increase font size
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            GlobalObjects.empName ?? "---",
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                // Increase font size
+                                color: Colors.black,
+                              ),
+                            ),
+                            softWrap: true,
+                          ),
+                          const SizedBox(height: 15,),
+                          Text(
+                            'Email',
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14,
+                                // Increase font size
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            GlobalObjects.empMail ?? "---",
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16,
+                                // Increase font size
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 15,),
+                          Text(
+                            'Joining',
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14,
+                                // Increase font size
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Join Date: ${DateFormat('dd MMM yy').format(GlobalObjects.empJoinDate ?? DateTime.now())}",
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 15,),
+                          Text(
+                            'Phone',
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14,
+                                // Increase font size
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            GlobalObjects.empPhone!.isNotEmpty ? GlobalObjects.empPhone.toString() : '---',
+                            style: GoogleFonts.montserrat(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16,
+                                // Increase font size
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                              border: Border.all()
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                flex: 1,
+                                child: Container(
+                                  color: AppColors.primaryColor,
+                                  alignment: Alignment.center,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      await Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation, secondaryAnimation) => EmpEditProfilePage(
+                                            onSave: () {
+                                              updateProfileData();
+                                            },
+                                            onSaveSuccess: () {
+                                              setState(() {
+                                                _didEditProfile = true;
+                                              });
+                                            },
+                                          ),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            var curve = Curves.easeInOut;
+                                            var curvedAnimation = CurvedAnimation(
+                                              parent: animation,
+                                              curve: curve,
+                                            );
+                                            return FadeTransition(
+                                              opacity: curvedAnimation,
+                                              child: child,
+                                            );
+                                          },
+                                          transitionDuration: const Duration(milliseconds: 800),
+                                        ),
+                                      );
+                                      if (_didEditProfile) {
+                                        widget.onProfileEdit(); // Call the callback function here
+                                        updateProfileData();
+                                        setState(() {
+                                          _didEditProfile = false; // Reset the boolean value
+                                        });
+                                      }
+                                    },
+                                    child: Text(
+                                      'Edit Profile',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: InkWell(
+                                    onTap: () => _logout(context),
+                                    child: Text(
+                                      'Logout',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.only(top: 10),
+                          child: GestureDetector(
+                            onTap: () {
+                              _launchURL(
+                                  'http://pioneersoftcloud.com/privacypolicy.html');
+                            },
+                            child: const Text(
+                              'Privacy Policy',
+                              style: TextStyle(
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
   }
@@ -548,7 +583,7 @@ class EmpProfilePageState extends State<EmpProfilePage> {
                       const Text(""),
                       Text(
                         "${title}",
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.w600,
                             color: Colors.white),
