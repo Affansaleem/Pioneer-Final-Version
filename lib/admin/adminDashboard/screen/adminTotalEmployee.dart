@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project/admin/adminDashboard/models/adminTotalEmployee_model.dart';
+import 'package:project/constants/apis.dart';
 import '../../../constants/AppBar_constant.dart';
 import '../../../constants/AppColor_constants.dart';
 import '../models/adminTotal_repository.dart';
@@ -14,7 +15,7 @@ class AdminTotalEmployeePage extends StatefulWidget {
 
 class _AdminTotalEmployeePageState extends State<AdminTotalEmployeePage> {
   late Future<List<AdminTotalEmployees>> futureEmployees;
-  final AdminTotalEmployeeRepository repository = AdminTotalEmployeeRepository('http://62.171.184.216:9595/api/Admin/Dashboard');
+  final AdminTotalEmployeeRepository repository = AdminTotalEmployeeRepository('${Apis.adminUrl}/Dashboard');
 
   @override
   void initState() {

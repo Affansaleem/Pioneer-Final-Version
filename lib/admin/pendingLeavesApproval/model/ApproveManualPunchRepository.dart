@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart'; // Import your SQLite helper
 
 class ApproveManualPunchRepository {
@@ -18,7 +19,7 @@ class ApproveManualPunchRepository {
         }
 
         final String apiUrl =
-            'http://62.171.184.216:9595/api/admin/manualpunch/approvemanualpunch?CorporateId=$corporateId';
+            '${Apis.adminUrl}/manualpunch/approvemanualpunch?CorporateId=$corporateId';
         final headers = <String, String>{
           'Content-Type': 'application/json',
         };

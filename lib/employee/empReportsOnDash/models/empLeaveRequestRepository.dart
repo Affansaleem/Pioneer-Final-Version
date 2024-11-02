@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Sqlite/sqlite_helper.dart'; // Adjust the import path based on your project structure
 
@@ -30,7 +31,7 @@ class EmpLeaveRepository {
   Future<String> getLeaveTypeName(int leaveId) async {
     final corporateId = await getCorporateId();
     final apiUrl =
-        "http://62.171.184.216:9595/api/employee/leave/getleavetype?CorporateId=$corporateId";
+        "${Apis.employeeUrl}/leave/getleavetype?CorporateId=$corporateId";
 
     final headers = {
       'Content-Type': 'application/json', // Set the content type to JSON
@@ -65,7 +66,7 @@ class EmpLeaveRepository {
     try {
       final corporateId = await getCorporateId();
       final apiUrl =
-          "http://62.171.184.216:9595/api/employee/leave/getleavetype?CorporateId=$corporateId";
+          "${Apis.employeeUrl}/leave/getleavetype?CorporateId=$corporateId";
 
       final headers = {
         'Content-Type': 'application/json', // Set the content type to JSON

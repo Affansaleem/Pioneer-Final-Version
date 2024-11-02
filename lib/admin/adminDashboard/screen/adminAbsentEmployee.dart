@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:project/constants/apis.dart';
 import '../../../constants/AppBar_constant.dart';
 import '../../../constants/AppColor_constants.dart';
 import '../models/adminAbsentEmployee_model.dart';
@@ -16,7 +17,7 @@ class AdminAbsentEmployeePage extends StatefulWidget {
 
 class _AdminAbsentEmployeePageState extends State<AdminAbsentEmployeePage> {
   late Future<List<AdminAbsentEmployee>> futurePresentEmployees;
-  final AbsentEmployeeRepository repository = AbsentEmployeeRepository('http://62.171.184.216:9595/api/Admin/Dashboard');
+  final AbsentEmployeeRepository repository = AbsentEmployeeRepository('${Apis.adminUrl}/Dashboard');
   late DateTime selectedDate;
 
   @override

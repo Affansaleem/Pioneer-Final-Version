@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'dart:convert';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import 'getActiveEmployeesModel.dart';
@@ -18,7 +19,7 @@ class GetActiveEmpRepository {
           return [];
         }
 
-        final apiUrl = 'http://62.171.184.216:9595/api/Admin/User/GetActiveEmployees?CorporateId=$corporateId';
+        final apiUrl = '${Apis.adminUrl}/User/GetActiveEmployees?CorporateId=$corporateId';
 
         final response = await http.get(Uri.parse(apiUrl));
 

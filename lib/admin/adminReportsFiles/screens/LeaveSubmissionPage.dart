@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
+import 'package:project/constants/apis.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -333,7 +334,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                               prefs.getString("corporate_id") ?? "ptsoffice";
                           print(corporateId);
                           var apiUrl =
-                              'http://62.171.184.216:9595/api/admin/leave/addleave?CorporateId=$corporateId';
+                              '${Apis.adminUrl}/leave/addleave?CorporateId=$corporateId';
 
                           final fromDate = fromDateController.text;
                           final toDate = toDateController.text;

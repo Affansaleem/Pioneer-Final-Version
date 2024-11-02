@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import 'departmentModel.dart';
 
 class DepartmentRepository {
-  final String baseUrl = 'http://62.171.184.216:9595/api/Admin/Department';
+  final String baseUrl = '${Apis.adminUrl}/Department';
 
   Future<List<Department>> getAllActiveDepartments() async {
     try {

@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import 'companyModel.dart';
 
 class CompanyRepository {
-  final String baseUrl = 'http://62.171.184.216:9595/api/Admin/Company';
+  final String baseUrl = '${Apis.adminUrl}/Company';
 
   Future<List<Company>> getAllActiveCompanies() async {
     try {

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:background_sms/background_sms.dart';
 import 'package:project/constants/AppBar_constant.dart';
+import 'package:project/constants/apis.dart';
 import 'admin_messageTemplate.dart';
 
 class AdminMessageSetupPage extends StatefulWidget {
@@ -29,7 +30,7 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
     });
 
     final url =
-        'http://62.171.184.216:9595/api/Admin/User/GetEmployeesForSms?CorporateId=ptsoffice&date=$date';
+        '${Apis.adminUrl}/User/GetEmployeesForSms?CorporateId=ptsoffice&date=$date';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -179,38 +180,38 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                 });
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.calendar_today,
                       color: Colors.blue,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       '${_selectedDate.split('-').reversed.join('-')}',
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Row(
+            const SizedBox(height: 20),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Employees",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
               ],
             ),
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _error.isNotEmpty
                 ? Center(child: Text(_error))
                 : Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -220,7 +221,7 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                         color: Colors.grey.withOpacity(0.3),
                         spreadRadius: 2,
                         blurRadius: 4,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -236,7 +237,7 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                         return Column(
                           children: [
                             ListTile(
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -244,7 +245,7 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                                     children: [
                                       Text(
                                         '${employee['empId']} - ${employee['name']}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.normal,
                                           color: Colors.black87,
@@ -252,10 +253,10 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 4), // Add spacing between name and department
+                                  const SizedBox(height: 4), // Add spacing between name and department
                                   Text(
                                     '${employee['dept']}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.normal,
                                       color: Colors.grey,
@@ -285,28 +286,28 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 22),
+              margin: const EdgeInsets.symmetric(horizontal: 22),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: Colors.blue,
                 borderRadius: BorderRadius.circular(20.0),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.message, color: Colors.white, size: 20),
-                  SizedBox(width: 8),
+                  const Icon(Icons.message, color: Colors.white, size: 20),
+                  const SizedBox(width: 8),
                   Text(
                     'Message Count: ${employees.length}',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -320,14 +321,14 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                       ),
                     );
                   },
-                  icon: Icon(Icons.edit, size: 20, color: Colors.blue),
-                  label: Text('Msg Template', style: TextStyle(fontSize: 14, color: Colors.blue)),
+                  icon: const Icon(Icons.edit, size: 20, color: Colors.blue),
+                  label: const Text('Msg Template', style: TextStyle(fontSize: 14, color: Colors.blue)),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.blue),
+                    side: const BorderSide(color: Colors.blue),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                 ),
                 OutlinedButton.icon(
@@ -345,17 +346,17 @@ class _AdminMessageSetupPageState extends State<AdminMessageSetupPage> {
                     }
                   },
 
-                  icon: Icon(Icons.send, size: 20, color: Colors.blue),
-                  label: Text(
+                  icon: const Icon(Icons.send, size: 20, color: Colors.blue),
+                  label: const Text(
                     'Send SMS',
                     style: TextStyle(fontSize: 14, color: Colors.blue),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.blue),
+                    side: const BorderSide(color: Colors.blue),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
                 ),
               ],

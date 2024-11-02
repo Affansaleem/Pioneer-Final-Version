@@ -1,11 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:project/Sqlite/sqlite_helper.dart'; // Adjust the import path based on your project structure
+import 'package:project/constants/apis.dart';
 import 'empMonthlyReportsModel.dart';
 
 class MonthlyReportsRepository {
   final String baseUrl =
-      'http://62.171.184.216:9595/api/employee/report/getmonthlyreport';
+      '${Apis.employeeUrl}/report/getmonthlyreport';
 
   Future<Map<String, dynamic>> getEmployeeData() async {
     try {

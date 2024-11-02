@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import 'emp_attendance_status_model.dart';
 
@@ -46,7 +47,7 @@ class EmpAttendanceRepository {
     String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     String apiUrl =
-        "http://62.171.184.216:9595/api/employee/dashboard/attendance?CorporateId=$corporateId&employeeId=$employeeId&Date=$currentDate";
+        "${Apis.employeeUrl}/dashboard/attendance?CorporateId=$corporateId&employeeId=$employeeId&Date=$currentDate";
 
     final headers = {
       'Content-Type': 'application/json', // Set the content type to JSON

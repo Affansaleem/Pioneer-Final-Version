@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:project/employee/empDashboard/models/user_model.dart';
 
 class UserRepository {
-  final apiUrl = "http://62.171.184.216:9595/api/employee/login";
+  final apiUrl = "${Apis.employeeUrl}/login";
   Future<List<Employee>> getData({
     required String corporateId,
     required String username,

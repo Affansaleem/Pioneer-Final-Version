@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import 'AdminProfileModel.dart'; // Import your SQLite helper
 
@@ -17,7 +18,7 @@ class AdminProfileRepository {
           return null;
         }
 
-        final url = Uri.parse('http://62.171.184.216:9595/api/admin/dashboard/profile?CorporateId=$corporateId&employeeId=$employeeId');
+        final url = Uri.parse('${Apis.adminUrl}/dashboard/profile?CorporateId=$corporateId&employeeId=$employeeId');
 
         final response = await http.get(url);
 

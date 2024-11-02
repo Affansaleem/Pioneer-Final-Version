@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:project/constants/apis.dart';
 import '../../../constants/AppBar_constant.dart';
 import '../../../constants/AppColor_constants.dart';
 import '../models/adminLeaveEmployee_model.dart';
@@ -15,7 +16,7 @@ class AdminLeaveEmployeePage extends StatefulWidget {
 
 class _AdminLeaveEmployeePageState extends State<AdminLeaveEmployeePage> {
   late Future<List<AdminLeaveEmployee>> futurePresentEmployees;
-  final LeaveEmployeeRepository repository = LeaveEmployeeRepository('http://62.171.184.216:9595/api/Admin/Dashboard');
+  final LeaveEmployeeRepository repository = LeaveEmployeeRepository('${Apis.adminUrl}/Dashboard');
   late DateTime selectedDate;
 
   @override

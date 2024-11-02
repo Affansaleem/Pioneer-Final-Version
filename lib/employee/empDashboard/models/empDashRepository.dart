@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import 'empDashModel.dart';
 
 class EmpDashRepository {
-  final String baseUrl = "http://62.171.184.216:9595/api/employee/dashboard/monthlystatus";
+  final String baseUrl = "${Apis.employeeUrl}/dashboard/monthlystatus";
 
   Future<List<EmpDashModel>> getData() async {
     try {

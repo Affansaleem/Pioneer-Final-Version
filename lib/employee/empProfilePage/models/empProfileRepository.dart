@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:project/employee/empProfilePage/models/empProfileModel.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 
@@ -32,7 +33,7 @@ class EmpProfileRepository {
     }
 
     String apiUrl =
-        "http://62.171.184.216:9595/api/employee/dashboard/profile?CorporateId=$coorporateId&employeeId=$employeeId";
+        "${Apis.employeeUrl}/dashboard/profile?CorporateId=$coorporateId&employeeId=$employeeId";
 
     final headers = {
       'Content-Type': 'application/json',

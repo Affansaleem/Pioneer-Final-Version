@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 
@@ -7,7 +8,7 @@ import 'empEditProfileModel.dart';
 
 class EmpEditProfileRepository {
   final String apiUrl =
-      "http://62.171.184.216:9595/api/employee/dashboard/updateprofile";
+      "${Apis.employeeUrl}/dashboard/updateprofile";
 
   Future<void> postData(EmpEditProfileModel empEditProfileModel) async {
     try {

@@ -32,7 +32,7 @@ class AdminMapDisplay extends StatefulWidget {
 
 class _AdminMapDisplayState extends State<AdminMapDisplay> {
   late GoogleMapController mapController;
-  LatLng _currentPosition = LatLng(0.0, 0.0);
+  LatLng _currentPosition = const LatLng(0.0, 0.0);
   String _currentAddress = '';
   final Set<Marker> _markers = {};
   final Set<Circle> _circles = {};
@@ -142,12 +142,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
         desiredAccuracy: LocationAccuracy.high);
     _currentPosition = LatLng(position.latitude, position.longitude);
 
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude, position.longitude);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
     if (placemarks.isNotEmpty) {
       Placemark place = placemarks[0];
       _currentAddress =
-      '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}, ${place.thoroughfare}';
+          '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}, ${place.thoroughfare}';
     }
 
     setState(() {
@@ -167,12 +167,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
 
   Future<void> _updatePosition(LatLng position) async {
     _currentPosition = position;
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude, position.longitude);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
     if (placemarks.isNotEmpty) {
       Placemark place = placemarks[0];
       _currentAddress =
-      '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}';
+          '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}, ${place.country}';
     }
 
     setState(() {
@@ -195,7 +195,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
 
       _circles.add(
         Circle(
-          circleId: CircleId("radius"),
+          circleId: const CircleId("radius"),
           center: _currentPosition,
           radius: _isKilometers ? _radius * 1000 : _radius,
           fillColor: Colors.blue.withOpacity(0.1),
@@ -223,7 +223,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
       _circles.clear();
       _circles.add(
         Circle(
-          circleId: CircleId("radius"),
+          circleId: const CircleId("radius"),
           center: _currentPosition,
           radius: _isKilometers ? _radius * 1000 : _radius,
           fillColor: Colors.blue.withOpacity(0.1),
@@ -242,7 +242,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
           builder: (context, setState) {
             return Container(
               color: Colors.white,
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 minHeight: 200, // Set the minimum height of the card
               ),
               child: Padding(
@@ -252,12 +252,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.red),
-                        SizedBox(width: 10),
+                        const Icon(Icons.location_on, color: Colors.red),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             _currentAddress,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.black87,
                               fontWeight: FontWeight.w500,
@@ -269,11 +269,11 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(
+                        const Text(
                           "Radius",
                           style: TextStyle(
                             color: Colors.black54,
@@ -283,7 +283,8 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                         ),
                         Row(
                           children: [
-                            Text('Km', style: TextStyle(color: Colors.black54)),
+                            const Text('Km',
+                                style: TextStyle(color: Colors.black54)),
                             Switch(
                               value: !_isKilometers,
                               onChanged: (value) {
@@ -296,18 +297,21 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                               inactiveThumbColor: Colors.black,
                               inactiveTrackColor: Colors.white,
                             ),
-                            Text('M', style: TextStyle(color: Colors.black54)),
+                            const Text('M',
+                                style: TextStyle(color: Colors.black54)),
                           ],
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Slider(
                       value: _radius,
                       min: _isKilometers ? 1 : 0,
                       max: _isKilometers ? 5 : 50,
                       divisions: _isKilometers ? 4 : 10,
-                      label: _isKilometers ? '${_radius.round()} km' : '${_radius.round()} meters',
+                      label: _isKilometers
+                          ? '${_radius.round()} km'
+                          : '${_radius.round()} meters',
                       activeColor: Colors.black,
                       inactiveColor: Colors.blue.withOpacity(0.3),
                       onChanged: (value) {
@@ -316,7 +320,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                         });
                       },
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
                         _updateLocation(
@@ -328,10 +332,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
 
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => AdminMainPage()), // Replace Homepage() with your homepage widget
-                              (Route<dynamic> route) => false, // This removes all previous routes
+                          MaterialPageRoute(
+                              builder: (context) => const AdminMainPage()),
+                          // Replace Homepage() with your homepage widget
+                          (Route<dynamic> route) =>
+                              false, // This removes all previous routes
                         );
-
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -340,7 +346,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: Text('Set Geofence'),
+                      child: const Text('Set Geofence'),
                     ),
                   ],
                 ),
@@ -361,7 +367,6 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
 
   Future<void> _submitGeofenceDataForSelectedEmployees() async {
     final adminGeofenceBloc = BlocProvider.of<AdminGeoFenceBloc>(context);
-
     final List<GetActiveEmpModel> selectedEmployees = widget.selectedEmployees;
     final List<AdminGeoFenceModel> geofenceDataList = [];
 
@@ -374,13 +379,13 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
         empName: employee.empName,
         lat: sendLat.toString(),
         lon: sendLong.toString(),
-        radius: (_radius).toString(),
+        radius:
+            _isKilometers ? ((_radius * 1000).toString()) : _radius.toString(),
         emailAddress: null,
         fatherName: null,
         phoneNo: null,
         profilePic: null,
         pwd: null,
-
       );
 
       geofenceDataList.add(geofenceModel);
@@ -392,7 +397,8 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   Future<void> checkLocationPermissionAndFetchLocation() async {
     final permission = await Geolocator.requestPermission();
 
-    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
       try {
         final data = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
@@ -427,7 +433,8 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
       List<Placemark> placemarks = await placemarkFromCoordinates(lat, long);
       if (mounted) {
         setState(() {
-          address = "${placemarks[0].street!}, ${placemarks[4].street!} , ${placemarks[0].country!}";
+          address =
+              "${placemarks[0].street!}, ${placemarks[4].street!} , ${placemarks[0].country!}";
         });
       }
     } else {}
@@ -440,7 +447,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
           backgroundColor: Colors.green,
         ),
       );
@@ -448,7 +455,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   }
 
   void popPage() {
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pop(context);
     });
   }
@@ -472,26 +479,26 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
   Widget build(BuildContext context) {
     return BlocConsumer<InternetBloc, InternetStates>(
         listener: (context, state) {
-          if (state is InternetLostState) {
-            isInternetLost = true;
-            Future.delayed(Duration(seconds: 2), () {
-              Navigator.push(
-                context,
-                PageTransition(
-                  child: NoInternet(),
-                  type: PageTransitionType.rightToLeft,
-                ),
-              );
-            });
-          } else if (state is InternetGainedState) {
-            // Check if internet was previously lost
-            if (isInternetLost) {
-              // Navigate back to the original page when internet is regained
-              Navigator.pop(context);
-            }
-            isInternetLost = false; // Reset the flag
-          }
-        }, builder: (context, state) {
+      if (state is InternetLostState) {
+        isInternetLost = true;
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.push(
+            context,
+            PageTransition(
+              child: const NoInternet(),
+              type: PageTransitionType.rightToLeft,
+            ),
+          );
+        });
+      } else if (state is InternetGainedState) {
+        // Check if internet was previously lost
+        if (isInternetLost) {
+          // Navigate back to the original page when internet is regained
+          Navigator.pop(context);
+        }
+        isInternetLost = false; // Reset the flag
+      }
+    }, builder: (context, state) {
       if (state is InternetGainedState) {
         if (currentLat != null && currentLong != null && !locationError) {
           return Scaffold(
@@ -518,7 +525,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
-                        margin: EdgeInsets.symmetric(vertical: 30),
+                        margin: const EdgeInsets.symmetric(vertical: 30),
                         child: Material(
                           elevation: 5.0,
                           shadowColor: Colors.grey[300],
@@ -531,9 +538,11 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here',
-                              prefixIcon: Icon(Icons.search, color: Colors.grey[700]),
+                              prefixIcon:
+                                  Icon(Icons.search, color: Colors.grey[700]),
                               suffixIcon: IconButton(
-                                icon: Icon(Icons.clear, color: Colors.grey[700]),
+                                icon:
+                                    Icon(Icons.clear, color: Colors.grey[700]),
                                 onPressed: () {
                                   searchController.clear();
                                   autocompleteSearch('');
@@ -556,7 +565,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                                 borderRadius: BorderRadius.circular(50.0),
                                 borderSide: BorderSide.none,
                               ),
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 15),
                             ),
                           ),
@@ -568,7 +577,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                           searchController.text.isNotEmpty)
                         Container(
                           color: Colors.grey[100],
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: SizedBox(
                             height: 200.0,
                             child: ListView.builder(
@@ -576,12 +585,15 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                               itemBuilder: (context, index) {
                                 var location = autocompleteResults[index];
                                 return ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16.0, vertical: 8.0),
-                                  leading: Icon(Icons.location_on, color: Colors.black),
+                                  leading: const Icon(Icons.location_on,
+                                      color: Colors.black),
                                   title: Text(
                                     location['display_name'],
-                                    style: TextStyle(fontSize: 16.0, color: Colors.grey[700]),
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.grey[700]),
                                   ),
                                   onTap: () {
                                     handleAutocompleteTap(
@@ -605,10 +617,12 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                   bottom: 10,
                   right: 15,
                   child: FloatingActionButton(
-                    mini: true, // This makes the button smaller
-                    backgroundColor: Colors.white, // Set background color to white
+                    mini: true,
+                    // This makes the button smaller
+                    backgroundColor: Colors.white,
+                    // Set background color to white
                     onPressed: _getCurrentLocation,
-                    child: Icon(
+                    child: const Icon(
                       Icons.my_location,
                       color: Colors.black, // Set icon color to blue
                     ),
@@ -616,28 +630,32 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                 ),
               ],
             ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
             floatingActionButton: isTyping
                 ? null
                 : SizedBox(
-              height: 40, // Adjust height
-              child: FloatingActionButton.extended(
-                backgroundColor: Colors.white, // Set background color to white
-                onPressed: () => _showBottomSheet(context),
-                label: Text(
-                  'Show Address',
-                  style: TextStyle(color: Colors.black, fontSize: 12), // Set text color to blue and font size
-                ),
-                icon: Icon(
-                  Icons.location_on,
-                  color: Colors.black, // Set icon color to blue
-                  size: 16, // Adjust icon size
-                ),
-              ),
-            ),
+                    height: 40, // Adjust height
+                    child: FloatingActionButton.extended(
+                      backgroundColor:
+                          Colors.white, // Set background color to white
+                      onPressed: () => _showBottomSheet(context),
+                      label: const Text(
+                        'Show Address',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize:
+                                12), // Set text color to blue and font size
+                      ),
+                      icon: const Icon(
+                        Icons.location_on,
+                        color: Colors.black, // Set icon color to blue
+                        size: 16, // Adjust icon size
+                      ),
+                    ),
+                  ),
           );
-        }
-        else {
+        } else {
           checkLocationPermissionAndFetchLocation();
           return Scaffold(
             appBar: AppBar(
@@ -652,7 +670,8 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                   ),
                 ),
               ),
-              iconTheme: IconThemeData(color: AppBarStyles.appBarIconColor),
+              iconTheme:
+                  const IconThemeData(color: AppBarStyles.appBarIconColor),
             ),
             body: const Center(
               child: Column(
@@ -683,7 +702,7 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                 ),
               ),
             ),
-            iconTheme: IconThemeData(color: AppBarStyles.appBarIconColor),
+            iconTheme: const IconThemeData(color: AppBarStyles.appBarIconColor),
           ),
           body: const Center(
             child: Column(

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import 'attendanceGeoFencingModel.dart';
 
@@ -17,7 +18,7 @@ class GeoFenceRepository {
       if (firstEmployee != null) {
         String corporateId = firstEmployee['corporate_id'] as String;
         final String baseUrl =
-            "http://62.171.184.216:9595/api/employee/location/AddGeoPunch?CorporateId=$corporateId&Area";
+            "${Apis.employeeUrl}/location/AddGeoPunch?CorporateId=$corporateId&Area";
         print("${baseUrl}=$area");
         final apiUrl = "${baseUrl}=$area";
 

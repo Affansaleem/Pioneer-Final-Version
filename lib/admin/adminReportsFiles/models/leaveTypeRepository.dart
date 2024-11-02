@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 
@@ -18,7 +19,7 @@ class LeaveTypeRepository {
           return null;
         }
 
-        final String baseUrl = 'http://62.171.184.216:9595/api/admin/leave/getleavetype?CorporateId=$corporateId';
+        final String baseUrl = '${Apis.adminUrl}/leave/getleavetype?CorporateId=$corporateId';
 
         final response = await http.get(Uri.parse(baseUrl));
 

@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:project/employee/empReportsOnDash/models/submission_model.dart';
 import 'package:project/Sqlite/sqlite_helper.dart'; // Adjust the import path based on your project structure
 
 class SubmissionRepository {
   final String baseUrl =
-      "http://62.171.184.216:9595/api/employee/leave/addleaverequest";
+      "${Apis.employeeUrl}/leave/addleaverequest";
 
   Future<String> getCorporateId() async {
     try {
