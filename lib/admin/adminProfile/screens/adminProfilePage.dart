@@ -15,17 +15,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import '../../../login/bloc/loginBloc/loginbloc.dart';
 import '../../../login/screens/loginPage.dart';
-import '../../adminDashboard/screen/adminMain.dart';
 import '../bloc/admin_profile_bloc.dart';
-import '../bloc/admin_profile_event.dart';
-import '../bloc/admin_profile_state.dart';
 import 'AdminEditProfilePage.dart';
-
 
 class AdminProfilePage extends StatefulWidget {
   final Function onProfileEdit;
 
-  const AdminProfilePage({Key? key, required this.onProfileEdit}) : super(key: key);
+  const AdminProfilePage({Key? key, required this.onProfileEdit})
+      : super(key: key);
 
   @override
   AdminProfilePageState createState() => AdminProfilePageState();
@@ -52,12 +49,14 @@ class AdminProfilePageState extends State<AdminProfilePage> {
       final adminDbHelper = AdminDatabaseHelper();
 
       // Wait for the data deletion to complete
-      CoolAlert.show(context: context, type: CoolAlertType.confirm,
+      CoolAlert.show(
+          context: context,
+          type: CoolAlertType.confirm,
           title: 'Confirm Logout',
           text: 'Are you sure?',
           confirmBtnText: 'Logout',
           cancelBtnText: 'Cancel',
-          onConfirmBtnTap: () async{
+          onConfirmBtnTap: () async {
             await adminDbHelper.deleteAllAdmins();
             Navigator.of(context).pop();
 
@@ -72,17 +71,14 @@ class AdminProfilePageState extends State<AdminProfilePage> {
               ),
             );
           },
-        onCancelBtnTap: ()  {
-
-        }
-      );
+          onCancelBtnTap: () {});
       // Show the custom confirmation dialog
-
     } catch (e) {
       print("Error during logout: $e");
       print("Logout failed: Data not deleted");
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -140,8 +136,22 @@ class AdminProfilePageState extends State<AdminProfilePage> {
   }
 
   void call(String number) => launch("tel:$number");
+
   void sendSms(String number) => launch("sms:$number");
+
   void sendEmail(String email) => launch("mailto:$email");
+
+  void _launchURL(String url) async {
+    if (url.isNotEmpty) {
+      try {
+        await launch(url);
+      } catch (e) {
+        print('Error launching URL: $e');
+      }
+    } else {
+      print('URL is empty or null');
+    }
+  }
 
   bool isInternetLost = false;
 
@@ -163,58 +173,60 @@ class AdminProfilePageState extends State<AdminProfilePage> {
     print(GlobalObjects.adminMail);
     print(GlobalObjects.adminusername);
   }
+
   Future<bool> _confirmLogout(BuildContext context) async {
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Confirm Logout',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            // Add any other styles you want
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Are you sure you want to logout?',
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(
+              'Confirm Logout',
               style: TextStyle(
-                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
                 // Add any other styles you want
               ),
             ),
-            // Add any additional content here
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: Text(
-              'No',
-              style: TextStyle(
-                // Add any styles you want for the 'No' button
-              ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure you want to logout?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    // Add any other styles you want
+                  ),
+                ),
+                // Add any additional content here
+              ],
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: Text(
-              'Yes',
-              style: TextStyle(
-                // Add any styles you want for the 'Yes' button
-                color: Colors.red, // For example, making the text red
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Text(
+                  'No',
+                  style: TextStyle(
+                      // Add any styles you want for the 'No' button
+                      ),
+                ),
               ),
-            ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Text(
+                  'Yes',
+                  style: TextStyle(
+                    // Add any styles you want for the 'Yes' button
+                    color: Colors.red, // For example, making the text red
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   @override
@@ -374,7 +386,9 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height > 720 ? 20: 0),
+                  SizedBox(
+                      height:
+                          MediaQuery.of(context).size.height > 720 ? 20 : 0),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Container(
@@ -390,7 +404,7 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                               final result = await Navigator.push(
                                 context,
                                 PageTransition(
-                                  child:  AdminEditProfilePage(
+                                  child: AdminEditProfilePage(
                                     onSave: () {
                                       // Callback function triggered when data is saved in EditProfilePage
                                       updateProfileData();
@@ -406,10 +420,12 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                                 ),
                               );
                               if (_didEditProfile) {
-                                widget.onProfileEdit(); // Call the callback function here
+                                widget
+                                    .onProfileEdit(); // Call the callback function here
                                 updateProfileData();
                                 setState(() {
-                                  _didEditProfile = false; // Reset the boolean value
+                                  _didEditProfile =
+                                      false; // Reset the boolean value
                                 });
                               }
                             },
@@ -421,10 +437,24 @@ class AdminProfilePageState extends State<AdminProfilePage> {
                             title: 'Logout',
                             icon: Icons.logout,
                             onTap: () async {
-                                await _logout(context);
+                              await _logout(context);
                             },
                           ),
-
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                _launchURL(
+                                    'http://pioneersoftcloud.com/privacypolicy.html');
+                              },
+                              child: Text(
+                                'Privacy Policy',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),

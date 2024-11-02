@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:project/constants/globalObjects.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import 'geofenceGetlatLongmodel.dart';
@@ -15,7 +16,7 @@ class GetLatLongRepo {
         int? empId = firstEmployee['id'] as int;
 
         final response = await http.get(Uri.parse(
-          "http://62.171.184.216:9595/api/employee/location/locationdetail?CorporateId=$corporateId&employeeId=$empId",
+          "${Apis.employeeUrl}/location/locationdetail?CorporateId=$corporateId&employeeId=$empId",
         ));
 
         if (response.statusCode == 200) {

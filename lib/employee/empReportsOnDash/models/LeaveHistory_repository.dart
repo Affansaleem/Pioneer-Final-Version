@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project/Sqlite/sqlite_helper.dart'; // Adjust the import path based on your project structure
 import 'empLeaveHistoryModel.dart';
@@ -34,7 +35,7 @@ class LeaveHistoryRepository {
       final int employeeId = employeeData['employeeId'] as int;
 
       final apiUrl =
-          "http://62.171.184.216:9595/api/employee/leave/getleavehistorybyemployeeid?CorporateId=$corporateId&employeeId=$employeeId";
+          "${Apis.employeeUrl}/leave/getleavehistorybyemployeeid?CorporateId=$corporateId&employeeId=$employeeId";
 
       final headers = {
         'Content-Type': 'application/json', // Set the content type to JSON

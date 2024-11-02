@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import 'PendingLeavesModel.dart';
 
@@ -19,7 +20,7 @@ class PendingLeavesRepository {
           return [];
         }
 
-        final String apiUrl = 'http://62.171.184.216:9595/api/admin/location/GetUnApproved?CorporateId=$corporateId';
+        final String apiUrl = '${Apis.adminUrl}/location/GetUnApproved?CorporateId=$corporateId';
 
         final response = await http.get(Uri.parse(apiUrl));
         if (response.statusCode == 200) {

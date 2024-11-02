@@ -52,7 +52,7 @@ class EmpMainPageState extends State<EmpMainPage> {
 
         // Delete profile data
         await dbHelper.deleteProfileData();
-
+        print("data deleted");
         await dbHelper.deleteAttendenceData();
 
       }
@@ -81,7 +81,6 @@ class EmpMainPageState extends State<EmpMainPage> {
     super.initState();
     profileRepository = EmpProfileRepository();
 
-    print("Drawer opens and closed");
     fetchProfileData();
   }
 

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -67,6 +66,7 @@ Future main() async {
 
 class MyApp extends StatelessWidget {
   MyApp();
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -230,9 +230,6 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
-          // useInheritedMediaQuery: true,
-          // locale: DevicePreview.locale(context),
-          // builder: DevicePreview.appBuilder,
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(

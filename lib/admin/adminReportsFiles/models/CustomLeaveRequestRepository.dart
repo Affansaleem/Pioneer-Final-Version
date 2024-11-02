@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 import 'CustomLeaveRequestModel.dart';
 
@@ -19,7 +20,7 @@ class CustomLeaveRequestRepository {
         }
 
         final String apiUrl =
-            'http://62.171.184.216:9595/api/admin/leave/approveleave?CorporateId=$corporateId';
+            '${Apis.adminUrl}/leave/approveleave?CorporateId=$corporateId';
 
         final Map<String, dynamic> requestData = leaveRequest.toJson();
 

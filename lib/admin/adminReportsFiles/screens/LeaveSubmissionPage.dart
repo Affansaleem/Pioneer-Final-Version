@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppBar_constant.dart';
+import 'package:project/constants/apis.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_bloc.dart';
 import 'package:project/introduction/bloc/bloc_internet/internet_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,6 +89,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
   void dispose() {
     addToCartPopUpAnimationController.dispose();
     super.dispose();
+    selectedEmployees.clear();
   }
 
   bool isInternetLost = false;
@@ -332,7 +334,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                               prefs.getString("corporate_id") ?? "ptsoffice";
                           print(corporateId);
                           var apiUrl =
-                              'http://62.171.184.216:9595/api/admin/leave/addleave?CorporateId=$corporateId';
+                              '${Apis.adminUrl}/leave/addleave?CorporateId=$corporateId';
 
                           final fromDate = fromDateController.text;
                           final toDate = toDateController.text;
@@ -423,7 +425,7 @@ class _LeaveSubmissionPageState extends State<LeaveSubmissionPage>
                           "Submit",
                           style: TextStyle(
                             color: Colors.white,
-                              fontSize: 18
+                              fontSize: 15
                           ),
                         ),
                       ),
@@ -494,106 +496,118 @@ class YourBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
-      child: DraggableScrollableSheet(
-        initialChildSize: 1, // Take up the entire screen initially
-        minChildSize: 0.1, // Minimum height when fully collapsed
-        maxChildSize: 1, // Maximum height when fully expanded
-        expand: true,
-        builder: (BuildContext context, ScrollController scrollController) {
-          return SingleChildScrollView(
-            reverse: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Draggable handle at the top
-                Container(
-                  height: 10,
-                  width: 50,
-                  margin: EdgeInsets.zero,
-                  padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+    return Stack(
+      children: [
+        Column(
+          children: [
+            SizedBox(height:5),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                height: 10,
+                width: 50,
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                SizedBox(height: 20,),
-                // Content
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  margin: EdgeInsets.zero,
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) => Divider(),
-                    itemCount: selectedEmployees.length,
-                    itemBuilder: (context, index) {
-                      var employee = selectedEmployees[index];
+              ),
+            ),
+          ],
+        ),
+        Container(
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.98, // Take up the entire screen initially
+            minChildSize: 0.1, // Minimum height when fully collapsed
+            maxChildSize: 0.98, // Maximum height when fully expanded
+            expand: true,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return SingleChildScrollView(
+                reverse: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
 
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    SizedBox(height: 20,),
+                    // Content
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      margin: EdgeInsets.zero,
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) => Divider(),
+                        itemCount: selectedEmployees.length,
+                        itemBuilder: (context, index) {
+                          var employee = selectedEmployees[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                Row(
+                                  children: [
+                                    // SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            '${employee.empName ?? ""}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                '${employee.empName ?? ""}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                employee.remarks.isEmpty
+                                                    ? "No Remarks!"
+                                                    : employee.remarks,
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              Text(
+                                                'ID: ${employee.empCode}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            employee.remarks.isEmpty
-                                                ? "---"
-                                                : employee.remarks,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          Text(
-                                            'ID: ${employee.empCode}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

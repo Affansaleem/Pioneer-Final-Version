@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import 'empDashModel.dart';
 
 class EmpDashRepository {
-  final String baseUrl = "http://62.171.184.216:9595/api/employee/dashboard/monthlystatus";
+  final String baseUrl = "${Apis.employeeUrl}/dashboard/monthlystatus";
 
   Future<List<EmpDashModel>> getData() async {
     try {
@@ -30,16 +31,20 @@ class EmpDashRepository {
 
         if (response.statusCode == 200) {
           final Map<String, dynamic> responseData = json.decode(response.body);
-          final int presentCount = responseData["presentCount"];
-          final int absentCount = responseData["absentCount"];
-          final int leaveCount = responseData["leaveCount"];
-
+          final int presentCount = responseData["present_Count"];
+          final int absentCount = responseData["absent_Count"];
+          final int leaveCount = responseData["leave_Count"];
+          final int holidayCount = responseData["holiday_Count"];
+          final int lateCount = responseData["late_Count"];
           final empDashModel = EmpDashModel(
             presentCount: presentCount,
             absentCount: absentCount,
             leaveCount: leaveCount,
+            holidayCount: holidayCount,
+            lateCount: lateCount
           );
 
+          // print(empDashModel.holidayCount);
           // Return a list with a single EmpDashModel, as your code suggests accessing userList[0]
           return [empDashModel];
         } else {

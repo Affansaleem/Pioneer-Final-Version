@@ -20,6 +20,17 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    Future.delayed(Duration(seconds: 3),() async => {
+      await setIntroScreenVisited(true),
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return LoginPage();
+          },
+        ),
+      )
+    });
     super.initState();
     _controller = AnimationController(
       duration: const Duration(seconds: 3),
@@ -55,7 +66,7 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
+    // print(MediaQuery.of(context).size.height);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -114,36 +125,7 @@ class _Screen1State extends State<Screen1> with SingleTickerProviderStateMixin {
               // SizedBox(height: (MediaQuery.of(context).size.height) > 720 ? 40 : 20 ),
 
               // Next button (conditionally displayed)
-              if (allPointsDisplayed)
-                Card(
-                  elevation: 5.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100.0), // Set the circular radius
-                  ),
-                  color: AppColors.primaryColor,
-                  child: GestureDetector(
-                    onTap: () async {
-                      await setIntroScreenVisited(true);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return LoginPage();
-                          },
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 150,
-                      padding: const EdgeInsets.symmetric(vertical: 15.0),
-                      child: const Text(
-                        'Next',
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
+
 
             ],
           ),

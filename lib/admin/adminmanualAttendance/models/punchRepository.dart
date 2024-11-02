@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:project/admin/adminmanualAttendance/models/punchDataModel.dart';
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/admin_sqliteHelper.dart';
 
 class ManualPunchRepository {
@@ -18,7 +19,7 @@ class ManualPunchRepository {
         }
 
         final String apiUrl =
-            'http://62.171.184.216:9595/api/Admin/ManualPunch/AddManualPunch?CorporateId=$corporateId';
+            '${Apis.adminUrl}/ManualPunch/AddManualPunch?CorporateId=$corporateId';
 
         // Convert List<PunchData> to List<Map<String, dynamic>>
         final requestDataJsonList = requestDataList

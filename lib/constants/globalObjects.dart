@@ -18,6 +18,8 @@ class GlobalObjects {
   static String? empPresent;
   static String? empAbsent;
   static String? empLeaves;
+  static String? empHoliday;
+  static String? empLate;
 
   // DropDowns
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import 'attendanceGeoFencingModel.dart';
 
@@ -9,6 +10,7 @@ class GeoFenceRepository {
   GeoFenceRepository(this.area);
 
   Future<void> postData(GeofenceModel geoFenceModel) async {
+    print("In geofence repo");
     try {
       final dbHelper = EmployeeDatabaseHelper.instance;
       final firstEmployee = await dbHelper.getFirstEmployee();
@@ -16,7 +18,7 @@ class GeoFenceRepository {
       if (firstEmployee != null) {
         String corporateId = firstEmployee['corporate_id'] as String;
         final String baseUrl =
-            "http://62.171.184.216:9595/api/employee/location/AddGeoPunch?CorporateId=$corporateId&Area";
+            "${Apis.employeeUrl}/location/AddGeoPunch?CorporateId=$corporateId&Area";
         print("${baseUrl}=$area");
         final apiUrl = "${baseUrl}=$area";
 
@@ -34,8 +36,9 @@ class GeoFenceRepository {
 
         if (response.statusCode == 200) {
           // Request was successful
-          print("Response submitted successfully!");
+          // print("Response submitted successfully!");
           print(response.body);
+          // print(response.statusCode);
         } else {
           // Request failed, log status code and response content
           print(

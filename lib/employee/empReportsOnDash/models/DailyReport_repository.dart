@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:project/constants/apis.dart';
 import 'dart:convert';
 import '../../../Sqlite/sqlite_helper.dart'; // Adjust the import path based on your project structure
 
@@ -6,7 +7,7 @@ import '../models/DailyReports_model.dart';
 
 class DailyReportsRepository {
   final String baseUrl =
-      'http://62.171.184.216:9595/api/employee/report/getdailyreport';
+      '${Apis.employeeUrl}/report/getdailyreport';
 
   Future<List<DailyReportsModel>> getDailyReports({
     required DateTime reportDate,

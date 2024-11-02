@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:project/constants/apis.dart';
 import '../../../Sqlite/sqlite_helper.dart';
 import 'emp_attendance_status_model.dart';
 
@@ -30,7 +32,6 @@ class EmpAttendanceRepository {
       print("Error fetching data from the database: $e");
       // Handle the error as needed
     }
-    print("Fetched corporateId: $corporateId, employeeId: $employeeId");
   }
 
   Future<EmpAttendanceModel> getData() async {
@@ -43,9 +44,10 @@ class EmpAttendanceRepository {
       // Handle the case where corporateId or employeeId is still null
       throw Exception("CorporateId or employeeId is null");
     }
+    String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     String apiUrl =
-        "http://62.171.184.216:9595/api/employee/dashboard/attendance?CorporateId=$corporateId&employeeId=$employeeId";
+        "${Apis.employeeUrl}/dashboard/attendance?CorporateId=$corporateId&employeeId=$employeeId&Date=$currentDate";
 
     final headers = {
       'Content-Type': 'application/json', // Set the content type to JSON

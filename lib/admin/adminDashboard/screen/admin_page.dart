@@ -26,18 +26,16 @@ class _AdminPageState extends State<AdminPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime selectedDate = DateTime.now(); // Initialize with the current date
   final adminDashboardRepository = AdminDashboardRepository(
-      'http://62.171.184.216:9595'); // Replace with your API base URL
+      'http://62.171.184.216:9595');
   AdminDashBoard? adminData;
   @override
   void initState() {
     super.initState();
-    // Load API data when the page is first loaded
     _loadData();
   }
 
   Future<void> _loadData() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // final corporateId = prefs.getString('corporate_id') ?? '';
+
     try {
       final adminDashboardData = await adminDashboardRepository
           .fetchDashboardData(selectedDate);
@@ -55,13 +53,11 @@ class _AdminPageState extends State<AdminPage> {
     setState(() {
       selectedDate = newDate;
     });
-    // Fetch data based on the new selected date and corporate ID here
     final prefs = await SharedPreferences.getInstance();
     final corporateId = prefs.getString('corporate_id') ?? '';
     _fetchDataForSelectedDate(selectedDate, corporateId);
   }
 
-  // Function to fetch data based on the selected date and corporate ID
   void _fetchDataForSelectedDate(DateTime date, String corporateId) async {
     try {
       final adminDashboardData =
@@ -69,10 +65,10 @@ class _AdminPageState extends State<AdminPage> {
       // Update the UI with the fetched data
       setState(() {
         adminData =
-            adminDashboardData; // Assuming you have a variable adminData in your widget state
+            adminDashboardData;
       });
     } catch (e) {
-      // Handle errors here
+
       print('Error fetching data: $e');
     }
   }
@@ -216,12 +212,13 @@ class _AdminPageState extends State<AdminPage> {
                                     lateCount: 0,
                                     totalEmployeeCount: 0,
                                   ),
-                              demoMyFiles: demoMyFiles, // Pass demoMyFiles here
+                              demoMyFiles: demoMyFiles,
                               totalEmployees:
                                   adminData?.totalEmployeeCount ?? 0,
                               presentEmployees: adminData?.presentCount ?? 0,
                               absentEmployees: adminData?.absentCount ?? 0,
                               lateEmployees: adminData?.lateCount ?? 0,
+                              selectedDate: selectedDate,
                             ),
 
                             const SizedBox(height: defaultPadding),
