@@ -467,13 +467,20 @@ class EmpProfilePageState extends State<EmpProfilePage> {
                                         });
                                       }
                                     },
-                                    child: Text(
-                                      'Edit Profile',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children:[
+                                        const Icon(FontAwesomeIcons.pencil,size: 16,color: Colors.white,),
+                                        const SizedBox(width: 10,),
+                                        Text(
+                                        'Edit Profile',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                        ),
                                       ),
+                                    ],
                                     ),
                                   ),
                                 ),
@@ -484,13 +491,20 @@ class EmpProfilePageState extends State<EmpProfilePage> {
                                   alignment: Alignment.center,
                                   child: InkWell(
                                     onTap: () => _logout(context),
-                                    child: Text(
-                                      'Logout',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
-                                      ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.logout,size: 16,),
+                                        const SizedBox(width: 10,),
+                                        Text(
+                                          'Logout',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -551,58 +565,5 @@ class EmpProfilePageState extends State<EmpProfilePage> {
     );
   }
 
-  Widget _buildTileWidget({
-    required String title,
-    required IconData icon,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-        onTap: onTap,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 1 / 14,
-                  width: MediaQuery.of(context).size.width * 5 / 6,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColors.primaryColor,
-                          AppColors.secondaryColor,
-                        ]),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    // ignore: prefer_const_literals_to_create_immutables
-                    children: [
-                      const Text(""),
-                      Text(
-                        "${title}",
-                        style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white),
-                      ),
-                      Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: const BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.white),
-                          child: Icon(
-                            icon,
-                            size: 25.0,
-                            color: AppColors.primaryColor,
-                          ))
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ));
-  }
+
 }
