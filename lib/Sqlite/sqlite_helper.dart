@@ -274,7 +274,7 @@ class EmployeeDatabaseHelper {
     if (result.isNotEmpty) {
       return {
         'empCode':
-            result.first['empCode'] as String, // Treat empCode as a string
+            result.first['empCode'] as String,
         'profilePic': result.first['profilePic'] as String,
         'empName': result.first['empName'] as String,
         'emailAddress': result.first['emailAddress'] as String,

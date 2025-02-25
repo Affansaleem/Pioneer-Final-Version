@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:project/constants/AppColor_constants.dart';
 import 'package:project/employee/empDashboard/screens/employeeMain.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +33,7 @@ class EmpProfilePage extends StatefulWidget {
 class EmpProfilePageState extends State<EmpProfilePage> {
   LoginPageState select = LoginPageState();
   Key _profileImageKey = UniqueKey();
-  bool _didEditProfile = false; // Add this variable
+  bool _didEditProfile = false;
 
   Widget _buildProfileImage() {
     return FutureBuilder(

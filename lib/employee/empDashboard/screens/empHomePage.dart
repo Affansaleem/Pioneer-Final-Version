@@ -33,7 +33,6 @@ import '../models/empDashModel.dart';
 import '../models/empDashRepository.dart';
 import '../models/emp_attendance_status_model.dart';
 import '../models/emp_attendance_status_repository.dart';
-import '../models/emp_attendane_dash_api_files/emp_attendance_bloc.dart';
 import 'empDrawer.dart';
 import 'empDrawerItems.dart';
 
@@ -50,6 +49,7 @@ class HomePageState extends State<EmpDashHome> {
   late bool locationError = true;
   double? lat;
   double? long;
+  EmpProfileModel? empProfile;
   var initProfile = EmpProfilePageState();
   EmpDrawerItem item = EmpDrawerItems.home;
   final EmpDashRepository _repository = EmpDashRepository();
@@ -57,7 +57,7 @@ class HomePageState extends State<EmpDashHome> {
   late List<EmpDashModel> empDashData;
   final EmpAttendanceRepository _attendanceRepository =
       EmpAttendanceRepository();
-  late EmpAttendanceModel empAttendanceData;
+  EmpAttendanceModel? empAttendanceData;
   bool loadingData = false;
 
   Future<void> attendDoneNowNull() async {
@@ -156,38 +156,24 @@ class HomePageState extends State<EmpDashHome> {
   String? profileImageUrl;
 
   Future<void> fetchProfileData() async {
-
     try {
-
+      final profileRepository = EmpProfileRepository();
+      final profileData = await profileRepository.getData();
+      empProfile = profileData.first;
       final dbHelper = EmployeeDatabaseHelper.instance;
       int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
-      // Dash
-      empDashData = await _repository.getData();
-      print(empDashData[0].holidayCount);
-      empAttendanceData = await _attendanceRepository.getData();
-      // Insert data into employeeHomePageData table
-      await dbHelper.insertEmployeeHomePageData(
-        inTime: empAttendanceData.in1?.toString() ?? '',
-        outTime: empAttendanceData.out2?.toString() ?? '',
-        status: empAttendanceData.status ?? '',
-        present: empDashData[0].presentCount.toString(),
-        absent: empDashData[0].absentCount.toString(),
-        leaves: empDashData[0].leaveCount.toString(),
-        holiday: empDashData[0].holidayCount.toString(),
-        late: empDashData[0].lateCount.toString()
-      );
-
-      if (loggedInEmployeeId > 0) {
+      print('Logged in employee id: $loggedInEmployeeId');
+      if (loggedInEmployeeId != 0) {
         final profileData = await dbHelper.getEmployeeProfileData();
         if (mounted) {
           setState(() {
-            GlobalObjects.empCode = profileData['empCode'];
-            GlobalObjects.empProfilePic = profileData['profilePic'];
-            GlobalObjects.empName = profileData['empName'];
-            GlobalObjects.empMail = profileData['emailAddress'];
-            GlobalObjects.empIn1 = empAttendanceData.in1;
-            GlobalObjects.empOut2 = empAttendanceData.out2;
-            GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
+            GlobalObjects.empCode = profileData['empCode'] == "" ? empProfile?.empCode : profileData['empCode'];
+            GlobalObjects.empProfilePic = profileData['profilePic'] == "" ? empProfile?.profilePic : profileData['profilePic'];
+            GlobalObjects.empName = profileData['empName'] == "" ? empProfile?.empName : profileData['empName'];
+            GlobalObjects.empMail = profileData['emailAddress'] == "" ? empProfile?.emailAddress : profileData['emailAddress'];
+            GlobalObjects.empIn1 = empAttendanceData?.in1;
+            GlobalObjects.empOut2 = empAttendanceData?.out2;
+            GlobalObjects.empStatus = empAttendanceData?.status?.toString() ?? '';
             GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
             GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
             GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
@@ -197,6 +183,21 @@ class HomePageState extends State<EmpDashHome> {
           });
         }
       }
+      // Dash
+      empDashData = await _repository.getData();
+      empAttendanceData = await _attendanceRepository.getData();
+      await dbHelper.insertEmployeeHomePageData(
+        inTime: empAttendanceData?.in1?.toString() ?? '',
+        outTime: empAttendanceData?.out2?.toString() ?? '',
+        status: empAttendanceData?.status ?? '',
+        present: empDashData[0].presentCount.toString(),
+        absent: empDashData[0].absentCount.toString(),
+        leaves: empDashData[0].leaveCount.toString(),
+        holiday: empDashData[0].holidayCount.toString(),
+        late: empDashData[0].lateCount.toString()
+      );
+
+
     } catch (e) {
       print("Error fetching profile data home: $e");
     } finally {
@@ -205,9 +206,9 @@ class HomePageState extends State<EmpDashHome> {
       if (mounted) {
         setState(() {
 
-          GlobalObjects.empIn1 = empAttendanceData.in1;
-          GlobalObjects.empOut2 = empAttendanceData.out2;
-          GlobalObjects.empStatus = empAttendanceData.status?.toString() ?? '';
+          GlobalObjects.empIn1 = empAttendanceData?.in1;
+          GlobalObjects.empOut2 = empAttendanceData?.out2;
+          GlobalObjects.empStatus = empAttendanceData?.status?.toString() ?? '';
           GlobalObjects.empPresent = empDashData[0].presentCount.toString() ?? '';
           GlobalObjects.empAbsent = empDashData[0].absentCount.toString() ?? '';
           GlobalObjects.empLeaves = empDashData[0].leaveCount.toString() ?? '';
@@ -218,57 +219,57 @@ class HomePageState extends State<EmpDashHome> {
     }
   }
 
-  Future<void> _refreshEmpHomePage() async {
-    try {
-      final dbHelper = EmployeeDatabaseHelper.instance;
-      int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
-
-      if (loggedInEmployeeId > 0) {
-        final profileRepository = EmpProfileRepository();
-        final profileData = await profileRepository.getData();
-
-        if (profileData.isNotEmpty) {
-          EmpProfileModel? empProfile = profileData.first;
-          final profileImage = empProfile.profilePic;
-
-          final db = await dbHelper.database;
-          await db.transaction((txn) async {
-            await txn.rawInsert('''
-            INSERT OR REPLACE INTO employeeProfileData (empCode, profilePic, empName, emailAddress)
-            VALUES (?, ?, ?, ?)
-          ''', [
-              empProfile.empCode,
-              profileImage,
-              empProfile.empName,
-              empProfile.emailAddress
-            ]);
-          });
-
-          GlobalObjects.empCode = empProfile.empCode;
-          print(GlobalObjects.empCode);
-
-          GlobalObjects.empProfilePic = profileImage;
-          GlobalObjects.empName = empProfile.empName;
-          GlobalObjects.empMail = empProfile.emailAddress;
-          setState(() {
-            GlobalObjects.empCode = empProfile.empCode;
-            print(GlobalObjects.empCode);
-            GlobalObjects.empProfilePic = profileImage;
-            GlobalObjects.empName = empProfile.empName;
-            GlobalObjects.empMail = empProfile.emailAddress;
-            savedEmpCode = empProfile.empCode;
-            profileImageUrl = profileImage;
-          });
-        }
-
-        await dbHelper.printProfileData();
-      }
-    } catch (e) {
-      print("Error fetching profile data: $e");
-    } finally {
-      setState(() {});
-    }
-  }
+  // Future<void> _refreshEmpHomePage() async {
+  //   try {
+  //     final dbHelper = EmployeeDatabaseHelper.instance;
+  //     int loggedInEmployeeId = await dbHelper.getLoggedInEmployeeId();
+  //
+  //     if (loggedInEmployeeId > 0) {
+  //       final profileRepository = EmpProfileRepository();
+  //       final profileData = await profileRepository.getData();
+  //
+  //       if (profileData.isNotEmpty) {
+  //         EmpProfileModel? empProfile = profileData.first;
+  //         final profileImage = empProfile.profilePic;
+  //
+  //         final db = await dbHelper.database;
+  //         await db.transaction((txn) async {
+  //           await txn.rawInsert('''
+  //           INSERT OR REPLACE INTO employeeProfileData (empCode, profilePic, empName, emailAddress)
+  //           VALUES (?, ?, ?, ?)
+  //         ''', [
+  //             empProfile.empCode,
+  //             profileImage,
+  //             empProfile.empName,
+  //             empProfile.emailAddress
+  //           ]);
+  //         });
+  //
+  //         GlobalObjects.empCode = empProfile.empCode;
+  //         print(GlobalObjects.empCode);
+  //
+  //         GlobalObjects.empProfilePic = profileImage;
+  //         GlobalObjects.empName = empProfile.empName;
+  //         GlobalObjects.empMail = empProfile.emailAddress;
+  //         setState(() {
+  //           GlobalObjects.empCode = empProfile.empCode;
+  //           print(GlobalObjects.empCode);
+  //           GlobalObjects.empProfilePic = profileImage;
+  //           GlobalObjects.empName = empProfile.empName;
+  //           GlobalObjects.empMail = empProfile.emailAddress;
+  //           savedEmpCode = empProfile.empCode;
+  //           profileImageUrl = profileImage;
+  //         });
+  //       }
+  //
+  //       await dbHelper.printProfileData();
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching profile data: $e");
+  //   } finally {
+  //     setState(() {});
+  //   }
+  // }
 
   Future<bool?> _onBackPressed(BuildContext context) async {
     bool? exitConfirmed = await showDialog(
@@ -426,7 +427,6 @@ class HomePageState extends State<EmpDashHome> {
     //FIRST APPROACH
     return BlocConsumer<InternetBloc, InternetStates>(
       listener: (context, state) {
-        // TODO: implement listener
       },
       builder: (context, state) {
         if (state is InternetGainedState) {
@@ -445,7 +445,7 @@ class HomePageState extends State<EmpDashHome> {
                       ),
                       backgroundColor: AppColors.primaryColor,
                       elevation: 0,
-                      title: Padding(
+                      title: const Padding(
                         padding: EdgeInsets.only( top: 35
                         ),
                         child: Text(
@@ -472,13 +472,8 @@ class HomePageState extends State<EmpDashHome> {
                                   },
                                 );
 
-                                // Simulate a delay for 2 seconds (replace this with your actual data fetching logic)
                                 await Future.delayed(const Duration(seconds: 2));
-
-                                // Close the dialog
                                 Navigator.of(context).pop();
-
-                                // Fetch profile data
                                 await fetchProfileData();
                               },
                               icon: const Icon(Icons.refresh, color: Colors.white),
@@ -539,13 +534,13 @@ class HomePageState extends State<EmpDashHome> {
                           ),
                           GestureDetector(
                             onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => EmpDetailedAttendance(),));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const EmpDetailedAttendance(),));
                             },
                             child: Container(
 
-                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              margin: const EdgeInsets.symmetric(horizontal: 10),
                               height: 75,
-                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(15), // Same as the Card's shape
@@ -554,7 +549,7 @@ class HomePageState extends State<EmpDashHome> {
                                     color: Colors.grey.withOpacity(0.5), // Adjust the shadow color and opacity
                                     spreadRadius: 3, // Adjust the spread radius
                                     blurRadius: 5, // Adjust the blur radius
-                                    offset: Offset(0, 3), // Adjust the offset
+                                    offset: const Offset(0, 3), // Adjust the offset
                                   ),
                                 ],
                               ),
@@ -566,17 +561,17 @@ class HomePageState extends State<EmpDashHome> {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "IN",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
                                         formattedTimeIn1,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
@@ -586,19 +581,19 @@ class HomePageState extends State<EmpDashHome> {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "Status",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
                                         GlobalObjects.empStatus != null && GlobalObjects.empStatus!.isNotEmpty
                                             ? GlobalObjects.empStatus!
                                             : "---",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),
@@ -608,17 +603,17 @@ class HomePageState extends State<EmpDashHome> {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      const Text(
                                         "OUT",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
                                         formattedTimeOut2 ,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                         ),
                                       ),

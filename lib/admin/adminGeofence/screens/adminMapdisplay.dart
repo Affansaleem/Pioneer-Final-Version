@@ -613,47 +613,73 @@ class _AdminMapDisplayState extends State<AdminMapDisplay> {
                     ],
                   ),
                 ),
-                Positioned(
-                  bottom: 10,
-                  right: 15,
-                  child: FloatingActionButton(
-                    mini: true,
-                    // This makes the button smaller
-                    backgroundColor: Colors.white,
-                    // Set background color to white
-                    onPressed: _getCurrentLocation,
-                    child: const Icon(
-                      Icons.my_location,
-                      color: Colors.black, // Set icon color to blue
-                    ),
-                  ),
-                ),
+                // Positioned(
+                //   bottom: 10,
+                //   right: 15,
+                //   child: FloatingActionButton(
+                //     mini: true,
+                //     // This makes the button smaller
+                //     backgroundColor: Colors.white,
+                //     // Set background color to white
+                //     onPressed: _getCurrentLocation,
+                //     child: const Icon(
+                //       Icons.my_location,
+                //       color: Colors.black, // Set icon color to blue
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: isTyping
-                ? null
-                : SizedBox(
-                    height: 40, // Adjust height
-                    child: FloatingActionButton.extended(
-                      backgroundColor:
-                          Colors.white, // Set background color to white
-                      onPressed: () => _showBottomSheet(context),
-                      label: const Text(
-                        'Show Address',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize:
-                                12), // Set text color to blue and font size
-                      ),
-                      icon: const Icon(
-                        Icons.location_on,
-                        color: Colors.black, // Set icon color to blue
-                        size: 16, // Adjust icon size
-                      ),
+            // floatingActionButton: isTyping
+            //     ? null
+                floatingActionButton:  Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        FloatingActionButton(
+                          onPressed: ()=> Navigator.pop(context),
+                          mini: true,
+                          // This makes the button smaller
+                          backgroundColor: Colors.white,
+                          child: const Icon(Icons.arrow_back),
+                        ),
+                        SizedBox(
+                          height: 40, // Adjust height
+                          child: FloatingActionButton.extended(
+                            backgroundColor:
+                                Colors.white, // Set background color to white
+                            onPressed: () => _showBottomSheet(context),
+                            label: const Text(
+                              'Show Address',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize:
+                                      12), // Set text color to blue and font size
+                            ),
+                            icon: const Icon(
+                              Icons.location_on,
+                              color: Colors.black, // Set icon color to blue
+                              size: 16, // Adjust icon size
+                            ),
+                          ),
+                        ),
+                        FloatingActionButton(
+                          mini: true,
+                          // This makes the button smaller
+                          backgroundColor: Colors.white,
+                          // Set background color to white
+                          onPressed: _getCurrentLocation,
+                          child: const Icon(
+                            Icons.my_location,
+                            color: Colors.black, // Set icon color to blue
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                ),
           );
         } else {
           checkLocationPermissionAndFetchLocation();

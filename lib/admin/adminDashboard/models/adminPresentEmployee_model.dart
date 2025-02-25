@@ -3,8 +3,8 @@ class AdminPresentEmployee {
   final String? cardNo;
   final String empName;
   final String? deptNames;
-  final DateTime in1;
-  final DateTime out2;
+  final DateTime? in1;
+  final DateTime? out2;
   final int hoursWorked;
   final String status;
 
@@ -25,8 +25,8 @@ class AdminPresentEmployee {
       empName: json['empName'] ?? '',
       cardNo: json['cardNo'],
       deptNames: json['deptNames'],
-      in1: json['in1'] != null ? DateTime.parse(json['in1']) : DateTime.now(),
-      out2: json['out2'] != null ? DateTime.parse(json['out2']) : DateTime.now(),
+      in1: json['in1'] != null ? DateTime.parse(json['in1']) : null,
+      out2: json['out2'] != null ? DateTime.parse(json['out2']) : null,
       hoursWorked: json['hoursworked'] ?? 0,
       status: json['status'] ?? '',
     );
