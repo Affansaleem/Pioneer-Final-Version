@@ -53,7 +53,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
     _currentTime = DateFormat.yMd().add_jm().format(DateTime.now());
 
     // Create a timer to update the time every second
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _currentTime = DateFormat.yMd().add_jm().format(DateTime.now());
       });
@@ -108,33 +108,34 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
   }
 
   void _popPage() {
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pop(context);
     });
 
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pop(context);
     });
   }
 
-  final Map<String, int> _reasonToLTypeId = {
-    "Annual": 1,
-    "Outstation Duty": 2,
-    "SL": 3,
-  };
+  // final Map<String, int> _reasonToLTypeId = {
+  //   "Annual": 1,
+  //   "Outstation Duty": 2,
+  //   "SL": 3,
+  // };
   String _selectedLeaveDuration = "";
   String _selectedReason = "";
+  int selectedTypeId = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Leave Form",
           style: AppBarStyles.appBarTextStyle,
         ),
         backgroundColor: AppColors.primaryColor,
         centerTitle: true,
-        iconTheme: IconThemeData(color: AppBarStyles.appBarIconColor),
+        iconTheme: const IconThemeData(color: AppBarStyles.appBarIconColor),
       ),
       body: BlocProvider(
         create: (context) {
@@ -151,22 +152,21 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                 child: CircularProgressIndicator(),
               );
             } else if (state is EmpLeaveRequestLoadedState) {
-              int selectedTypeId = 0;
               List<EmpLeaveModel> userList = state.users;
-              final employeeLeave1 = userList.isNotEmpty
-                  ? userList[0]
-                  : EmpLeaveModel(
-                      leaveTypeId: 0, ltypeCode: '', ltypeName: '');
-              final employeeLeave2 = userList.length > 1
-                  ? userList[1]
-                  : EmpLeaveModel(
-                      leaveTypeId: 0, ltypeCode: '', ltypeName: '');
-              final employeeLeave3 = userList.length > 2
-                  ? userList[2]
-                  : EmpLeaveModel(
-                      leaveTypeId: 0, ltypeCode: '', ltypeName: '');
-
-              selectedTypeId = employeeLeave1.leaveTypeId ?? 0;
+              // final employeeLeave1 = userList.isNotEmpty
+              //     ? userList[0]
+              //     : EmpLeaveModel(
+              //         leaveTypeId: 0, ltypeCode: '', ltypeName: '');
+              // final employeeLeave2 = userList.length > 1
+              //     ? userList[1]
+              //     : EmpLeaveModel(
+              //         leaveTypeId: 0, ltypeCode: '', ltypeName: '');
+              // final employeeLeave3 = userList.length > 2
+              //     ? userList[2]
+              //     : EmpLeaveModel(
+              //         leaveTypeId: 0, ltypeCode: '', ltypeName: '');
+              //
+              // selectedTypeId = employeeLeave1.leaveTypeId ?? 0;
 
               return Align(
                 alignment: Alignment.center,
@@ -191,7 +191,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                 ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             const Text(
                               'From Date',
                               style: TextStyle(
@@ -250,30 +250,32 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
-                          DropdownButtonFormField<String>(
-                            value: _selectedReason,
-                            items: [
-                              if (userList.isNotEmpty) ...[
-                                DropdownMenuItem<String>(
-                                  value: "", // Include an empty value if userList is not empty
-                                  child: Text(""), // Display an empty string
-                                ),
-                                for (var user in userList)
-                                  DropdownMenuItem<String>(
-                                    value: user.ltypeName,
-                                    child: Text(user.ltypeName),
+                            DropdownButtonFormField<String>(
+                              value: _selectedReason,
+                              items: [
+                                if (userList.isNotEmpty) ...[
+                                  const DropdownMenuItem<String>(
+                                    value: "",
+                                    child: Text(""),
                                   ),
+                                  ...userList.map((user) => DropdownMenuItem<String>(
+                                    value: user.leaveTypeId.toString(),
+                                    child: Text(user.ltypeName),
+                                  )).toList(),
+                                ],
                               ],
-                            ],
-                            onChanged: (String? value) {
-                              setState(() {
-                                _selectedReason = value ?? "";
-                                _reasonController.text = _selectedReason;
-                                selectedTypeId = _reasonToLTypeId[value ?? ""] ?? 0;
-                              });
-                            },
-                          ),
-
+                              onChanged: (String? value) {
+                                setState(() {
+                                });
+                                  _selectedReason = value ?? "";
+                                  _reasonController.text = _selectedReason;
+                                  selectedTypeId = userList
+                                      .firstWhere(
+                                        (user) => user.leaveTypeId.toString() == value,
+                                    orElse: () => EmpLeaveModel(leaveTypeId: 0, ltypeName: "", ltypeCode: ""),
+                                  ).leaveTypeId;
+                              },
+                            ),
                             const SizedBox(height: 16),
                             const Text(
                               'Reason for Leave',
@@ -283,7 +285,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                             ),
                             TextField(
                               controller: _reasonTextController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Enter your reason for leave',
                               ),
                             ),
@@ -333,8 +335,8 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   borderRadius: BorderRadius.circular(30.0),
                                 ),
                                 backgroundColor: Colors.grey,
-                                padding: EdgeInsets.all(16.0),
-                                minimumSize: Size(200, 40),
+                                padding: const EdgeInsets.all(16.0),
+                                minimumSize: const Size(200, 40),
                               )
                                   : ElevatedButton.styleFrom(
                   
@@ -342,8 +344,8 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   borderRadius: BorderRadius.circular(30.0),
                                 ),
                                 backgroundColor: Colors.blue,
-                                padding: EdgeInsets.all(16.0),
-                                minimumSize: Size(200, 40),
+                                padding: const EdgeInsets.all(16.0),
+                                minimumSize: const Size(200, 40),
                               ),
                               onPressed: () async {
                                 if (_reasonTextController.text == null ||
@@ -364,9 +366,9 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                       .text; // Get the reason from the text field
                                   print(
                                       "Selected Reason: $selectedReason ");
-                                  final selectedTypeId =
-                                      _reasonToLTypeId[selectedReason] ??
-                                          0;
+                                  // final leaveId = selectedTypeId;
+                                      // _reasonToLTypeId[selectedReason] ??
+                                      //     0;
                   
                                   final submissionModel = SubmissionModel(
                   
@@ -431,7 +433,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm>
                                   }
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 'Submit',
                                 style: TextStyle(
                                   fontSize: 16,
