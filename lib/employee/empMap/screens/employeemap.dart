@@ -244,6 +244,12 @@ class _EmployeeMapState extends State<EmployeeMap>
     showCustomWarningAlert(context, "Please take photo before proceeding");
   }
 
+  String fixBase64Padding(String base64String) {
+    while (base64String.length % 4 != 0) {
+      base64String += "=";
+    }
+    return base64String;
+  }
   Future<void> _markAttendance() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String cardNo = prefs.getString('cardNo') ?? " ";
@@ -255,7 +261,7 @@ class _EmployeeMapState extends State<EmployeeMap>
     if (selectedImage == null) {
       _imageError();
     } else {
-      final base64Image = base64Encode(resizedImage);
+      final base64Image = fixBase64Padding(base64Encode(resizedImage));
       final geoFenceModel = GeofenceModel(
         cardno: cardNo.toString(),
         punchDatetime: DateTime.now(),

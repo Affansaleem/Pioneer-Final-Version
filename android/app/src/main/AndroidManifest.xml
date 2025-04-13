@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="Pioneer"
+        android:label="Pioneer Times"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
