@@ -6,6 +6,12 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>Your app needs access to the photo library to allow you to select images</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Your app needs access to the camera to mark attendance</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Your app needs access to location services to track attendance based on user location.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Project</string>
 	<key>CFBundleExecutable</key>
